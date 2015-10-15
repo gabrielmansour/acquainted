@@ -1,6 +1,7 @@
 'use strict';
 
-var React = require('react');
+import React from 'react';
+import Card from './components/card';
 
 require("./style.scss");
 
@@ -8,7 +9,9 @@ class HelloMessage extends React.Component {
   static defaultProps = {salutation: 'Ni Hao'};
 
   render() {
-    return <div>{this.props.salutation}, {this.props.name}</div>;
+    return <div>{this.props.salutation}, {this.props.name}
+    <Card />
+    </div>;
   }
 }
 

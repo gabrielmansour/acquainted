@@ -1,5 +1,20 @@
+var refills = require('node-refills').includePaths;
+function getBourbonPaths() {
+  var includePathsString = 'includePaths[]=';
+
+  var paths = '';
+  for (var x in refills) {
+    paths += includePathsString + refills[x] + '&';
+  }
+  return paths;
+}
+
+console.log(getBourbonPaths());
+
 module.exports = {
-  entry: "./src/entry.js",
+  entry: "./entry.js",
+
+  context: __dirname + '/src',
   output: {
     path: __dirname,
     filename: "app.js"
@@ -7,7 +22,8 @@ module.exports = {
   module: {
     loaders: [
       { test: /\.css$/, loader: "style!css" },
-      { test: /\.scss$/, loaders: ["style", "css", "sass"] },
+      { test: /\.scss$/, loader: "style!css!sass?" + getBourbonPaths() },
+      { test: /\.json$/, loader: "json", exclude: /(node_modules|bower_components)/ },
       { test: /\.jsx?$/, exclude: /(node_modules|bower_components)/, loader: 'babel?stage=0' }
     ]
   }

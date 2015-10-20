@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "react": "^0.13.3",
+    "react-router": "^1.0.0-rc3",
     "reflux": "^0.2.12"
   },
   "devDependencies": {

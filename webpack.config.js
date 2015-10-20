@@ -12,7 +12,7 @@ function getBourbonPaths() {
 console.log(getBourbonPaths());
 
 module.exports = {
-  entry: "./entry.js",
+  entry: "./main.js",
 
   context: __dirname + '/src',
   output: {
@@ -23,8 +23,8 @@ module.exports = {
     loaders: [
       { test: /\.css$/, loader: "style!css" },
       { test: /\.scss$/, loader: "style!css!sass?" + getBourbonPaths() },
-      { test: /\.json$/, loader: "json", exclude: /(node_modules|bower_components)/ },
-      { test: /\.jsx?$/, exclude: /(node_modules|bower_components)/, loader: 'babel?stage=0' }
+      { test: /\.json$/, loader: "json", exclude: /node_modules/ },
+      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel?stage=0' }
     ]
   }
 };

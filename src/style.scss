@@ -10,6 +10,7 @@
 
 @import "refills/cards";
 @import "refills/navigation";
+@import "refills/button-group";
 @import "refills/image-gradient-dynamic";
 @import "refills/tables";
 @import "refills/tables-minimal";
@@ -32,4 +33,27 @@
 
 @import "refills/texture-legend";
 
+header.centered-navigation {
+  margin-bottom: 2em;
+}
 
+.card {
+  float: none;
+  display: inline-block;
+  .card-image {
+    max-height: none;
+  }
+
+  img:not([src]) {
+    max-height: 352px;
+  }
+}
+
+#everyone {
+  max-width: 90%;
+  margin: 0 auto;
+}
+
+.button-group {
+  @include clearfix;
+}

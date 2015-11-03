@@ -64,3 +64,16 @@ header.centered-navigation {
   @include clearfix;
   margin-bottom: 1em;
 }
+
+#flash-cards #people {
+  width: 50%;
+  margin: 0 auto;
+  @include media($large-screen) {
+    .card {
+      box-sizing: border-box;
+      width: 40%;
+      margin: 2em;
+      img { max-height: 285px; }
+    }
+  }
+}

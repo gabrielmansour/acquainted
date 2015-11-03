@@ -1,17 +1,16 @@
 'use strict';
 
 import React from 'react';
-import Reflux from 'reflux';
-import { Router, Route, Link } from 'react-router';
-import Card from './components/card';
-import {ButtonGroup, ButtonGroupItem } from './components/button_group';
+import { Router, Route } from 'react-router';
 import SiteHeader from './common/site_header';
+
+import Everyone from './containers/everyone';
+import Deck from './containers/deck';
+
 
 require("./style.scss");
 
 class Main extends React.Component {
-  state = { people: require('../data/people.json') };
-
   render() {
     return <div>
       <SiteHeader />
@@ -20,50 +19,11 @@ class Main extends React.Component {
   }
 }
 
-class Questions extends React.Component {
-  render () {
-    return <div>
-      <h2>Who is <strong>This Person</strong>?</h2>
-      <Card /><Card /><Card /><Card />
-    </div>
-  }
-}
-
-class Everyone extends React.Component {
-  state = { people: require('../data/people.json') };
-
-  render() {
-    var people = this.state.people.map(function(person, i){
-      return <Card key={i} title={person.fmt_name} body={[person.title, person.fmt_headline]} image={person.image_url} url={person.linkedin_url} />;
-    });
-    return <div id="everyone">
-      <span style={{float:'left'}}>Sort by:{' '}</span>
-      <ButtonGroup>
-        <ButtonGroupItem onClick={this._sortBy('id')} checked={true}>Date added</ButtonGroupItem>
-        <ButtonGroupItem onClick={this._sortBy('fmt_name')}>Name</ButtonGroupItem>
-        <ButtonGroupItem onClick={this._sortBy('title')}>Title</ButtonGroupItem>
-      </ButtonGroup>
-
-      <div id="people">{people}</div>
-    </div>;
-  }
-
-  _sortBy (criteria) {
-    return function(e) {
-      var sorted = this.state.people.sort(function(a, b) {
-        return a[criteria] < b[criteria] ? -1 : 1;
-      });
-      this.setState({people: sorted});
-      return true;
-    }.bind(this);
-  }
-}
-
 React.render(
   (
   <Router component={Main}>
     <Route path="/" name="home" component={Main}>
-      <Route path="" name="home" component={Questions} />
+      <Route path="play" name="play" component={Deck} />
       <Route path="everyone" name="everyone" component={Everyone} />
     </Route>
   </Router>

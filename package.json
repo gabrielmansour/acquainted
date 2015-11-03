@@ -4,6 +4,7 @@
   "description": "A flash card game that makes it easier to learn the names and faces of the people with whom you work.",
   "main": "index.js",
   "dependencies": {
+    "lodash": "^3.10.1",
     "react": "^0.13.3",
     "react-router": "^1.0.0-rc3",
     "reflux": "^0.2.12"

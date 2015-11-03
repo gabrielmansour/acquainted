@@ -15,7 +15,7 @@ class ButtonGroupItem extends React.Component {
 
   render() {
     return (<label>
-      <input type="radio" name="button-group" value={this.props.children} checked={this.props.checked}  onChange={this.props.onClick} />
+      <input type="radio" name="button-group" value={this.props.children} checked={this.props.checked} onChange={this.props.onClick} />
       <span className="button-group-item">{this.props.children}</span>
     </label>);
   }

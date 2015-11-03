@@ -34,15 +34,14 @@ class Everyone extends React.Component {
 
   render() {
     var people = this.state.people.map(function(person, i){
-      return <Card key={i} title={person.fmt_name} body={[person.title, person.fmt_headline]} image={person.image_url} />;
+      return <Card key={i} title={person.fmt_name} body={[person.title, person.fmt_headline]} image={person.image_url} url={person.linkedin_url} />;
     });
     return <div id="everyone">
+      <span style={{float:'left'}}>Sort by:{' '}</span>
       <ButtonGroup>
-        Sort by:{' '}
-        <ButtonGroupItem checked={true}>Date added</ButtonGroupItem>
-        <ButtonGroupItem onClick={this._sortBy('name')}>Name</ButtonGroupItem>
-        <ButtonGroupItem>Item 3</ButtonGroupItem>
-        <ButtonGroupItem>Item 4</ButtonGroupItem>
+        <ButtonGroupItem onClick={this._sortBy('id')} checked={true}>Date added</ButtonGroupItem>
+        <ButtonGroupItem onClick={this._sortBy('fmt_name')}>Name</ButtonGroupItem>
+        <ButtonGroupItem onClick={this._sortBy('title')}>Title</ButtonGroupItem>
       </ButtonGroup>
 
       <div id="people">{people}</div>
@@ -50,9 +49,13 @@ class Everyone extends React.Component {
   }
 
   _sortBy (criteria) {
-    this.state.people.sort(function(a, b) {
-      return b.name;
-    });
+    return function(e) {
+      var sorted = this.state.people.sort(function(a, b) {
+        return a[criteria] < b[criteria] ? -1 : 1;
+      });
+      this.setState({people: sorted});
+      return true;
+    }.bind(this);
   }
 }
 

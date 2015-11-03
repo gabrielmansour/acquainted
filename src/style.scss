@@ -10,6 +10,7 @@
 
 @import "refills/cards";
 @import "refills/navigation";
+@import "refills/badges";
 @import "refills/button-group";
 @import "refills/image-gradient-dynamic";
 @import "refills/tables";
@@ -44,8 +45,13 @@ header.centered-navigation {
     max-height: none;
   }
 
-  img:not([src]) {
-    max-height: 352px;
+  img:not([src]), img[src=""], img.error {
+    max-height: 328px;
+  }
+
+  .card-copy {
+    height: 3em;
+    box-sizing: content-box;
   }
 }
 
@@ -56,4 +62,5 @@ header.centered-navigation {
 
 .button-group {
   @include clearfix;
+  margin-bottom: 1em;
 }

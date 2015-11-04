@@ -11,6 +11,12 @@ import Deck from './containers/deck';
 require("./style.scss");
 
 class Main extends React.Component {
+  componentWillMount () {
+    if (!this.props.children) {
+      window.location.hash = '/play';
+     }
+  }
+
   render() {
     return <div>
       <SiteHeader />

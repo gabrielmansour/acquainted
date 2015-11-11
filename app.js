@@ -66,15 +66,19 @@
 
 	var _commonSite_header2 = _interopRequireDefault(_commonSite_header);
 
-	var _containersEveryone = __webpack_require__(204);
-
-	var _containersEveryone2 = _interopRequireDefault(_containersEveryone);
-
-	var _containersDeck = __webpack_require__(228);
+	var _containersDeck = __webpack_require__(204);
 
 	var _containersDeck2 = _interopRequireDefault(_containersDeck);
 
-	__webpack_require__(272);
+	var _containersEveryone = __webpack_require__(249);
+
+	var _containersEveryone2 = _interopRequireDefault(_containersEveryone);
+
+	var _containersColophon = __webpack_require__(252);
+
+	var _containersColophon2 = _interopRequireDefault(_containersColophon);
+
+	__webpack_require__(256);
 
 	var Main = (function (_React$Component) {
 	  _inherits(Main, _React$Component);
@@ -114,7 +118,8 @@
 	    _reactRouter.Route,
 	    { path: '/', name: 'home', component: Main },
 	    _react2['default'].createElement(_reactRouter.Route, { path: 'play', name: 'play', component: _containersDeck2['default'] }),
-	    _react2['default'].createElement(_reactRouter.Route, { path: 'everyone', name: 'everyone', component: _containersEveryone2['default'] })
+	    _react2['default'].createElement(_reactRouter.Route, { path: 'everyone', name: 'everyone', component: _containersEveryone2['default'] }),
+	    _react2['default'].createElement(_reactRouter.Route, { path: 'colophon', name: 'colophon', component: _containersColophon2['default'] })
 	  )
 	), document.getElementById('container'));
 
@@ -24900,6 +24905,15 @@
 	              ),
 	              _react2['default'].createElement(
 	                'li',
+	                { className: 'nav-link' },
+	                _react2['default'].createElement(
+	                  _reactRouter.Link,
+	                  { to: '/colophon' },
+	                  'About'
+	                )
+	              ),
+	              _react2['default'].createElement(
+	                'li',
 	                { className: 'nav-link logo' },
 	                _react2['default'].createElement('img', { src: 'https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/placeholder_logo_3_dark.png', alt: 'Logo image' })
 	              ),
@@ -24949,1709 +24963,114 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reflux = __webpack_require__(205);
+	var _componentsGuess = __webpack_require__(205);
 
-	var _reflux2 = _interopRequireDefault(_reflux);
+	var _componentsGuess2 = _interopRequireDefault(_componentsGuess);
 
-	var _componentsCard = __webpack_require__(225);
+	var _componentsScore_keeper = __webpack_require__(232);
 
-	var _componentsCard2 = _interopRequireDefault(_componentsCard);
+	var _componentsScore_keeper2 = _interopRequireDefault(_componentsScore_keeper);
 
-	var _componentsButton_group = __webpack_require__(226);
+	var _lodashCollectionSample = __webpack_require__(237);
 
-	var Everyone = (function (_React$Component) {
-	  _inherits(Everyone, _React$Component);
+	var _lodashCollectionSample2 = _interopRequireDefault(_lodashCollectionSample);
 
-	  function Everyone() {
-	    _classCallCheck(this, Everyone);
+	var _lodashFunctionDelay = __webpack_require__(245);
 
-	    _get(Object.getPrototypeOf(Everyone.prototype), 'constructor', this).apply(this, arguments);
+	var _lodashFunctionDelay2 = _interopRequireDefault(_lodashFunctionDelay);
 
-	    this.state = { people: __webpack_require__(227) };
+	var _lodashLangIsEqual = __webpack_require__(207);
+
+	var _lodashLangIsEqual2 = _interopRequireDefault(_lodashLangIsEqual);
+
+	var PEOPLE = __webpack_require__(248).filter(function (p) {
+	  return p.image_url;
+	});
+
+	var Deck = (function (_React$Component) {
+	  _inherits(Deck, _React$Component);
+
+	  function Deck() {
+	    var _this = this;
+
+	    _classCallCheck(this, Deck);
+
+	    _get(Object.getPrototypeOf(Deck.prototype), 'constructor', this).apply(this, arguments);
+
+	    this.state = { people: [], choices: [], currentPerson: null, scores: { right: 0, wrong: 0 } };
+
+	    this._handleGuess = function (person) {
+	      return function (e) {
+	        var delay = 600;
+
+	        if ((0, _lodashLangIsEqual2['default'])(_this.state.currentPerson, person)) {
+	          _this.state.scores.right++;
+	        } else {
+	          _this.state.scores.wrong++;
+	          delay = 1200;
+	        }
+	        _this.setState({ chosen: person, scores: _this.state.scores });
+
+	        (0, _lodashFunctionDelay2['default'])(_this.deal.bind(_this), delay);
+	      };
+	    };
 	  }
 
-	  _createClass(Everyone, [{
+	  _createClass(Deck, [{
+	    key: 'componentWillMount',
+	    value: function componentWillMount() {
+	      this.deal();
+	    }
+	  }, {
+	    key: 'deal',
+	    value: function deal() {
+	      var choices = (0, _lodashCollectionSample2['default'])(PEOPLE, 4);
+	      this.setState({
+	        people: PEOPLE,
+	        choices: choices,
+	        currentPerson: (0, _lodashCollectionSample2['default'])(choices),
+	        chosen: null
+	      });
+	    }
+	  }, {
 	    key: 'render',
 	    value: function render() {
-	      var people = this.state.people.map(function (person, i) {
-	        return _react2['default'].createElement(_componentsCard2['default'], { key: i, title: person.fmt_name, body: [person.title, person.fmt_headline], image: person.image_url, url: person.linkedin_url });
-	      });
+	      var choices = this.state.choices.map(function (person, i) {
+	        return _react2['default'].createElement(_componentsGuess2['default'], { key: i, person: person, correctPerson: this.state.currentPerson, chosen: this.state.chosen, onClick: this._handleGuess });
+	      }, this);
 	      return _react2['default'].createElement(
 	        'div',
-	        { id: 'everyone' },
+	        { id: 'flash-cards' },
+	        _react2['default'].createElement(_componentsScore_keeper2['default'], this.state.scores),
 	        _react2['default'].createElement(
-	          'span',
-	          { style: { float: 'left' } },
-	          'Sort by:',
-	          ' '
-	        ),
-	        _react2['default'].createElement(
-	          _componentsButton_group.ButtonGroup,
+	          'h1',
 	          null,
+	          'Who is ',
+	          this.state.currentPerson && this.state.currentPerson.fmt_name,
+	          '? ',
 	          _react2['default'].createElement(
-	            _componentsButton_group.ButtonGroupItem,
-	            { onClick: this._sortBy('id'), checked: true },
-	            'Date added'
-	          ),
-	          _react2['default'].createElement(
-	            _componentsButton_group.ButtonGroupItem,
-	            { onClick: this._sortBy('fmt_name') },
-	            'Name'
-	          ),
-	          _react2['default'].createElement(
-	            _componentsButton_group.ButtonGroupItem,
-	            { onClick: this._sortBy('title') },
-	            'Title'
+	            'small',
+	            null,
+	            this.state.currentPerson.title
 	          )
 	        ),
 	        _react2['default'].createElement(
 	          'div',
 	          { id: 'people' },
-	          people
+	          choices
 	        )
 	      );
 	    }
-	  }, {
-	    key: '_sortBy',
-	    value: function _sortBy(criteria) {
-	      return (function (e) {
-	        var sorted = this.state.people.sort(function (a, b) {
-	          return a[criteria] < b[criteria] ? -1 : 1;
-	        });
-	        this.setState({ people: sorted });
-	        return true;
-	      }).bind(this);
-	    }
 	  }]);
 
-	  return Everyone;
+	  return Deck;
 	})(_react2['default'].Component);
 
-	exports['default'] = Everyone;
+	exports['default'] = Deck;
 	module.exports = exports['default'];
 
 /***/ },
 /* 205 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Reflux = __webpack_require__(206);
-
-	Reflux.connect = __webpack_require__(220);
-
-	Reflux.connectFilter = __webpack_require__(222);
-
-	Reflux.ListenerMixin = __webpack_require__(221);
-
-	Reflux.listenTo = __webpack_require__(223);
-
-	Reflux.listenToMany = __webpack_require__(224);
-
-	module.exports = Reflux;
-
-
-/***/ },
-/* 206 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	var Reflux = {
-	    version: {
-	        "reflux-core": "0.2.1"
-	    }
-	};
-
-	Reflux.ActionMethods = __webpack_require__(207);
-
-	Reflux.ListenerMethods = __webpack_require__(208);
-
-	Reflux.PublisherMethods = __webpack_require__(218);
-
-	Reflux.StoreMethods = __webpack_require__(217);
-
-	Reflux.createAction = __webpack_require__(219);
-
-	Reflux.createStore = __webpack_require__(213);
-
-	var maker = __webpack_require__(212).staticJoinCreator;
-
-	Reflux.joinTrailing = Reflux.all = maker("last"); // Reflux.all alias for backward compatibility
-
-	Reflux.joinLeading = maker("first");
-
-	Reflux.joinStrict = maker("strict");
-
-	Reflux.joinConcat = maker("all");
-
-	var _ = Reflux.utils = __webpack_require__(209);
-
-	Reflux.EventEmitter = _.EventEmitter;
-
-	Reflux.Promise = _.Promise;
-
-	/**
-	 * Convenience function for creating a set of actions
-	 *
-	 * @param definitions the definitions for the actions to be created
-	 * @returns an object with actions of corresponding action names
-	 */
-	Reflux.createActions = (function () {
-	    var reducer = function reducer(definitions, actions) {
-	        Object.keys(definitions).forEach(function (actionName) {
-	            var val = definitions[actionName];
-	            actions[actionName] = Reflux.createAction(val);
-	        });
-	    };
-
-	    return function (definitions) {
-	        var actions = {};
-	        if (definitions instanceof Array) {
-	            definitions.forEach(function (val) {
-	                if (_.isObject(val)) {
-	                    reducer(val, actions);
-	                } else {
-	                    actions[val] = Reflux.createAction(val);
-	                }
-	            });
-	        } else {
-	            reducer(definitions, actions);
-	        }
-	        return actions;
-	    };
-	})();
-
-	/**
-	 * Sets the eventmitter that Reflux uses
-	 */
-	Reflux.setEventEmitter = function (ctx) {
-	    Reflux.EventEmitter = _.EventEmitter = ctx;
-	};
-
-	/**
-	 * Sets the Promise library that Reflux uses
-	 */
-	Reflux.setPromise = function (ctx) {
-	    Reflux.Promise = _.Promise = ctx;
-	};
-
-	/**
-	 * Sets the Promise factory that creates new promises
-	 * @param {Function} factory has the signature `function(resolver) { return [new Promise]; }`
-	 */
-	Reflux.setPromiseFactory = function (factory) {
-	    _.createPromise = factory;
-	};
-
-	/**
-	 * Sets the method used for deferring actions and stores
-	 */
-	Reflux.nextTick = function (nextTick) {
-	    _.nextTick = nextTick;
-	};
-
-	Reflux.use = function (pluginCb) {
-	    pluginCb(Reflux);
-	};
-
-	/**
-	 * Provides the set of created actions and stores for introspection
-	 */
-	/*eslint-disable no-underscore-dangle*/
-	Reflux.__keep = __webpack_require__(214);
-	/*eslint-enable no-underscore-dangle*/
-
-	/**
-	 * Warn if Function.prototype.bind not available
-	 */
-	if (!Function.prototype.bind) {
-	    console.error("Function.prototype.bind not available. " + "ES5 shim required. " + "https://github.com/spoike/refluxjs#es5");
-	}
-
-	exports["default"] = Reflux;
-	module.exports = exports["default"];
-
-/***/ },
-/* 207 */
-/***/ function(module, exports) {
-
-	/**
-	 * A module of methods that you want to include in all actions.
-	 * This module is consumed by `createAction`.
-	 */
-	"use strict";
-
-	module.exports = {};
-
-/***/ },
-/* 208 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _ = __webpack_require__(209),
-	    maker = __webpack_require__(212).instanceJoinCreator;
-
-	/**
-	 * Extract child listenables from a parent from their
-	 * children property and return them in a keyed Object
-	 *
-	 * @param {Object} listenable The parent listenable
-	 */
-	var mapChildListenables = function mapChildListenables(listenable) {
-	    var i = 0,
-	        children = {},
-	        childName;
-	    for (; i < (listenable.children || []).length; ++i) {
-	        childName = listenable.children[i];
-	        if (listenable[childName]) {
-	            children[childName] = listenable[childName];
-	        }
-	    }
-	    return children;
-	};
-
-	/**
-	 * Make a flat dictionary of all listenables including their
-	 * possible children (recursively), concatenating names in camelCase.
-	 *
-	 * @param {Object} listenables The top-level listenables
-	 */
-	var flattenListenables = function flattenListenables(listenables) {
-	    var flattened = {};
-	    for (var key in listenables) {
-	        var listenable = listenables[key];
-	        var childMap = mapChildListenables(listenable);
-
-	        // recursively flatten children
-	        var children = flattenListenables(childMap);
-
-	        // add the primary listenable and chilren
-	        flattened[key] = listenable;
-	        for (var childKey in children) {
-	            var childListenable = children[childKey];
-	            flattened[key + _.capitalize(childKey)] = childListenable;
-	        }
-	    }
-
-	    return flattened;
-	};
-
-	/**
-	 * A module of methods related to listening.
-	 */
-	module.exports = {
-
-	    /**
-	     * An internal utility function used by `validateListening`
-	     *
-	     * @param {Action|Store} listenable The listenable we want to search for
-	     * @returns {Boolean} The result of a recursive search among `this.subscriptions`
-	     */
-	    hasListener: function hasListener(listenable) {
-	        var i = 0,
-	            j,
-	            listener,
-	            listenables;
-	        for (; i < (this.subscriptions || []).length; ++i) {
-	            listenables = [].concat(this.subscriptions[i].listenable);
-	            for (j = 0; j < listenables.length; j++) {
-	                listener = listenables[j];
-	                if (listener === listenable || listener.hasListener && listener.hasListener(listenable)) {
-	                    return true;
-	                }
-	            }
-	        }
-	        return false;
-	    },
-
-	    /**
-	     * A convenience method that listens to all listenables in the given object.
-	     *
-	     * @param {Object} listenables An object of listenables. Keys will be used as callback method names.
-	     */
-	    listenToMany: function listenToMany(listenables) {
-	        var allListenables = flattenListenables(listenables);
-	        for (var key in allListenables) {
-	            var cbname = _.callbackName(key),
-	                localname = this[cbname] ? cbname : this[key] ? key : undefined;
-	            if (localname) {
-	                this.listenTo(allListenables[key], localname, this[cbname + "Default"] || this[localname + "Default"] || localname);
-	            }
-	        }
-	    },
-
-	    /**
-	     * Checks if the current context can listen to the supplied listenable
-	     *
-	     * @param {Action|Store} listenable An Action or Store that should be
-	     *  listened to.
-	     * @returns {String|Undefined} An error message, or undefined if there was no problem.
-	     */
-	    validateListening: function validateListening(listenable) {
-	        if (listenable === this) {
-	            return "Listener is not able to listen to itself";
-	        }
-	        if (!_.isFunction(listenable.listen)) {
-	            return listenable + " is missing a listen method";
-	        }
-	        if (listenable.hasListener && listenable.hasListener(this)) {
-	            return "Listener cannot listen to this listenable because of circular loop";
-	        }
-	    },
-
-	    /**
-	     * Sets up a subscription to the given listenable for the context object
-	     *
-	     * @param {Action|Store} listenable An Action or Store that should be
-	     *  listened to.
-	     * @param {Function|String} callback The callback to register as event handler
-	     * @param {Function|String} defaultCallback The callback to register as default handler
-	     * @returns {Object} A subscription obj where `stop` is an unsub function and `listenable` is the object being listened to
-	     */
-	    listenTo: function listenTo(listenable, callback, defaultCallback) {
-	        var desub,
-	            unsubscriber,
-	            subscriptionobj,
-	            subs = this.subscriptions = this.subscriptions || [];
-	        _.throwIf(this.validateListening(listenable));
-	        this.fetchInitialState(listenable, defaultCallback);
-	        desub = listenable.listen(this[callback] || callback, this);
-	        unsubscriber = function () {
-	            var index = subs.indexOf(subscriptionobj);
-	            _.throwIf(index === -1, "Tried to remove listen already gone from subscriptions list!");
-	            subs.splice(index, 1);
-	            desub();
-	        };
-	        subscriptionobj = {
-	            stop: unsubscriber,
-	            listenable: listenable
-	        };
-	        subs.push(subscriptionobj);
-	        return subscriptionobj;
-	    },
-
-	    /**
-	     * Stops listening to a single listenable
-	     *
-	     * @param {Action|Store} listenable The action or store we no longer want to listen to
-	     * @returns {Boolean} True if a subscription was found and removed, otherwise false.
-	     */
-	    stopListeningTo: function stopListeningTo(listenable) {
-	        var sub,
-	            i = 0,
-	            subs = this.subscriptions || [];
-	        for (; i < subs.length; i++) {
-	            sub = subs[i];
-	            if (sub.listenable === listenable) {
-	                sub.stop();
-	                _.throwIf(subs.indexOf(sub) !== -1, "Failed to remove listen from subscriptions list!");
-	                return true;
-	            }
-	        }
-	        return false;
-	    },
-
-	    /**
-	     * Stops all subscriptions and empties subscriptions array
-	     */
-	    stopListeningToAll: function stopListeningToAll() {
-	        var remaining,
-	            subs = this.subscriptions || [];
-	        while (remaining = subs.length) {
-	            subs[0].stop();
-	            _.throwIf(subs.length !== remaining - 1, "Failed to remove listen from subscriptions list!");
-	        }
-	    },
-
-	    /**
-	     * Used in `listenTo`. Fetches initial data from a publisher if it has a `getInitialState` method.
-	     * @param {Action|Store} listenable The publisher we want to get initial state from
-	     * @param {Function|String} defaultCallback The method to receive the data
-	     */
-	    fetchInitialState: function fetchInitialState(listenable, defaultCallback) {
-	        defaultCallback = defaultCallback && this[defaultCallback] || defaultCallback;
-	        var me = this;
-	        if (_.isFunction(defaultCallback) && _.isFunction(listenable.getInitialState)) {
-	            var data = listenable.getInitialState();
-	            if (data && _.isFunction(data.then)) {
-	                data.then(function () {
-	                    defaultCallback.apply(me, arguments);
-	                });
-	            } else {
-	                defaultCallback.call(this, data);
-	            }
-	        }
-	    },
-
-	    /**
-	     * The callback will be called once all listenables have triggered at least once.
-	     * It will be invoked with the last emission from each listenable.
-	     * @param {...Publishers} publishers Publishers that should be tracked.
-	     * @param {Function|String} callback The method to call when all publishers have emitted
-	     * @returns {Object} A subscription obj where `stop` is an unsub function and `listenable` is an array of listenables
-	     */
-	    joinTrailing: maker("last"),
-
-	    /**
-	     * The callback will be called once all listenables have triggered at least once.
-	     * It will be invoked with the first emission from each listenable.
-	     * @param {...Publishers} publishers Publishers that should be tracked.
-	     * @param {Function|String} callback The method to call when all publishers have emitted
-	     * @returns {Object} A subscription obj where `stop` is an unsub function and `listenable` is an array of listenables
-	     */
-	    joinLeading: maker("first"),
-
-	    /**
-	     * The callback will be called once all listenables have triggered at least once.
-	     * It will be invoked with all emission from each listenable.
-	     * @param {...Publishers} publishers Publishers that should be tracked.
-	     * @param {Function|String} callback The method to call when all publishers have emitted
-	     * @returns {Object} A subscription obj where `stop` is an unsub function and `listenable` is an array of listenables
-	     */
-	    joinConcat: maker("all"),
-
-	    /**
-	     * The callback will be called once all listenables have triggered.
-	     * If a callback triggers twice before that happens, an error is thrown.
-	     * @param {...Publishers} publishers Publishers that should be tracked.
-	     * @param {Function|String} callback The method to call when all publishers have emitted
-	     * @returns {Object} A subscription obj where `stop` is an unsub function and `listenable` is an array of listenables
-	     */
-	    joinStrict: maker("strict")
-	};
-
-/***/ },
-/* 209 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(setImmediate) {"use strict";
-
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
-	exports.capitalize = capitalize;
-	exports.callbackName = callbackName;
-	exports.isObject = isObject;
-	exports.extend = extend;
-	exports.isFunction = isFunction;
-	exports.object = object;
-	exports.isArguments = isArguments;
-	exports.throwIf = throwIf;
-
-	function capitalize(string) {
-	    return string.charAt(0).toUpperCase() + string.slice(1);
-	}
-
-	function callbackName(string, prefix) {
-	    prefix = prefix || "on";
-	    return prefix + exports.capitalize(string);
-	}
-
-	var environment = {};
-
-	exports.environment = environment;
-	function checkEnv(target) {
-	    var flag = undefined;
-	    try {
-	        /*eslint-disable no-eval */
-	        if (eval(target)) {
-	            flag = true;
-	        }
-	        /*eslint-enable no-eval */
-	    } catch (e) {
-	        flag = false;
-	    }
-	    environment[callbackName(target, "has")] = flag;
-	}
-	checkEnv("setImmediate");
-	checkEnv("Promise");
-
-	/*
-	 * isObject, extend, isFunction, isArguments are taken from undescore/lodash in
-	 * order to remove the dependency
-	 */
-
-	function isObject(obj) {
-	    var type = typeof obj;
-	    return type === "function" || type === "object" && !!obj;
-	}
-
-	function extend(obj) {
-	    if (!isObject(obj)) {
-	        return obj;
-	    }
-	    var source, prop;
-	    for (var i = 1, length = arguments.length; i < length; i++) {
-	        source = arguments[i];
-	        for (prop in source) {
-	            if (Object.getOwnPropertyDescriptor && Object.defineProperty) {
-	                var propertyDescriptor = Object.getOwnPropertyDescriptor(source, prop);
-	                Object.defineProperty(obj, prop, propertyDescriptor);
-	            } else {
-	                obj[prop] = source[prop];
-	            }
-	        }
-	    }
-	    return obj;
-	}
-
-	function isFunction(value) {
-	    return typeof value === "function";
-	}
-
-	exports.EventEmitter = __webpack_require__(211);
-
-	if (environment.hasSetImmediate) {
-	    exports.nextTick = function (callback) {
-	        setImmediate(callback);
-	    };
-	} else {
-	    exports.nextTick = function (callback) {
-	        setTimeout(callback, 0);
-	    };
-	}
-
-	function object(keys, vals) {
-	    var o = {},
-	        i = 0;
-	    for (; i < keys.length; i++) {
-	        o[keys[i]] = vals[i];
-	    }
-	    return o;
-	}
-
-	if (environment.hasPromise) {
-	    exports.Promise = Promise;
-	    exports.createPromise = function (resolver) {
-	        return new exports.Promise(resolver);
-	    };
-	} else {
-	    exports.Promise = null;
-	    exports.createPromise = function () {};
-	}
-
-	function isArguments(value) {
-	    return typeof value === "object" && "callee" in value && typeof value.length === "number";
-	}
-
-	function throwIf(val, msg) {
-	    if (val) {
-	        throw Error(msg || val);
-	    }
-	}
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(210).setImmediate))
-
-/***/ },
-/* 210 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(3).nextTick;
-	var apply = Function.prototype.apply;
-	var slice = Array.prototype.slice;
-	var immediateIds = {};
-	var nextImmediateId = 0;
-
-	// DOM APIs, for completeness
-
-	exports.setTimeout = function() {
-	  return new Timeout(apply.call(setTimeout, window, arguments), clearTimeout);
-	};
-	exports.setInterval = function() {
-	  return new Timeout(apply.call(setInterval, window, arguments), clearInterval);
-	};
-	exports.clearTimeout =
-	exports.clearInterval = function(timeout) { timeout.close(); };
-
-	function Timeout(id, clearFn) {
-	  this._id = id;
-	  this._clearFn = clearFn;
-	}
-	Timeout.prototype.unref = Timeout.prototype.ref = function() {};
-	Timeout.prototype.close = function() {
-	  this._clearFn.call(window, this._id);
-	};
-
-	// Does not start the time, just sets up the members needed.
-	exports.enroll = function(item, msecs) {
-	  clearTimeout(item._idleTimeoutId);
-	  item._idleTimeout = msecs;
-	};
-
-	exports.unenroll = function(item) {
-	  clearTimeout(item._idleTimeoutId);
-	  item._idleTimeout = -1;
-	};
-
-	exports._unrefActive = exports.active = function(item) {
-	  clearTimeout(item._idleTimeoutId);
-
-	  var msecs = item._idleTimeout;
-	  if (msecs >= 0) {
-	    item._idleTimeoutId = setTimeout(function onTimeout() {
-	      if (item._onTimeout)
-	        item._onTimeout();
-	    }, msecs);
-	  }
-	};
-
-	// That's not how node.js implements it but the exposed api is the same.
-	exports.setImmediate = typeof setImmediate === "function" ? setImmediate : function(fn) {
-	  var id = nextImmediateId++;
-	  var args = arguments.length < 2 ? false : slice.call(arguments, 1);
-
-	  immediateIds[id] = true;
-
-	  nextTick(function onNextTick() {
-	    if (immediateIds[id]) {
-	      // fn.call() is faster so we optimize for the common use-case
-	      // @see http://jsperf.com/call-apply-segu
-	      if (args) {
-	        fn.apply(null, args);
-	      } else {
-	        fn.call(null);
-	      }
-	      // Prevent ids from leaking
-	      exports.clearImmediate(id);
-	    }
-	  });
-
-	  return id;
-	};
-
-	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
-	  delete immediateIds[id];
-	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(210).setImmediate, __webpack_require__(210).clearImmediate))
-
-/***/ },
-/* 211 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	//
-	// We store our EE objects in a plain object whose properties are event names.
-	// If `Object.create(null)` is not supported we prefix the event names with a
-	// `~` to make sure that the built-in object properties are not overridden or
-	// used as an attack vector.
-	// We also assume that `Object.create(null)` is available when the event name
-	// is an ES6 Symbol.
-	//
-	var prefix = typeof Object.create !== 'function' ? '~' : false;
-
-	/**
-	 * Representation of a single EventEmitter function.
-	 *
-	 * @param {Function} fn Event handler to be called.
-	 * @param {Mixed} context Context for function execution.
-	 * @param {Boolean} once Only emit once
-	 * @api private
-	 */
-	function EE(fn, context, once) {
-	  this.fn = fn;
-	  this.context = context;
-	  this.once = once || false;
-	}
-
-	/**
-	 * Minimal EventEmitter interface that is molded against the Node.js
-	 * EventEmitter interface.
-	 *
-	 * @constructor
-	 * @api public
-	 */
-	function EventEmitter() { /* Nothing to set */ }
-
-	/**
-	 * Holds the assigned EventEmitters by name.
-	 *
-	 * @type {Object}
-	 * @private
-	 */
-	EventEmitter.prototype._events = undefined;
-
-	/**
-	 * Return a list of assigned event listeners.
-	 *
-	 * @param {String} event The events that should be listed.
-	 * @param {Boolean} exists We only need to know if there are listeners.
-	 * @returns {Array|Boolean}
-	 * @api public
-	 */
-	EventEmitter.prototype.listeners = function listeners(event, exists) {
-	  var evt = prefix ? prefix + event : event
-	    , available = this._events && this._events[evt];
-
-	  if (exists) return !!available;
-	  if (!available) return [];
-	  if (available.fn) return [available.fn];
-
-	  for (var i = 0, l = available.length, ee = new Array(l); i < l; i++) {
-	    ee[i] = available[i].fn;
-	  }
-
-	  return ee;
-	};
-
-	/**
-	 * Emit an event to all registered event listeners.
-	 *
-	 * @param {String} event The name of the event.
-	 * @returns {Boolean} Indication if we've emitted an event.
-	 * @api public
-	 */
-	EventEmitter.prototype.emit = function emit(event, a1, a2, a3, a4, a5) {
-	  var evt = prefix ? prefix + event : event;
-
-	  if (!this._events || !this._events[evt]) return false;
-
-	  var listeners = this._events[evt]
-	    , len = arguments.length
-	    , args
-	    , i;
-
-	  if ('function' === typeof listeners.fn) {
-	    if (listeners.once) this.removeListener(event, listeners.fn, undefined, true);
-
-	    switch (len) {
-	      case 1: return listeners.fn.call(listeners.context), true;
-	      case 2: return listeners.fn.call(listeners.context, a1), true;
-	      case 3: return listeners.fn.call(listeners.context, a1, a2), true;
-	      case 4: return listeners.fn.call(listeners.context, a1, a2, a3), true;
-	      case 5: return listeners.fn.call(listeners.context, a1, a2, a3, a4), true;
-	      case 6: return listeners.fn.call(listeners.context, a1, a2, a3, a4, a5), true;
-	    }
-
-	    for (i = 1, args = new Array(len -1); i < len; i++) {
-	      args[i - 1] = arguments[i];
-	    }
-
-	    listeners.fn.apply(listeners.context, args);
-	  } else {
-	    var length = listeners.length
-	      , j;
-
-	    for (i = 0; i < length; i++) {
-	      if (listeners[i].once) this.removeListener(event, listeners[i].fn, undefined, true);
-
-	      switch (len) {
-	        case 1: listeners[i].fn.call(listeners[i].context); break;
-	        case 2: listeners[i].fn.call(listeners[i].context, a1); break;
-	        case 3: listeners[i].fn.call(listeners[i].context, a1, a2); break;
-	        default:
-	          if (!args) for (j = 1, args = new Array(len -1); j < len; j++) {
-	            args[j - 1] = arguments[j];
-	          }
-
-	          listeners[i].fn.apply(listeners[i].context, args);
-	      }
-	    }
-	  }
-
-	  return true;
-	};
-
-	/**
-	 * Register a new EventListener for the given event.
-	 *
-	 * @param {String} event Name of the event.
-	 * @param {Functon} fn Callback function.
-	 * @param {Mixed} context The context of the function.
-	 * @api public
-	 */
-	EventEmitter.prototype.on = function on(event, fn, context) {
-	  var listener = new EE(fn, context || this)
-	    , evt = prefix ? prefix + event : event;
-
-	  if (!this._events) this._events = prefix ? {} : Object.create(null);
-	  if (!this._events[evt]) this._events[evt] = listener;
-	  else {
-	    if (!this._events[evt].fn) this._events[evt].push(listener);
-	    else this._events[evt] = [
-	      this._events[evt], listener
-	    ];
-	  }
-
-	  return this;
-	};
-
-	/**
-	 * Add an EventListener that's only called once.
-	 *
-	 * @param {String} event Name of the event.
-	 * @param {Function} fn Callback function.
-	 * @param {Mixed} context The context of the function.
-	 * @api public
-	 */
-	EventEmitter.prototype.once = function once(event, fn, context) {
-	  var listener = new EE(fn, context || this, true)
-	    , evt = prefix ? prefix + event : event;
-
-	  if (!this._events) this._events = prefix ? {} : Object.create(null);
-	  if (!this._events[evt]) this._events[evt] = listener;
-	  else {
-	    if (!this._events[evt].fn) this._events[evt].push(listener);
-	    else this._events[evt] = [
-	      this._events[evt], listener
-	    ];
-	  }
-
-	  return this;
-	};
-
-	/**
-	 * Remove event listeners.
-	 *
-	 * @param {String} event The event we want to remove.
-	 * @param {Function} fn The listener that we need to find.
-	 * @param {Mixed} context Only remove listeners matching this context.
-	 * @param {Boolean} once Only remove once listeners.
-	 * @api public
-	 */
-	EventEmitter.prototype.removeListener = function removeListener(event, fn, context, once) {
-	  var evt = prefix ? prefix + event : event;
-
-	  if (!this._events || !this._events[evt]) return this;
-
-	  var listeners = this._events[evt]
-	    , events = [];
-
-	  if (fn) {
-	    if (listeners.fn) {
-	      if (
-	           listeners.fn !== fn
-	        || (once && !listeners.once)
-	        || (context && listeners.context !== context)
-	      ) {
-	        events.push(listeners);
-	      }
-	    } else {
-	      for (var i = 0, length = listeners.length; i < length; i++) {
-	        if (
-	             listeners[i].fn !== fn
-	          || (once && !listeners[i].once)
-	          || (context && listeners[i].context !== context)
-	        ) {
-	          events.push(listeners[i]);
-	        }
-	      }
-	    }
-	  }
-
-	  //
-	  // Reset the array, or remove it completely if we have no more listeners.
-	  //
-	  if (events.length) {
-	    this._events[evt] = events.length === 1 ? events[0] : events;
-	  } else {
-	    delete this._events[evt];
-	  }
-
-	  return this;
-	};
-
-	/**
-	 * Remove all listeners or only the listeners for the specified event.
-	 *
-	 * @param {String} event The event want to remove all listeners for.
-	 * @api public
-	 */
-	EventEmitter.prototype.removeAllListeners = function removeAllListeners(event) {
-	  if (!this._events) return this;
-
-	  if (event) delete this._events[prefix ? prefix + event : event];
-	  else this._events = prefix ? {} : Object.create(null);
-
-	  return this;
-	};
-
-	//
-	// Alias methods names because people roll like that.
-	//
-	EventEmitter.prototype.off = EventEmitter.prototype.removeListener;
-	EventEmitter.prototype.addListener = EventEmitter.prototype.on;
-
-	//
-	// This function doesn't apply anymore.
-	//
-	EventEmitter.prototype.setMaxListeners = function setMaxListeners() {
-	  return this;
-	};
-
-	//
-	// Expose the prefix.
-	//
-	EventEmitter.prefixed = prefix;
-
-	//
-	// Expose the module.
-	//
-	if (true) {
-	  module.exports = EventEmitter;
-	}
-
-
-/***/ },
-/* 212 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * Internal module used to create static and instance join methods
-	 */
-
-	"use strict";
-
-	var createStore = __webpack_require__(213),
-	    _ = __webpack_require__(209);
-
-	var slice = Array.prototype.slice,
-	    strategyMethodNames = {
-	    strict: "joinStrict",
-	    first: "joinLeading",
-	    last: "joinTrailing",
-	    all: "joinConcat"
-	};
-
-	/**
-	 * Used in `index.js` to create the static join methods
-	 * @param {String} strategy Which strategy to use when tracking listenable trigger arguments
-	 * @returns {Function} A static function which returns a store with a join listen on the given listenables using the given strategy
-	 */
-	exports.staticJoinCreator = function (strategy) {
-	    return function () /* listenables... */{
-	        var listenables = slice.call(arguments);
-	        return createStore({
-	            init: function init() {
-	                this[strategyMethodNames[strategy]].apply(this, listenables.concat("triggerAsync"));
-	            }
-	        });
-	    };
-	};
-
-	/**
-	 * Used in `ListenerMethods.js` to create the instance join methods
-	 * @param {String} strategy Which strategy to use when tracking listenable trigger arguments
-	 * @returns {Function} An instance method which sets up a join listen on the given listenables using the given strategy
-	 */
-	exports.instanceJoinCreator = function (strategy) {
-	    return function () /* listenables..., callback*/{
-	        _.throwIf(arguments.length < 2, "Cannot create a join with less than 2 listenables!");
-	        var listenables = slice.call(arguments),
-	            callback = listenables.pop(),
-	            numberOfListenables = listenables.length,
-	            join = {
-	            numberOfListenables: numberOfListenables,
-	            callback: this[callback] || callback,
-	            listener: this,
-	            strategy: strategy
-	        },
-	            i,
-	            cancels = [],
-	            subobj;
-	        for (i = 0; i < numberOfListenables; i++) {
-	            _.throwIf(this.validateListening(listenables[i]));
-	        }
-	        for (i = 0; i < numberOfListenables; i++) {
-	            cancels.push(listenables[i].listen(newListener(i, join), this));
-	        }
-	        reset(join);
-	        subobj = { listenable: listenables };
-	        subobj.stop = makeStopper(subobj, cancels, this);
-	        this.subscriptions = (this.subscriptions || []).concat(subobj);
-	        return subobj;
-	    };
-	};
-
-	// ---- internal join functions ----
-
-	function makeStopper(subobj, cancels, context) {
-	    return function () {
-	        var i,
-	            subs = context.subscriptions,
-	            index = subs ? subs.indexOf(subobj) : -1;
-	        _.throwIf(index === -1, "Tried to remove join already gone from subscriptions list!");
-	        for (i = 0; i < cancels.length; i++) {
-	            cancels[i]();
-	        }
-	        subs.splice(index, 1);
-	    };
-	}
-
-	function reset(join) {
-	    join.listenablesEmitted = new Array(join.numberOfListenables);
-	    join.args = new Array(join.numberOfListenables);
-	}
-
-	function newListener(i, join) {
-	    return function () {
-	        var callargs = slice.call(arguments);
-	        if (join.listenablesEmitted[i]) {
-	            switch (join.strategy) {
-	                case "strict":
-	                    throw new Error("Strict join failed because listener triggered twice.");
-	                case "last":
-	                    join.args[i] = callargs;break;
-	                case "all":
-	                    join.args[i].push(callargs);
-	            }
-	        } else {
-	            join.listenablesEmitted[i] = true;
-	            join.args[i] = join.strategy === "all" ? [callargs] : callargs;
-	        }
-	        emitIfAllListenablesEmitted(join);
-	    };
-	}
-
-	function emitIfAllListenablesEmitted(join) {
-	    for (var i = 0; i < join.numberOfListenables; i++) {
-	        if (!join.listenablesEmitted[i]) {
-	            return;
-	        }
-	    }
-	    join.callback.apply(join.listener, join.args);
-	    reset(join);
-	}
-
-/***/ },
-/* 213 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _ = __webpack_require__(209),
-	    Keep = __webpack_require__(214),
-	    mixer = __webpack_require__(215),
-	    bindMethods = __webpack_require__(216);
-
-	var allowed = { preEmit: 1, shouldEmit: 1 };
-
-	/**
-	 * Creates an event emitting Data Store. It is mixed in with functions
-	 * from the `ListenerMethods` and `PublisherMethods` mixins. `preEmit`
-	 * and `shouldEmit` may be overridden in the definition object.
-	 *
-	 * @param {Object} definition The data store object definition
-	 * @returns {Store} A data store instance
-	 */
-	module.exports = function (definition) {
-
-	    var StoreMethods = __webpack_require__(217),
-	        PublisherMethods = __webpack_require__(218),
-	        ListenerMethods = __webpack_require__(208);
-
-	    definition = definition || {};
-
-	    for (var a in StoreMethods) {
-	        if (!allowed[a] && (PublisherMethods[a] || ListenerMethods[a])) {
-	            throw new Error("Cannot override API method " + a + " in Reflux.StoreMethods. Use another method name or override it on Reflux.PublisherMethods / Reflux.ListenerMethods instead.");
-	        }
-	    }
-
-	    for (var d in definition) {
-	        if (!allowed[d] && (PublisherMethods[d] || ListenerMethods[d])) {
-	            throw new Error("Cannot override API method " + d + " in store creation. Use another method name or override it on Reflux.PublisherMethods / Reflux.ListenerMethods instead.");
-	        }
-	    }
-
-	    definition = mixer(definition);
-
-	    function Store() {
-	        var i = 0,
-	            arr;
-	        this.subscriptions = [];
-	        this.emitter = new _.EventEmitter();
-	        this.eventLabel = "change";
-	        bindMethods(this, definition);
-	        if (this.init && _.isFunction(this.init)) {
-	            this.init();
-	        }
-	        if (this.listenables) {
-	            arr = [].concat(this.listenables);
-	            for (; i < arr.length; i++) {
-	                this.listenToMany(arr[i]);
-	            }
-	        }
-	    }
-
-	    _.extend(Store.prototype, ListenerMethods, PublisherMethods, StoreMethods, definition);
-
-	    var store = new Store();
-	    Keep.createdStores.push(store);
-
-	    return store;
-	};
-
-/***/ },
-/* 214 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	exports.createdStores = [];
-
-	exports.createdActions = [];
-
-	exports.reset = function () {
-	    while (exports.createdStores.length) {
-	        exports.createdStores.pop();
-	    }
-	    while (exports.createdActions.length) {
-	        exports.createdActions.pop();
-	    }
-	};
-
-/***/ },
-/* 215 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _ = __webpack_require__(209);
-
-	module.exports = function mix(def) {
-	    var composed = {
-	        init: [],
-	        preEmit: [],
-	        shouldEmit: []
-	    };
-
-	    var updated = (function mixDef(mixin) {
-	        var mixed = {};
-	        if (mixin.mixins) {
-	            mixin.mixins.forEach(function (subMixin) {
-	                _.extend(mixed, mixDef(subMixin));
-	            });
-	        }
-	        _.extend(mixed, mixin);
-	        Object.keys(composed).forEach(function (composable) {
-	            if (mixin.hasOwnProperty(composable)) {
-	                composed[composable].push(mixin[composable]);
-	            }
-	        });
-	        return mixed;
-	    })(def);
-
-	    if (composed.init.length > 1) {
-	        updated.init = function () {
-	            var args = arguments;
-	            composed.init.forEach(function (init) {
-	                init.apply(this, args);
-	            }, this);
-	        };
-	    }
-	    if (composed.preEmit.length > 1) {
-	        updated.preEmit = function () {
-	            return composed.preEmit.reduce((function (args, preEmit) {
-	                var newValue = preEmit.apply(this, args);
-	                return newValue === undefined ? args : [newValue];
-	            }).bind(this), arguments);
-	        };
-	    }
-	    if (composed.shouldEmit.length > 1) {
-	        updated.shouldEmit = function () {
-	            var args = arguments;
-	            return !composed.shouldEmit.some(function (shouldEmit) {
-	                return !shouldEmit.apply(this, args);
-	            }, this);
-	        };
-	    }
-	    Object.keys(composed).forEach(function (composable) {
-	        if (composed[composable].length === 1) {
-	            updated[composable] = composed[composable][0];
-	        }
-	    });
-
-	    return updated;
-	};
-
-/***/ },
-/* 216 */
-/***/ function(module, exports) {
-
-	"use strict";
-
-	module.exports = function (store, definition) {
-	    for (var name in definition) {
-	        if (Object.getOwnPropertyDescriptor && Object.defineProperty) {
-	            var propertyDescriptor = Object.getOwnPropertyDescriptor(definition, name);
-
-	            if (!propertyDescriptor.value || typeof propertyDescriptor.value !== "function" || !definition.hasOwnProperty(name)) {
-	                continue;
-	            }
-
-	            store[name] = definition[name].bind(store);
-	        } else {
-	            var property = definition[name];
-
-	            if (typeof property !== "function" || !definition.hasOwnProperty(name)) {
-	                continue;
-	            }
-
-	            store[name] = property.bind(store);
-	        }
-	    }
-
-	    return store;
-	};
-
-/***/ },
-/* 217 */
-/***/ function(module, exports) {
-
-	/**
-	 * A module of methods that you want to include in all stores.
-	 * This module is consumed by `createStore`.
-	 */
-	"use strict";
-
-	module.exports = {};
-
-/***/ },
-/* 218 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _ = __webpack_require__(209);
-
-	/**
-	 * A module of methods for object that you want to be able to listen to.
-	 * This module is consumed by `createStore` and `createAction`
-	 */
-	module.exports = {
-
-	    /**
-	     * Hook used by the publisher that is invoked before emitting
-	     * and before `shouldEmit`. The arguments are the ones that the action
-	     * is invoked with. If this function returns something other than
-	     * undefined, that will be passed on as arguments for shouldEmit and
-	     * emission.
-	     */
-	    preEmit: function preEmit() {},
-
-	    /**
-	     * Hook used by the publisher after `preEmit` to determine if the
-	     * event should be emitted with given arguments. This may be overridden
-	     * in your application, default implementation always returns true.
-	     *
-	     * @returns {Boolean} true if event should be emitted
-	     */
-	    shouldEmit: function shouldEmit() {
-	        return true;
-	    },
-
-	    /**
-	     * Subscribes the given callback for action triggered
-	     *
-	     * @param {Function} callback The callback to register as event handler
-	     * @param {Mixed} [optional] bindContext The context to bind the callback with
-	     * @returns {Function} Callback that unsubscribes the registered event handler
-	     */
-	    listen: function listen(callback, bindContext) {
-	        bindContext = bindContext || this;
-	        var eventHandler = function eventHandler(args) {
-	            if (aborted) {
-	                return;
-	            }
-	            callback.apply(bindContext, args);
-	        },
-	            me = this,
-	            aborted = false;
-	        this.emitter.addListener(this.eventLabel, eventHandler);
-	        return function () {
-	            aborted = true;
-	            me.emitter.removeListener(me.eventLabel, eventHandler);
-	        };
-	    },
-
-	    /**
-	     * Attach handlers to promise that trigger the completed and failed
-	     * child publishers, if available.
-	     *
-	     * @param {Object} The promise to attach to
-	     */
-	    promise: function promise(_promise) {
-	        var me = this;
-
-	        var canHandlePromise = this.children.indexOf("completed") >= 0 && this.children.indexOf("failed") >= 0;
-
-	        if (!canHandlePromise) {
-	            throw new Error("Publisher must have \"completed\" and \"failed\" child publishers");
-	        }
-
-	        _promise.then(function (response) {
-	            return me.completed(response);
-	        }, function (error) {
-	            return me.failed(error);
-	        });
-	    },
-
-	    /**
-	     * Subscribes the given callback for action triggered, which should
-	     * return a promise that in turn is passed to `this.promise`
-	     *
-	     * @param {Function} callback The callback to register as event handler
-	     */
-	    listenAndPromise: function listenAndPromise(callback, bindContext) {
-	        var me = this;
-	        bindContext = bindContext || this;
-	        this.willCallPromise = (this.willCallPromise || 0) + 1;
-
-	        var removeListen = this.listen(function () {
-
-	            if (!callback) {
-	                throw new Error("Expected a function returning a promise but got " + callback);
-	            }
-
-	            var args = arguments,
-	                promise = callback.apply(bindContext, args);
-	            return me.promise.call(me, promise);
-	        }, bindContext);
-
-	        return function () {
-	            me.willCallPromise--;
-	            removeListen.call(me);
-	        };
-	    },
-
-	    /**
-	     * Publishes an event using `this.emitter` (if `shouldEmit` agrees)
-	     */
-	    trigger: function trigger() {
-	        var args = arguments,
-	            pre = this.preEmit.apply(this, args);
-	        args = pre === undefined ? args : _.isArguments(pre) ? pre : [].concat(pre);
-	        if (this.shouldEmit.apply(this, args)) {
-	            this.emitter.emit(this.eventLabel, args);
-	        }
-	    },
-
-	    /**
-	     * Tries to publish the event on the next tick
-	     */
-	    triggerAsync: function triggerAsync() {
-	        var args = arguments,
-	            me = this;
-	        _.nextTick(function () {
-	            me.trigger.apply(me, args);
-	        });
-	    },
-
-	    /**
-	     * Returns a Promise for the triggered action
-	     *
-	     * @return {Promise}
-	     *   Resolved by completed child action.
-	     *   Rejected by failed child action.
-	     *   If listenAndPromise'd, then promise associated to this trigger.
-	     *   Otherwise, the promise is for next child action completion.
-	     */
-	    triggerPromise: function triggerPromise() {
-	        var me = this;
-	        var args = arguments;
-
-	        var canHandlePromise = this.children.indexOf("completed") >= 0 && this.children.indexOf("failed") >= 0;
-
-	        var promise = _.createPromise(function (resolve, reject) {
-	            // If `listenAndPromise` is listening
-	            // patch `promise` w/ context-loaded resolve/reject
-	            if (me.willCallPromise) {
-	                _.nextTick(function () {
-	                    var previousPromise = me.promise;
-	                    me.promise = function (inputPromise) {
-	                        inputPromise.then(resolve, reject);
-	                        // Back to your regularly schedule programming.
-	                        me.promise = previousPromise;
-	                        return me.promise.apply(me, arguments);
-	                    };
-	                    me.trigger.apply(me, args);
-	                });
-	                return;
-	            }
-
-	            if (canHandlePromise) {
-	                var removeSuccess = me.completed.listen(function (argsArr) {
-	                    removeSuccess();
-	                    removeFailed();
-	                    resolve(argsArr);
-	                });
-
-	                var removeFailed = me.failed.listen(function (argsArr) {
-	                    removeSuccess();
-	                    removeFailed();
-	                    reject(argsArr);
-	                });
-	            }
-
-	            me.triggerAsync.apply(me, args);
-
-	            if (!canHandlePromise) {
-	                resolve();
-	            }
-	        });
-
-	        return promise;
-	    }
-	};
-
-/***/ },
-/* 219 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use strict";
-
-	var _ = __webpack_require__(209),
-	    ActionMethods = __webpack_require__(207),
-	    PublisherMethods = __webpack_require__(218),
-	    Keep = __webpack_require__(214);
-
-	var allowed = { preEmit: 1, shouldEmit: 1 };
-
-	/**
-	 * Creates an action functor object. It is mixed in with functions
-	 * from the `PublisherMethods` mixin. `preEmit` and `shouldEmit` may
-	 * be overridden in the definition object.
-	 *
-	 * @param {Object} definition The action object definition
-	 */
-	var createAction = function createAction(definition) {
-
-	    definition = definition || {};
-	    if (!_.isObject(definition)) {
-	        definition = { actionName: definition };
-	    }
-
-	    for (var a in ActionMethods) {
-	        if (!allowed[a] && PublisherMethods[a]) {
-	            throw new Error("Cannot override API method " + a + " in Reflux.ActionMethods. Use another method name or override it on Reflux.PublisherMethods instead.");
-	        }
-	    }
-
-	    for (var d in definition) {
-	        if (!allowed[d] && PublisherMethods[d]) {
-	            throw new Error("Cannot override API method " + d + " in action creation. Use another method name or override it on Reflux.PublisherMethods instead.");
-	        }
-	    }
-
-	    definition.children = definition.children || [];
-	    if (definition.asyncResult) {
-	        definition.children = definition.children.concat(["completed", "failed"]);
-	    }
-
-	    var i = 0,
-	        childActions = {};
-	    for (; i < definition.children.length; i++) {
-	        var name = definition.children[i];
-	        childActions[name] = createAction(name);
-	    }
-
-	    var context = _.extend({
-	        eventLabel: "action",
-	        emitter: new _.EventEmitter(),
-	        _isAction: true
-	    }, PublisherMethods, ActionMethods, definition);
-
-	    var functor = function functor() {
-	        var triggerType = functor.sync ? "trigger" : _.environment.hasPromise ? "triggerPromise" : "triggerAsync";
-	        return functor[triggerType].apply(functor, arguments);
-	    };
-
-	    _.extend(functor, childActions, context);
-
-	    Keep.createdActions.push(functor);
-
-	    return functor;
-	};
-
-	module.exports = createAction;
-
-/***/ },
-/* 220 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ListenerMethods = __webpack_require__(208),
-	    ListenerMixin = __webpack_require__(221),
-	    _ = __webpack_require__(209);
-
-	module.exports = function(listenable,key){
-	    return {
-	        getInitialState: function(){
-	            if (!_.isFunction(listenable.getInitialState)) {
-	                return {};
-	            } else if (key === undefined) {
-	                return listenable.getInitialState();
-	            } else {
-	                return _.object([key],[listenable.getInitialState()]);
-	            }
-	        },
-	        componentDidMount: function(){
-	            _.extend(this,ListenerMethods);
-	            var me = this, cb = (key === undefined ? this.setState : function(v){
-	                if (typeof me.isMounted === "undefined" || me.isMounted() === true) {
-	                    me.setState(_.object([key],[v]));
-	                }
-	            });
-	            this.listenTo(listenable,cb);
-	        },
-	        componentWillUnmount: ListenerMixin.componentWillUnmount
-	    };
-	};
-
-
-/***/ },
-/* 221 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(209),
-	    ListenerMethods = __webpack_require__(208);
-
-	/**
-	 * A module meant to be consumed as a mixin by a React component. Supplies the methods from
-	 * `ListenerMethods` mixin and takes care of teardown of subscriptions.
-	 * Note that if you're using the `connect` mixin you don't need this mixin, as connect will
-	 * import everything this mixin contains!
-	 */
-	module.exports = _.extend({
-
-	    /**
-	     * Cleans up all listener previously registered.
-	     */
-	    componentWillUnmount: ListenerMethods.stopListeningToAll
-
-	}, ListenerMethods);
-
-
-/***/ },
-/* 222 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ListenerMethods = __webpack_require__(208),
-	    ListenerMixin = __webpack_require__(221),
-	    _ = __webpack_require__(209);
-
-	module.exports = function(listenable, key, filterFunc) {
-	    filterFunc = _.isFunction(key) ? key : filterFunc;
-	    return {
-	        getInitialState: function() {
-	            if (!_.isFunction(listenable.getInitialState)) {
-	                return {};
-	            } else if (_.isFunction(key)) {
-	                return filterFunc.call(this, listenable.getInitialState());
-	            } else {
-	                // Filter initial payload from store.
-	                var result = filterFunc.call(this, listenable.getInitialState());
-	                if (typeof(result) !== "undefined") {
-	                    return _.object([key], [result]);
-	                } else {
-	                    return {};
-	                }
-	            }
-	        },
-	        componentDidMount: function() {
-	            _.extend(this, ListenerMethods);
-	            var me = this;
-	            var cb = function(value) {
-	                if (_.isFunction(key)) {
-	                    me.setState(filterFunc.call(me, value));
-	                } else {
-	                    var result = filterFunc.call(me, value);
-	                    me.setState(_.object([key], [result]));
-	                }
-	            };
-
-	            this.listenTo(listenable, cb);
-	        },
-	        componentWillUnmount: ListenerMixin.componentWillUnmount
-	    };
-	};
-
-
-
-/***/ },
-/* 223 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ListenerMethods = __webpack_require__(208);
-
-	/**
-	 * A mixin factory for a React component. Meant as a more convenient way of using the `ListenerMixin`,
-	 * without having to manually set listeners in the `componentDidMount` method.
-	 *
-	 * @param {Action|Store} listenable An Action or Store that should be
-	 *  listened to.
-	 * @param {Function|String} callback The callback to register as event handler
-	 * @param {Function|String} defaultCallback The callback to register as default handler
-	 * @returns {Object} An object to be used as a mixin, which sets up the listener for the given listenable.
-	 */
-	module.exports = function(listenable,callback,initial){
-	    return {
-	        /**
-	         * Set up the mixin before the initial rendering occurs. Import methods from `ListenerMethods`
-	         * and then make the call to `listenTo` with the arguments provided to the factory function
-	         */
-	        componentDidMount: function() {
-	            for(var m in ListenerMethods){
-	                if (this[m] !== ListenerMethods[m]){
-	                    if (this[m]){
-	                        throw "Can't have other property '"+m+"' when using Reflux.listenTo!";
-	                    }
-	                    this[m] = ListenerMethods[m];
-	                }
-	            }
-	            this.listenTo(listenable,callback,initial);
-	        },
-	        /**
-	         * Cleans up all listener previously registered.
-	         */
-	        componentWillUnmount: ListenerMethods.stopListeningToAll
-	    };
-	};
-
-
-/***/ },
-/* 224 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ListenerMethods = __webpack_require__(208);
-
-	/**
-	 * A mixin factory for a React component. Meant as a more convenient way of using the `listenerMixin`,
-	 * without having to manually set listeners in the `componentDidMount` method. This version is used
-	 * to automatically set up a `listenToMany` call.
-	 *
-	 * @param {Object} listenables An object of listenables
-	 * @returns {Object} An object to be used as a mixin, which sets up the listeners for the given listenables.
-	 */
-	module.exports = function(listenables){
-	    return {
-	        /**
-	         * Set up the mixin before the initial rendering occurs. Import methods from `ListenerMethods`
-	         * and then make the call to `listenTo` with the arguments provided to the factory function
-	         */
-	        componentDidMount: function() {
-	            for(var m in ListenerMethods){
-	                if (this[m] !== ListenerMethods[m]){
-	                    if (this[m]){
-	                        throw "Can't have other property '"+m+"' when using Reflux.listenToMany!";
-	                    }
-	                    this[m] = ListenerMethods[m];
-	                }
-	            }
-	            this.listenToMany(listenables);
-	        },
-	        /**
-	         * Cleans up all listener previously registered.
-	         */
-	        componentWillUnmount: ListenerMethods.stopListeningToAll
-	    };
-	};
-
-
-/***/ },
-/* 225 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26674,180 +25093,2065 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var Card = (function (_React$Component) {
-	  _inherits(Card, _React$Component);
+	var _classnames = __webpack_require__(206);
 
-	  function Card() {
-	    _classCallCheck(this, Card);
+	var _classnames2 = _interopRequireDefault(_classnames);
 
-	    _get(Object.getPrototypeOf(Card.prototype), 'constructor', this).apply(this, arguments);
+	var _lodashLangIsEqual = __webpack_require__(207);
+
+	var _lodashLangIsEqual2 = _interopRequireDefault(_lodashLangIsEqual);
+
+	var Guess = (function (_React$Component) {
+	  _inherits(Guess, _React$Component);
+
+	  function Guess() {
+	    _classCallCheck(this, Guess);
+
+	    _get(Object.getPrototypeOf(Guess.prototype), 'constructor', this).apply(this, arguments);
 	  }
 
-	  _createClass(Card, [{
-	    key: 'componentDidUpdate',
-	    value: function componentDidUpdate() {
-	      _react2['default'].findDOMNode(this.refs.img).className = '';
-	    }
-	  }, {
+	  _createClass(Guess, [{
 	    key: 'render',
 	    value: function render() {
 	      return _react2['default'].createElement(
 	        'div',
-	        { className: 'card' },
-	        _react2['default'].createElement(
-	          'div',
-	          { className: 'card-image' },
-	          _react2['default'].createElement('img', { ref: 'img', src: this.props.image, alt: this.props.title, onError: this._handleImgError })
-	        ),
-	        _react2['default'].createElement(
-	          'div',
-	          { className: 'card-header' },
-	          this.props.title,
-	          ' ',
-	          this._linkedin()
-	        ),
-	        _react2['default'].createElement(
-	          'div',
-	          { className: 'card-copy' },
-	          _react2['default'].createElement(
-	            'p',
-	            null,
-	            this._formattedBody()
-	          )
-	        )
+	        { className: this._classNames() },
+	        this._image(),
+	        this._answerText()
 	      );
 	    }
 	  }, {
-	    key: '_formattedBody',
-	    value: function _formattedBody() {
-	      if (this.props.body && this.props.body.length == 2) {
-	        var first = this.props.body[0].replace('&amp;', '&'),
-	            second = this.props.body[0].replace(/ (at|@) <B>Influtitive<B>/).replace('&amp;', '&');
-	        if (first == second) {
-	          return first;
-	        } else {
-	          return [first, second];
-	        }
-	      }
+	    key: '_classNames',
+	    value: function _classNames() {
+	      return (0, _classnames2['default'])({
+	        card: true,
+	        guess: true,
+	        guessed: this.props.chosen,
+	        actual: this.props.chosen && (0, _lodashLangIsEqual2['default'])(this.props.person, this.props.correctPerson) && !this._guessedRight(),
+	        right: this._guessedRight(),
+	        wrong: this._guessedWrong()
+	      });
+	    }
+	  }, {
+	    key: '_guessedRight',
+	    value: function _guessedRight() {
+	      return this.props.chosen && (0, _lodashLangIsEqual2['default'])(this.props.chosen, this.props.person) && (0, _lodashLangIsEqual2['default'])(this.props.chosen, this.props.correctPerson);
+	    }
+	  }, {
+	    key: '_guessedWrong',
+	    value: function _guessedWrong() {
+	      return this.props.chosen && (0, _lodashLangIsEqual2['default'])(this.props.chosen, this.props.person) && !(0, _lodashLangIsEqual2['default'])(this.props.chosen, this.props.correctPerson);
+	    }
+	  }, {
+	    key: '_image',
+	    value: function _image() {
+	      return _react2['default'].createElement(
+	        'div',
+	        { className: 'card-image' },
+	        _react2['default'].createElement('img', { ref: 'img', src: this.props.person.image_url, alt: this.props.person.name,
+	          onError: this._handleImgError, onClick: this.props.onClick(this.props.person) })
+	      );
+	    }
+	  }, {
+	    key: '_answerText',
+	    value: function _answerText() {
+	      var message = [],
+	          title = this.props.person.title;
+	      title = title.replace(/ (at|@) <B>Influtitive<B>/).replace('&amp;', '&');
 
-	      return this.props.body;
-	    }
-	  }, {
-	    key: '_handleImgError',
-	    value: function _handleImgError(e) {
-	      e.target.src = '';
-	      e.target.className = 'error';
-	    }
-	  }, {
-	    key: '_linkedin',
-	    value: function _linkedin() {
-	      if (this.props.url) {
+	      if (this.props.chosen) {
+
+	        if (this._guessedWrong()) {
+	          message = ['Nope!', 'That\'s ' + this.props.person.fmt_name, title];
+	        }
+
 	        return _react2['default'].createElement(
-	          'span',
-	          { className: 'badges', style: { float: 'right' } },
+	          'div',
+	          { className: 'overlay' },
 	          _react2['default'].createElement(
-	            'a',
-	            { href: this.props.url, className: 'badge notice' },
-	            'in'
+	            'p',
+	            null,
+	            message[0]
+	          ),
+	          _react2['default'].createElement(
+	            'p',
+	            null,
+	            message[1]
+	          ),
+	          _react2['default'].createElement(
+	            'p',
+	            null,
+	            message[2]
 	          )
 	        );
 	      }
 	    }
 	  }], [{
+	    key: 'propTypes',
+	    value: {
+	      person: _react2['default'].PropTypes.object.isRequired,
+	      correctPerson: _react2['default'].PropTypes.object.isRequired,
+	      chosen: _react2['default'].PropTypes.object,
+	      onClick: _react2['default'].PropTypes['function']
+	    },
+	    enumerable: true
+	  }, {
 	    key: 'defaultProps',
-	    value: { image: null,
-	      title: null,
-	      body: null,
-	      url: null
+	    value: {
+	      person: {},
+	      correctPerson: null,
+	      chosen: null,
+	      onClick: function onClick() {}
 	    },
 	    enumerable: true
 	  }]);
 
-	  return Card;
+	  return Guess;
 	})(_react2['default'].Component);
 
-	exports['default'] = Card;
+	exports['default'] = Guess;
 	module.exports = exports['default'];
+
+/***/ },
+/* 206 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
+	  Copyright (c) 2015 Jed Watson.
+	  Licensed under the MIT License (MIT), see
+	  http://jedwatson.github.io/classnames
+	*/
+	/* global define */
+
+	(function () {
+		'use strict';
+
+		var hasOwn = {}.hasOwnProperty;
+
+		function classNames () {
+			var classes = '';
+
+			for (var i = 0; i < arguments.length; i++) {
+				var arg = arguments[i];
+				if (!arg) continue;
+
+				var argType = typeof arg;
+
+				if (argType === 'string' || argType === 'number') {
+					classes += ' ' + arg;
+				} else if (Array.isArray(arg)) {
+					classes += ' ' + classNames.apply(null, arg);
+				} else if (argType === 'object') {
+					for (var key in arg) {
+						if (hasOwn.call(arg, key) && arg[key]) {
+							classes += ' ' + key;
+						}
+					}
+				}
+			}
+
+			return classes.substr(1);
+		}
+
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		} else if (true) {
+			// register as 'classnames', consistent with npm package name
+			!(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
+				return classNames;
+			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+		} else {
+			window.classNames = classNames;
+		}
+	}());
+
+
+/***/ },
+/* 207 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseIsEqual = __webpack_require__(208),
+	    bindCallback = __webpack_require__(230);
+
+	/**
+	 * Performs a deep comparison between two values to determine if they are
+	 * equivalent. If `customizer` is provided it's invoked to compare values.
+	 * If `customizer` returns `undefined` comparisons are handled by the method
+	 * instead. The `customizer` is bound to `thisArg` and invoked with up to
+	 * three arguments: (value, other [, index|key]).
+	 *
+	 * **Note:** This method supports comparing arrays, booleans, `Date` objects,
+	 * numbers, `Object` objects, regexes, and strings. Objects are compared by
+	 * their own, not inherited, enumerable properties. Functions and DOM nodes
+	 * are **not** supported. Provide a customizer function to extend support
+	 * for comparing other values.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @alias eq
+	 * @category Lang
+	 * @param {*} value The value to compare.
+	 * @param {*} other The other value to compare.
+	 * @param {Function} [customizer] The function to customize value comparisons.
+	 * @param {*} [thisArg] The `this` binding of `customizer`.
+	 * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+	 * @example
+	 *
+	 * var object = { 'user': 'fred' };
+	 * var other = { 'user': 'fred' };
+	 *
+	 * object == other;
+	 * // => false
+	 *
+	 * _.isEqual(object, other);
+	 * // => true
+	 *
+	 * // using a customizer callback
+	 * var array = ['hello', 'goodbye'];
+	 * var other = ['hi', 'goodbye'];
+	 *
+	 * _.isEqual(array, other, function(value, other) {
+	 *   if (_.every([value, other], RegExp.prototype.test, /^h(?:i|ello)$/)) {
+	 *     return true;
+	 *   }
+	 * });
+	 * // => true
+	 */
+	function isEqual(value, other, customizer, thisArg) {
+	  customizer = typeof customizer == 'function' ? bindCallback(customizer, thisArg, 3) : undefined;
+	  var result = customizer ? customizer(value, other) : undefined;
+	  return  result === undefined ? baseIsEqual(value, other, customizer) : !!result;
+	}
+
+	module.exports = isEqual;
+
+
+/***/ },
+/* 208 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseIsEqualDeep = __webpack_require__(209),
+	    isObject = __webpack_require__(218),
+	    isObjectLike = __webpack_require__(219);
+
+	/**
+	 * The base implementation of `_.isEqual` without support for `this` binding
+	 * `customizer` functions.
+	 *
+	 * @private
+	 * @param {*} value The value to compare.
+	 * @param {*} other The other value to compare.
+	 * @param {Function} [customizer] The function to customize comparing values.
+	 * @param {boolean} [isLoose] Specify performing partial comparisons.
+	 * @param {Array} [stackA] Tracks traversed `value` objects.
+	 * @param {Array} [stackB] Tracks traversed `other` objects.
+	 * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
+	 */
+	function baseIsEqual(value, other, customizer, isLoose, stackA, stackB) {
+	  if (value === other) {
+	    return true;
+	  }
+	  if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
+	    return value !== value && other !== other;
+	  }
+	  return baseIsEqualDeep(value, other, baseIsEqual, customizer, isLoose, stackA, stackB);
+	}
+
+	module.exports = baseIsEqual;
+
+
+/***/ },
+/* 209 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var equalArrays = __webpack_require__(210),
+	    equalByTag = __webpack_require__(212),
+	    equalObjects = __webpack_require__(213),
+	    isArray = __webpack_require__(226),
+	    isTypedArray = __webpack_require__(229);
+
+	/** `Object#toString` result references. */
+	var argsTag = '[object Arguments]',
+	    arrayTag = '[object Array]',
+	    objectTag = '[object Object]';
+
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objToString = objectProto.toString;
+
+	/**
+	 * A specialized version of `baseIsEqual` for arrays and objects which performs
+	 * deep comparisons and tracks traversed objects enabling objects with circular
+	 * references to be compared.
+	 *
+	 * @private
+	 * @param {Object} object The object to compare.
+	 * @param {Object} other The other object to compare.
+	 * @param {Function} equalFunc The function to determine equivalents of values.
+	 * @param {Function} [customizer] The function to customize comparing objects.
+	 * @param {boolean} [isLoose] Specify performing partial comparisons.
+	 * @param {Array} [stackA=[]] Tracks traversed `value` objects.
+	 * @param {Array} [stackB=[]] Tracks traversed `other` objects.
+	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+	 */
+	function baseIsEqualDeep(object, other, equalFunc, customizer, isLoose, stackA, stackB) {
+	  var objIsArr = isArray(object),
+	      othIsArr = isArray(other),
+	      objTag = arrayTag,
+	      othTag = arrayTag;
+
+	  if (!objIsArr) {
+	    objTag = objToString.call(object);
+	    if (objTag == argsTag) {
+	      objTag = objectTag;
+	    } else if (objTag != objectTag) {
+	      objIsArr = isTypedArray(object);
+	    }
+	  }
+	  if (!othIsArr) {
+	    othTag = objToString.call(other);
+	    if (othTag == argsTag) {
+	      othTag = objectTag;
+	    } else if (othTag != objectTag) {
+	      othIsArr = isTypedArray(other);
+	    }
+	  }
+	  var objIsObj = objTag == objectTag,
+	      othIsObj = othTag == objectTag,
+	      isSameTag = objTag == othTag;
+
+	  if (isSameTag && !(objIsArr || objIsObj)) {
+	    return equalByTag(object, other, objTag);
+	  }
+	  if (!isLoose) {
+	    var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
+	        othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
+
+	    if (objIsWrapped || othIsWrapped) {
+	      return equalFunc(objIsWrapped ? object.value() : object, othIsWrapped ? other.value() : other, customizer, isLoose, stackA, stackB);
+	    }
+	  }
+	  if (!isSameTag) {
+	    return false;
+	  }
+	  // Assume cyclic values are equal.
+	  // For more information on detecting circular references see https://es5.github.io/#JO.
+	  stackA || (stackA = []);
+	  stackB || (stackB = []);
+
+	  var length = stackA.length;
+	  while (length--) {
+	    if (stackA[length] == object) {
+	      return stackB[length] == other;
+	    }
+	  }
+	  // Add `object` and `other` to the stack of traversed objects.
+	  stackA.push(object);
+	  stackB.push(other);
+
+	  var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, isLoose, stackA, stackB);
+
+	  stackA.pop();
+	  stackB.pop();
+
+	  return result;
+	}
+
+	module.exports = baseIsEqualDeep;
+
+
+/***/ },
+/* 210 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var arraySome = __webpack_require__(211);
+
+	/**
+	 * A specialized version of `baseIsEqualDeep` for arrays with support for
+	 * partial deep comparisons.
+	 *
+	 * @private
+	 * @param {Array} array The array to compare.
+	 * @param {Array} other The other array to compare.
+	 * @param {Function} equalFunc The function to determine equivalents of values.
+	 * @param {Function} [customizer] The function to customize comparing arrays.
+	 * @param {boolean} [isLoose] Specify performing partial comparisons.
+	 * @param {Array} [stackA] Tracks traversed `value` objects.
+	 * @param {Array} [stackB] Tracks traversed `other` objects.
+	 * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
+	 */
+	function equalArrays(array, other, equalFunc, customizer, isLoose, stackA, stackB) {
+	  var index = -1,
+	      arrLength = array.length,
+	      othLength = other.length;
+
+	  if (arrLength != othLength && !(isLoose && othLength > arrLength)) {
+	    return false;
+	  }
+	  // Ignore non-index properties.
+	  while (++index < arrLength) {
+	    var arrValue = array[index],
+	        othValue = other[index],
+	        result = customizer ? customizer(isLoose ? othValue : arrValue, isLoose ? arrValue : othValue, index) : undefined;
+
+	    if (result !== undefined) {
+	      if (result) {
+	        continue;
+	      }
+	      return false;
+	    }
+	    // Recursively compare arrays (susceptible to call stack limits).
+	    if (isLoose) {
+	      if (!arraySome(other, function(othValue) {
+	            return arrValue === othValue || equalFunc(arrValue, othValue, customizer, isLoose, stackA, stackB);
+	          })) {
+	        return false;
+	      }
+	    } else if (!(arrValue === othValue || equalFunc(arrValue, othValue, customizer, isLoose, stackA, stackB))) {
+	      return false;
+	    }
+	  }
+	  return true;
+	}
+
+	module.exports = equalArrays;
+
+
+/***/ },
+/* 211 */
+/***/ function(module, exports) {
+
+	/**
+	 * A specialized version of `_.some` for arrays without support for callback
+	 * shorthands and `this` binding.
+	 *
+	 * @private
+	 * @param {Array} array The array to iterate over.
+	 * @param {Function} predicate The function invoked per iteration.
+	 * @returns {boolean} Returns `true` if any element passes the predicate check,
+	 *  else `false`.
+	 */
+	function arraySome(array, predicate) {
+	  var index = -1,
+	      length = array.length;
+
+	  while (++index < length) {
+	    if (predicate(array[index], index, array)) {
+	      return true;
+	    }
+	  }
+	  return false;
+	}
+
+	module.exports = arraySome;
+
+
+/***/ },
+/* 212 */
+/***/ function(module, exports) {
+
+	/** `Object#toString` result references. */
+	var boolTag = '[object Boolean]',
+	    dateTag = '[object Date]',
+	    errorTag = '[object Error]',
+	    numberTag = '[object Number]',
+	    regexpTag = '[object RegExp]',
+	    stringTag = '[object String]';
+
+	/**
+	 * A specialized version of `baseIsEqualDeep` for comparing objects of
+	 * the same `toStringTag`.
+	 *
+	 * **Note:** This function only supports comparing values with tags of
+	 * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
+	 *
+	 * @private
+	 * @param {Object} object The object to compare.
+	 * @param {Object} other The other object to compare.
+	 * @param {string} tag The `toStringTag` of the objects to compare.
+	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+	 */
+	function equalByTag(object, other, tag) {
+	  switch (tag) {
+	    case boolTag:
+	    case dateTag:
+	      // Coerce dates and booleans to numbers, dates to milliseconds and booleans
+	      // to `1` or `0` treating invalid dates coerced to `NaN` as not equal.
+	      return +object == +other;
+
+	    case errorTag:
+	      return object.name == other.name && object.message == other.message;
+
+	    case numberTag:
+	      // Treat `NaN` vs. `NaN` as equal.
+	      return (object != +object)
+	        ? other != +other
+	        : object == +other;
+
+	    case regexpTag:
+	    case stringTag:
+	      // Coerce regexes to strings and treat strings primitives and string
+	      // objects as equal. See https://es5.github.io/#x15.10.6.4 for more details.
+	      return object == (other + '');
+	  }
+	  return false;
+	}
+
+	module.exports = equalByTag;
+
+
+/***/ },
+/* 213 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var keys = __webpack_require__(214);
+
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * A specialized version of `baseIsEqualDeep` for objects with support for
+	 * partial deep comparisons.
+	 *
+	 * @private
+	 * @param {Object} object The object to compare.
+	 * @param {Object} other The other object to compare.
+	 * @param {Function} equalFunc The function to determine equivalents of values.
+	 * @param {Function} [customizer] The function to customize comparing values.
+	 * @param {boolean} [isLoose] Specify performing partial comparisons.
+	 * @param {Array} [stackA] Tracks traversed `value` objects.
+	 * @param {Array} [stackB] Tracks traversed `other` objects.
+	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
+	 */
+	function equalObjects(object, other, equalFunc, customizer, isLoose, stackA, stackB) {
+	  var objProps = keys(object),
+	      objLength = objProps.length,
+	      othProps = keys(other),
+	      othLength = othProps.length;
+
+	  if (objLength != othLength && !isLoose) {
+	    return false;
+	  }
+	  var index = objLength;
+	  while (index--) {
+	    var key = objProps[index];
+	    if (!(isLoose ? key in other : hasOwnProperty.call(other, key))) {
+	      return false;
+	    }
+	  }
+	  var skipCtor = isLoose;
+	  while (++index < objLength) {
+	    key = objProps[index];
+	    var objValue = object[key],
+	        othValue = other[key],
+	        result = customizer ? customizer(isLoose ? othValue : objValue, isLoose? objValue : othValue, key) : undefined;
+
+	    // Recursively compare objects (susceptible to call stack limits).
+	    if (!(result === undefined ? equalFunc(objValue, othValue, customizer, isLoose, stackA, stackB) : result)) {
+	      return false;
+	    }
+	    skipCtor || (skipCtor = key == 'constructor');
+	  }
+	  if (!skipCtor) {
+	    var objCtor = object.constructor,
+	        othCtor = other.constructor;
+
+	    // Non `Object` object instances with different constructors are not equal.
+	    if (objCtor != othCtor &&
+	        ('constructor' in object && 'constructor' in other) &&
+	        !(typeof objCtor == 'function' && objCtor instanceof objCtor &&
+	          typeof othCtor == 'function' && othCtor instanceof othCtor)) {
+	      return false;
+	    }
+	  }
+	  return true;
+	}
+
+	module.exports = equalObjects;
+
+
+/***/ },
+/* 214 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getNative = __webpack_require__(215),
+	    isArrayLike = __webpack_require__(220),
+	    isObject = __webpack_require__(218),
+	    shimKeys = __webpack_require__(224);
+
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeKeys = getNative(Object, 'keys');
+
+	/**
+	 * Creates an array of the own enumerable property names of `object`.
+	 *
+	 * **Note:** Non-object values are coerced to objects. See the
+	 * [ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)
+	 * for more details.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Object
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.keys(new Foo);
+	 * // => ['a', 'b'] (iteration order is not guaranteed)
+	 *
+	 * _.keys('hi');
+	 * // => ['0', '1']
+	 */
+	var keys = !nativeKeys ? shimKeys : function(object) {
+	  var Ctor = object == null ? undefined : object.constructor;
+	  if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
+	      (typeof object != 'function' && isArrayLike(object))) {
+	    return shimKeys(object);
+	  }
+	  return isObject(object) ? nativeKeys(object) : [];
+	};
+
+	module.exports = keys;
+
+
+/***/ },
+/* 215 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isNative = __webpack_require__(216);
+
+	/**
+	 * Gets the native function at `key` of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {string} key The key of the method to get.
+	 * @returns {*} Returns the function if it's native, else `undefined`.
+	 */
+	function getNative(object, key) {
+	  var value = object == null ? undefined : object[key];
+	  return isNative(value) ? value : undefined;
+	}
+
+	module.exports = getNative;
+
+
+/***/ },
+/* 216 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isFunction = __webpack_require__(217),
+	    isObjectLike = __webpack_require__(219);
+
+	/** Used to detect host constructors (Safari > 5). */
+	var reIsHostCtor = /^\[object .+?Constructor\]$/;
+
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to resolve the decompiled source of functions. */
+	var fnToString = Function.prototype.toString;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/** Used to detect if a method is native. */
+	var reIsNative = RegExp('^' +
+	  fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
+	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
+	);
+
+	/**
+	 * Checks if `value` is a native function.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
+	 * @example
+	 *
+	 * _.isNative(Array.prototype.push);
+	 * // => true
+	 *
+	 * _.isNative(_);
+	 * // => false
+	 */
+	function isNative(value) {
+	  if (value == null) {
+	    return false;
+	  }
+	  if (isFunction(value)) {
+	    return reIsNative.test(fnToString.call(value));
+	  }
+	  return isObjectLike(value) && reIsHostCtor.test(value);
+	}
+
+	module.exports = isNative;
+
+
+/***/ },
+/* 217 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isObject = __webpack_require__(218);
+
+	/** `Object#toString` result references. */
+	var funcTag = '[object Function]';
+
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objToString = objectProto.toString;
+
+	/**
+	 * Checks if `value` is classified as a `Function` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isFunction(_);
+	 * // => true
+	 *
+	 * _.isFunction(/abc/);
+	 * // => false
+	 */
+	function isFunction(value) {
+	  // The use of `Object#toString` avoids issues with the `typeof` operator
+	  // in older versions of Chrome and Safari which return 'function' for regexes
+	  // and Safari 8 which returns 'object' for typed array constructors.
+	  return isObject(value) && objToString.call(value) == funcTag;
+	}
+
+	module.exports = isFunction;
+
+
+/***/ },
+/* 218 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
+	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
+	 * @example
+	 *
+	 * _.isObject({});
+	 * // => true
+	 *
+	 * _.isObject([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isObject(1);
+	 * // => false
+	 */
+	function isObject(value) {
+	  // Avoid a V8 JIT bug in Chrome 19-20.
+	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
+	  var type = typeof value;
+	  return !!value && (type == 'object' || type == 'function');
+	}
+
+	module.exports = isObject;
+
+
+/***/ },
+/* 219 */
+/***/ function(module, exports) {
+
+	/**
+	 * Checks if `value` is object-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
+	 */
+	function isObjectLike(value) {
+	  return !!value && typeof value == 'object';
+	}
+
+	module.exports = isObjectLike;
+
+
+/***/ },
+/* 220 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var getLength = __webpack_require__(221),
+	    isLength = __webpack_require__(223);
+
+	/**
+	 * Checks if `value` is array-like.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
+	 */
+	function isArrayLike(value) {
+	  return value != null && isLength(getLength(value));
+	}
+
+	module.exports = isArrayLike;
+
+
+/***/ },
+/* 221 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseProperty = __webpack_require__(222);
+
+	/**
+	 * Gets the "length" property value of `object`.
+	 *
+	 * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
+	 * that affects Safari on at least iOS 8.1-8.3 ARM64.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {*} Returns the "length" value.
+	 */
+	var getLength = baseProperty('length');
+
+	module.exports = getLength;
+
+
+/***/ },
+/* 222 */
+/***/ function(module, exports) {
+
+	/**
+	 * The base implementation of `_.property` without support for deep paths.
+	 *
+	 * @private
+	 * @param {string} key The key of the property to get.
+	 * @returns {Function} Returns the new function.
+	 */
+	function baseProperty(key) {
+	  return function(object) {
+	    return object == null ? undefined : object[key];
+	  };
+	}
+
+	module.exports = baseProperty;
+
+
+/***/ },
+/* 223 */
+/***/ function(module, exports) {
+
+	/**
+	 * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
+	 * of an array-like value.
+	 */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+
+	/**
+	 * Checks if `value` is a valid array-like length.
+	 *
+	 * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
+	 */
+	function isLength(value) {
+	  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
+	}
+
+	module.exports = isLength;
+
+
+/***/ },
+/* 224 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isArguments = __webpack_require__(225),
+	    isArray = __webpack_require__(226),
+	    isIndex = __webpack_require__(227),
+	    isLength = __webpack_require__(223),
+	    keysIn = __webpack_require__(228);
+
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * A fallback implementation of `Object.keys` which creates an array of the
+	 * own enumerable property names of `object`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 */
+	function shimKeys(object) {
+	  var props = keysIn(object),
+	      propsLength = props.length,
+	      length = propsLength && object.length;
+
+	  var allowIndexes = !!length && isLength(length) &&
+	    (isArray(object) || isArguments(object));
+
+	  var index = -1,
+	      result = [];
+
+	  while (++index < propsLength) {
+	    var key = props[index];
+	    if ((allowIndexes && isIndex(key, length)) || hasOwnProperty.call(object, key)) {
+	      result.push(key);
+	    }
+	  }
+	  return result;
+	}
+
+	module.exports = shimKeys;
+
+
+/***/ },
+/* 225 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isArrayLike = __webpack_require__(220),
+	    isObjectLike = __webpack_require__(219);
+
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/** Native method references. */
+	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
+
+	/**
+	 * Checks if `value` is classified as an `arguments` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isArguments(function() { return arguments; }());
+	 * // => true
+	 *
+	 * _.isArguments([1, 2, 3]);
+	 * // => false
+	 */
+	function isArguments(value) {
+	  return isObjectLike(value) && isArrayLike(value) &&
+	    hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee');
+	}
+
+	module.exports = isArguments;
+
 
 /***/ },
 /* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	var getNative = __webpack_require__(215),
+	    isLength = __webpack_require__(223),
+	    isObjectLike = __webpack_require__(219);
 
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	/** `Object#toString` result references. */
+	var arrayTag = '[object Array]';
 
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
 
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objToString = objectProto.toString;
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeIsArray = getNative(Array, 'isArray');
 
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	/**
+	 * Checks if `value` is classified as an `Array` object.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isArray([1, 2, 3]);
+	 * // => true
+	 *
+	 * _.isArray(function() { return arguments; }());
+	 * // => false
+	 */
+	var isArray = nativeIsArray || function(value) {
+	  return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
+	};
+
+	module.exports = isArray;
+
+
+/***/ },
+/* 227 */
+/***/ function(module, exports) {
+
+	/** Used to detect unsigned integer values. */
+	var reIsUint = /^\d+$/;
+
+	/**
+	 * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
+	 * of an array-like value.
+	 */
+	var MAX_SAFE_INTEGER = 9007199254740991;
+
+	/**
+	 * Checks if `value` is a valid array-like index.
+	 *
+	 * @private
+	 * @param {*} value The value to check.
+	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
+	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
+	 */
+	function isIndex(value, length) {
+	  value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
+	  length = length == null ? MAX_SAFE_INTEGER : length;
+	  return value > -1 && value % 1 == 0 && value < length;
+	}
+
+	module.exports = isIndex;
+
+
+/***/ },
+/* 228 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isArguments = __webpack_require__(225),
+	    isArray = __webpack_require__(226),
+	    isIndex = __webpack_require__(227),
+	    isLength = __webpack_require__(223),
+	    isObject = __webpack_require__(218);
+
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+
+	/** Used to check objects for own properties. */
+	var hasOwnProperty = objectProto.hasOwnProperty;
+
+	/**
+	 * Creates an array of the own and inherited enumerable property names of `object`.
+	 *
+	 * **Note:** Non-object values are coerced to objects.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Object
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property names.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.keysIn(new Foo);
+	 * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
+	 */
+	function keysIn(object) {
+	  if (object == null) {
+	    return [];
+	  }
+	  if (!isObject(object)) {
+	    object = Object(object);
+	  }
+	  var length = object.length;
+	  length = (length && isLength(length) &&
+	    (isArray(object) || isArguments(object)) && length) || 0;
+
+	  var Ctor = object.constructor,
+	      index = -1,
+	      isProto = typeof Ctor == 'function' && Ctor.prototype === object,
+	      result = Array(length),
+	      skipIndexes = length > 0;
+
+	  while (++index < length) {
+	    result[index] = (index + '');
+	  }
+	  for (var key in object) {
+	    if (!(skipIndexes && isIndex(key, length)) &&
+	        !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
+	      result.push(key);
+	    }
+	  }
+	  return result;
+	}
+
+	module.exports = keysIn;
+
+
+/***/ },
+/* 229 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isLength = __webpack_require__(223),
+	    isObjectLike = __webpack_require__(219);
+
+	/** `Object#toString` result references. */
+	var argsTag = '[object Arguments]',
+	    arrayTag = '[object Array]',
+	    boolTag = '[object Boolean]',
+	    dateTag = '[object Date]',
+	    errorTag = '[object Error]',
+	    funcTag = '[object Function]',
+	    mapTag = '[object Map]',
+	    numberTag = '[object Number]',
+	    objectTag = '[object Object]',
+	    regexpTag = '[object RegExp]',
+	    setTag = '[object Set]',
+	    stringTag = '[object String]',
+	    weakMapTag = '[object WeakMap]';
+
+	var arrayBufferTag = '[object ArrayBuffer]',
+	    float32Tag = '[object Float32Array]',
+	    float64Tag = '[object Float64Array]',
+	    int8Tag = '[object Int8Array]',
+	    int16Tag = '[object Int16Array]',
+	    int32Tag = '[object Int32Array]',
+	    uint8Tag = '[object Uint8Array]',
+	    uint8ClampedTag = '[object Uint8ClampedArray]',
+	    uint16Tag = '[object Uint16Array]',
+	    uint32Tag = '[object Uint32Array]';
+
+	/** Used to identify `toStringTag` values of typed arrays. */
+	var typedArrayTags = {};
+	typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
+	typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
+	typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
+	typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
+	typedArrayTags[uint32Tag] = true;
+	typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
+	typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
+	typedArrayTags[dateTag] = typedArrayTags[errorTag] =
+	typedArrayTags[funcTag] = typedArrayTags[mapTag] =
+	typedArrayTags[numberTag] = typedArrayTags[objectTag] =
+	typedArrayTags[regexpTag] = typedArrayTags[setTag] =
+	typedArrayTags[stringTag] = typedArrayTags[weakMapTag] = false;
+
+	/** Used for native method references. */
+	var objectProto = Object.prototype;
+
+	/**
+	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
+	 * of values.
+	 */
+	var objToString = objectProto.toString;
+
+	/**
+	 * Checks if `value` is classified as a typed array.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to check.
+	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
+	 * @example
+	 *
+	 * _.isTypedArray(new Uint8Array);
+	 * // => true
+	 *
+	 * _.isTypedArray([]);
+	 * // => false
+	 */
+	function isTypedArray(value) {
+	  return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[objToString.call(value)];
+	}
+
+	module.exports = isTypedArray;
+
+
+/***/ },
+/* 230 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var identity = __webpack_require__(231);
+
+	/**
+	 * A specialized version of `baseCallback` which only supports `this` binding
+	 * and specifying the number of arguments to provide to `func`.
+	 *
+	 * @private
+	 * @param {Function} func The function to bind.
+	 * @param {*} thisArg The `this` binding of `func`.
+	 * @param {number} [argCount] The number of arguments to provide to `func`.
+	 * @returns {Function} Returns the callback.
+	 */
+	function bindCallback(func, thisArg, argCount) {
+	  if (typeof func != 'function') {
+	    return identity;
+	  }
+	  if (thisArg === undefined) {
+	    return func;
+	  }
+	  switch (argCount) {
+	    case 1: return function(value) {
+	      return func.call(thisArg, value);
+	    };
+	    case 3: return function(value, index, collection) {
+	      return func.call(thisArg, value, index, collection);
+	    };
+	    case 4: return function(accumulator, value, index, collection) {
+	      return func.call(thisArg, accumulator, value, index, collection);
+	    };
+	    case 5: return function(value, other, key, object, source) {
+	      return func.call(thisArg, value, other, key, object, source);
+	    };
+	  }
+	  return function() {
+	    return func.apply(thisArg, arguments);
+	  };
+	}
+
+	module.exports = bindCallback;
+
+
+/***/ },
+/* 231 */
+/***/ function(module, exports) {
+
+	/**
+	 * This method returns the first argument provided to it.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Utility
+	 * @param {*} value Any value.
+	 * @returns {*} Returns `value`.
+	 * @example
+	 *
+	 * var object = { 'user': 'fred' };
+	 *
+	 * _.identity(object) === object;
+	 * // => true
+	 */
+	function identity(value) {
+	  return value;
+	}
+
+	module.exports = identity;
+
+
+/***/ },
+/* 232 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 	var _react = __webpack_require__(1);
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var ButtonGroup = (function (_React$Component) {
-	  _inherits(ButtonGroup, _React$Component);
+	__webpack_require__(233);
 
-	  function ButtonGroup() {
-	    _classCallCheck(this, ButtonGroup);
+	var ScoreKeeper = (function (_React$Component) {
+	  _inherits(ScoreKeeper, _React$Component);
 
-	    _get(Object.getPrototypeOf(ButtonGroup.prototype), "constructor", this).apply(this, arguments);
+	  function ScoreKeeper() {
+	    _classCallCheck(this, ScoreKeeper);
+
+	    _get(Object.getPrototypeOf(ScoreKeeper.prototype), 'constructor', this).apply(this, arguments);
 	  }
 
-	  _createClass(ButtonGroup, [{
-	    key: "render",
+	  _createClass(ScoreKeeper, [{
+	    key: 'render',
 	    value: function render() {
-	      return _react2["default"].createElement(
-	        "div",
-	        { className: "button-group" },
-	        this.props.children
-	      );
-	    }
-	  }]);
-
-	  return ButtonGroup;
-	})(_react2["default"].Component);
-
-	var ButtonGroupItem = (function (_React$Component2) {
-	  _inherits(ButtonGroupItem, _React$Component2);
-
-	  function ButtonGroupItem() {
-	    _classCallCheck(this, ButtonGroupItem);
-
-	    _get(Object.getPrototypeOf(ButtonGroupItem.prototype), "constructor", this).apply(this, arguments);
-	  }
-
-	  _createClass(ButtonGroupItem, [{
-	    key: "render",
-	    value: function render() {
-	      return _react2["default"].createElement(
-	        "label",
-	        null,
-	        _react2["default"].createElement("input", { type: "radio", name: "button-group", value: this.props.children, checked: this.props.checked, onChange: this.props.onClick }),
-	        _react2["default"].createElement(
-	          "span",
-	          { className: "button-group-item" },
-	          this.props.children
+	      return _react2['default'].createElement(
+	        'div',
+	        { className: 'stats' },
+	        _react2['default'].createElement(
+	          'ul',
+	          null,
+	          _react2['default'].createElement('li', { dangerouslySetInnerHTML: { __html: this.props.right + '<span>Right</span>' } }),
+	          _react2['default'].createElement('li', { dangerouslySetInnerHTML: { __html: this.props.wrong + '<span>Wrong</span>' } })
 	        )
 	      );
 	    }
-	  }], [{
-	    key: "defaultProps",
-	    value: { checked: false, onClick: function onClick() {} },
-	    enumerable: true
 	  }]);
 
-	  return ButtonGroupItem;
-	})(_react2["default"].Component);
+	  return ScoreKeeper;
+	})(_react2['default'].Component);
 
-	module.exports = { ButtonGroup: ButtonGroup, ButtonGroupItem: ButtonGroupItem };
+	exports['default'] = ScoreKeeper;
+	module.exports = exports['default'];
 
 /***/ },
-/* 227 */
+/* 233 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// style-loader: Adds some css to the DOM by adding a <style> tag
+
+	// load the styles
+	var content = __webpack_require__(234);
+	if(typeof content === 'string') content = [[module.id, content, '']];
+	// add the styles to the DOM
+	var update = __webpack_require__(236)(content, {});
+	if(content.locals) module.exports = content.locals;
+	// Hot Module Replacement
+	if(false) {
+		// When the styles change, update the <style> tags
+		if(!content.locals) {
+			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js?includePaths[]=/Users/gabriel/Documents/Projects/Influitive/acquainted/node_modules/node-bourbon/node_modules/bourbon/app/assets/stylesheets&includePaths[]=/Users/gabriel/Documents/Projects/Influitive/acquainted/node_modules/node-neat/node_modules/bourbon-neat/app/assets/stylesheets&includePaths[]=/Users/gabriel/Documents/Projects/Influitive/acquainted/node_modules/node-refills/assets/stylesheets&!./refills_stats.scss", function() {
+				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js?includePaths[]=/Users/gabriel/Documents/Projects/Influitive/acquainted/node_modules/node-bourbon/node_modules/bourbon/app/assets/stylesheets&includePaths[]=/Users/gabriel/Documents/Projects/Influitive/acquainted/node_modules/node-neat/node_modules/bourbon-neat/app/assets/stylesheets&includePaths[]=/Users/gabriel/Documents/Projects/Influitive/acquainted/node_modules/node-refills/assets/stylesheets&!./refills_stats.scss");
+				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+				update(newContent);
+			});
+		}
+		// When the module is disposed, remove the <style> tags
+		module.hot.dispose(function() { update(); });
+	}
+
+/***/ },
+/* 234 */
+/***/ function(module, exports, __webpack_require__) {
+
+	exports = module.exports = __webpack_require__(235)();
+	// imports
+
+
+	// module
+	exports.push([module.id, ".stats {\n  padding: 0.75em; }\n  .stats ul {\n    padding: 0; }\n  .stats li {\n    border-right: 1px solid rgba(51, 51, 51, 0.2);\n    color: #6f99d5;\n    display: inline;\n    float: left;\n    font-size: 1.2em;\n    line-height: 1.1em;\n    padding: 0 0.7em; }\n    .stats li:first-child {\n      padding-left: 0; }\n    .stats li:last-child {\n      border-right: 0; }\n  .stats span {\n    color: #333;\n    display: block;\n    font-size: 0.7em;\n    font-weight: normal; }\n", ""]);
+
+	// exports
+
+
+/***/ },
+/* 235 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 236 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	var stylesInDom = {},
+		memoize = function(fn) {
+			var memo;
+			return function () {
+				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
+				return memo;
+			};
+		},
+		isOldIE = memoize(function() {
+			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
+		}),
+		getHeadElement = memoize(function () {
+			return document.head || document.getElementsByTagName("head")[0];
+		}),
+		singletonElement = null,
+		singletonCounter = 0;
+
+	module.exports = function(list, options) {
+		if(false) {
+			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
+		}
+
+		options = options || {};
+		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
+		// tags it will allow on a page
+		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
+
+		var styles = listToStyles(list);
+		addStylesToDom(styles, options);
+
+		return function update(newList) {
+			var mayRemove = [];
+			for(var i = 0; i < styles.length; i++) {
+				var item = styles[i];
+				var domStyle = stylesInDom[item.id];
+				domStyle.refs--;
+				mayRemove.push(domStyle);
+			}
+			if(newList) {
+				var newStyles = listToStyles(newList);
+				addStylesToDom(newStyles, options);
+			}
+			for(var i = 0; i < mayRemove.length; i++) {
+				var domStyle = mayRemove[i];
+				if(domStyle.refs === 0) {
+					for(var j = 0; j < domStyle.parts.length; j++)
+						domStyle.parts[j]();
+					delete stylesInDom[domStyle.id];
+				}
+			}
+		};
+	}
+
+	function addStylesToDom(styles, options) {
+		for(var i = 0; i < styles.length; i++) {
+			var item = styles[i];
+			var domStyle = stylesInDom[item.id];
+			if(domStyle) {
+				domStyle.refs++;
+				for(var j = 0; j < domStyle.parts.length; j++) {
+					domStyle.parts[j](item.parts[j]);
+				}
+				for(; j < item.parts.length; j++) {
+					domStyle.parts.push(addStyle(item.parts[j], options));
+				}
+			} else {
+				var parts = [];
+				for(var j = 0; j < item.parts.length; j++) {
+					parts.push(addStyle(item.parts[j], options));
+				}
+				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
+			}
+		}
+	}
+
+	function listToStyles(list) {
+		var styles = [];
+		var newStyles = {};
+		for(var i = 0; i < list.length; i++) {
+			var item = list[i];
+			var id = item[0];
+			var css = item[1];
+			var media = item[2];
+			var sourceMap = item[3];
+			var part = {css: css, media: media, sourceMap: sourceMap};
+			if(!newStyles[id])
+				styles.push(newStyles[id] = {id: id, parts: [part]});
+			else
+				newStyles[id].parts.push(part);
+		}
+		return styles;
+	}
+
+	function createStyleElement() {
+		var styleElement = document.createElement("style");
+		var head = getHeadElement();
+		styleElement.type = "text/css";
+		head.appendChild(styleElement);
+		return styleElement;
+	}
+
+	function createLinkElement() {
+		var linkElement = document.createElement("link");
+		var head = getHeadElement();
+		linkElement.rel = "stylesheet";
+		head.appendChild(linkElement);
+		return linkElement;
+	}
+
+	function addStyle(obj, options) {
+		var styleElement, update, remove;
+
+		if (options.singleton) {
+			var styleIndex = singletonCounter++;
+			styleElement = singletonElement || (singletonElement = createStyleElement());
+			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
+			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
+		} else if(obj.sourceMap &&
+			typeof URL === "function" &&
+			typeof URL.createObjectURL === "function" &&
+			typeof URL.revokeObjectURL === "function" &&
+			typeof Blob === "function" &&
+			typeof btoa === "function") {
+			styleElement = createLinkElement();
+			update = updateLink.bind(null, styleElement);
+			remove = function() {
+				styleElement.parentNode.removeChild(styleElement);
+				if(styleElement.href)
+					URL.revokeObjectURL(styleElement.href);
+			};
+		} else {
+			styleElement = createStyleElement();
+			update = applyToTag.bind(null, styleElement);
+			remove = function() {
+				styleElement.parentNode.removeChild(styleElement);
+			};
+		}
+
+		update(obj);
+
+		return function updateStyle(newObj) {
+			if(newObj) {
+				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
+					return;
+				update(obj = newObj);
+			} else {
+				remove();
+			}
+		};
+	}
+
+	var replaceText = (function () {
+		var textStore = [];
+
+		return function (index, replacement) {
+			textStore[index] = replacement;
+			return textStore.filter(Boolean).join('\n');
+		};
+	})();
+
+	function applyToSingletonTag(styleElement, index, remove, obj) {
+		var css = remove ? "" : obj.css;
+
+		if (styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = replaceText(index, css);
+		} else {
+			var cssNode = document.createTextNode(css);
+			var childNodes = styleElement.childNodes;
+			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
+			if (childNodes.length) {
+				styleElement.insertBefore(cssNode, childNodes[index]);
+			} else {
+				styleElement.appendChild(cssNode);
+			}
+		}
+	}
+
+	function applyToTag(styleElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+		var sourceMap = obj.sourceMap;
+
+		if(media) {
+			styleElement.setAttribute("media", media)
+		}
+
+		if(styleElement.styleSheet) {
+			styleElement.styleSheet.cssText = css;
+		} else {
+			while(styleElement.firstChild) {
+				styleElement.removeChild(styleElement.firstChild);
+			}
+			styleElement.appendChild(document.createTextNode(css));
+		}
+	}
+
+	function updateLink(linkElement, obj) {
+		var css = obj.css;
+		var media = obj.media;
+		var sourceMap = obj.sourceMap;
+
+		if(sourceMap) {
+			// http://stackoverflow.com/a/26603875
+			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
+		}
+
+		var blob = new Blob([css], { type: "text/css" });
+
+		var oldSrc = linkElement.href;
+
+		linkElement.href = URL.createObjectURL(blob);
+
+		if(oldSrc)
+			URL.revokeObjectURL(oldSrc);
+	}
+
+
+/***/ },
+/* 237 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseRandom = __webpack_require__(238),
+	    isIterateeCall = __webpack_require__(239),
+	    toArray = __webpack_require__(240),
+	    toIterable = __webpack_require__(244);
+
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeMin = Math.min;
+
+	/**
+	 * Gets a random element or `n` random elements from a collection.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Collection
+	 * @param {Array|Object|string} collection The collection to sample.
+	 * @param {number} [n] The number of elements to sample.
+	 * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
+	 * @returns {*} Returns the random sample(s).
+	 * @example
+	 *
+	 * _.sample([1, 2, 3, 4]);
+	 * // => 2
+	 *
+	 * _.sample([1, 2, 3, 4], 2);
+	 * // => [3, 1]
+	 */
+	function sample(collection, n, guard) {
+	  if (guard ? isIterateeCall(collection, n, guard) : n == null) {
+	    collection = toIterable(collection);
+	    var length = collection.length;
+	    return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
+	  }
+	  var index = -1,
+	      result = toArray(collection),
+	      length = result.length,
+	      lastIndex = length - 1;
+
+	  n = nativeMin(n < 0 ? 0 : (+n || 0), length);
+	  while (++index < n) {
+	    var rand = baseRandom(index, lastIndex),
+	        value = result[rand];
+
+	    result[rand] = result[index];
+	    result[index] = value;
+	  }
+	  result.length = n;
+	  return result;
+	}
+
+	module.exports = sample;
+
+
+/***/ },
+/* 238 */
+/***/ function(module, exports) {
+
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeFloor = Math.floor,
+	    nativeRandom = Math.random;
+
+	/**
+	 * The base implementation of `_.random` without support for argument juggling
+	 * and returning floating-point numbers.
+	 *
+	 * @private
+	 * @param {number} min The minimum possible value.
+	 * @param {number} max The maximum possible value.
+	 * @returns {number} Returns the random number.
+	 */
+	function baseRandom(min, max) {
+	  return min + nativeFloor(nativeRandom() * (max - min + 1));
+	}
+
+	module.exports = baseRandom;
+
+
+/***/ },
+/* 239 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isArrayLike = __webpack_require__(220),
+	    isIndex = __webpack_require__(227),
+	    isObject = __webpack_require__(218);
+
+	/**
+	 * Checks if the provided arguments are from an iteratee call.
+	 *
+	 * @private
+	 * @param {*} value The potential iteratee value argument.
+	 * @param {*} index The potential iteratee index or key argument.
+	 * @param {*} object The potential iteratee object argument.
+	 * @returns {boolean} Returns `true` if the arguments are from an iteratee call, else `false`.
+	 */
+	function isIterateeCall(value, index, object) {
+	  if (!isObject(object)) {
+	    return false;
+	  }
+	  var type = typeof index;
+	  if (type == 'number'
+	      ? (isArrayLike(object) && isIndex(index, object.length))
+	      : (type == 'string' && index in object)) {
+	    var other = object[index];
+	    return value === value ? (value === other) : (other !== other);
+	  }
+	  return false;
+	}
+
+	module.exports = isIterateeCall;
+
+
+/***/ },
+/* 240 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var arrayCopy = __webpack_require__(241),
+	    getLength = __webpack_require__(221),
+	    isLength = __webpack_require__(223),
+	    values = __webpack_require__(242);
+
+	/**
+	 * Converts `value` to an array.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Lang
+	 * @param {*} value The value to convert.
+	 * @returns {Array} Returns the converted array.
+	 * @example
+	 *
+	 * (function() {
+	 *   return _.toArray(arguments).slice(1);
+	 * }(1, 2, 3));
+	 * // => [2, 3]
+	 */
+	function toArray(value) {
+	  var length = value ? getLength(value) : 0;
+	  if (!isLength(length)) {
+	    return values(value);
+	  }
+	  if (!length) {
+	    return [];
+	  }
+	  return arrayCopy(value);
+	}
+
+	module.exports = toArray;
+
+
+/***/ },
+/* 241 */
+/***/ function(module, exports) {
+
+	/**
+	 * Copies the values of `source` to `array`.
+	 *
+	 * @private
+	 * @param {Array} source The array to copy values from.
+	 * @param {Array} [array=[]] The array to copy values to.
+	 * @returns {Array} Returns `array`.
+	 */
+	function arrayCopy(source, array) {
+	  var index = -1,
+	      length = source.length;
+
+	  array || (array = Array(length));
+	  while (++index < length) {
+	    array[index] = source[index];
+	  }
+	  return array;
+	}
+
+	module.exports = arrayCopy;
+
+
+/***/ },
+/* 242 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseValues = __webpack_require__(243),
+	    keys = __webpack_require__(214);
+
+	/**
+	 * Creates an array of the own enumerable property values of `object`.
+	 *
+	 * **Note:** Non-object values are coerced to objects.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Object
+	 * @param {Object} object The object to query.
+	 * @returns {Array} Returns the array of property values.
+	 * @example
+	 *
+	 * function Foo() {
+	 *   this.a = 1;
+	 *   this.b = 2;
+	 * }
+	 *
+	 * Foo.prototype.c = 3;
+	 *
+	 * _.values(new Foo);
+	 * // => [1, 2] (iteration order is not guaranteed)
+	 *
+	 * _.values('hi');
+	 * // => ['h', 'i']
+	 */
+	function values(object) {
+	  return baseValues(object, keys(object));
+	}
+
+	module.exports = values;
+
+
+/***/ },
+/* 243 */
+/***/ function(module, exports) {
+
+	/**
+	 * The base implementation of `_.values` and `_.valuesIn` which creates an
+	 * array of `object` property values corresponding to the property names
+	 * of `props`.
+	 *
+	 * @private
+	 * @param {Object} object The object to query.
+	 * @param {Array} props The property names to get values for.
+	 * @returns {Object} Returns the array of property values.
+	 */
+	function baseValues(object, props) {
+	  var index = -1,
+	      length = props.length,
+	      result = Array(length);
+
+	  while (++index < length) {
+	    result[index] = object[props[index]];
+	  }
+	  return result;
+	}
+
+	module.exports = baseValues;
+
+
+/***/ },
+/* 244 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var isArrayLike = __webpack_require__(220),
+	    isObject = __webpack_require__(218),
+	    values = __webpack_require__(242);
+
+	/**
+	 * Converts `value` to an array-like object if it's not one.
+	 *
+	 * @private
+	 * @param {*} value The value to process.
+	 * @returns {Array|Object} Returns the array-like object.
+	 */
+	function toIterable(value) {
+	  if (value == null) {
+	    return [];
+	  }
+	  if (!isArrayLike(value)) {
+	    return values(value);
+	  }
+	  return isObject(value) ? value : Object(value);
+	}
+
+	module.exports = toIterable;
+
+
+/***/ },
+/* 245 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var baseDelay = __webpack_require__(246),
+	    restParam = __webpack_require__(247);
+
+	/**
+	 * Invokes `func` after `wait` milliseconds. Any additional arguments are
+	 * provided to `func` when it's invoked.
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Function
+	 * @param {Function} func The function to delay.
+	 * @param {number} wait The number of milliseconds to delay invocation.
+	 * @param {...*} [args] The arguments to invoke the function with.
+	 * @returns {number} Returns the timer id.
+	 * @example
+	 *
+	 * _.delay(function(text) {
+	 *   console.log(text);
+	 * }, 1000, 'later');
+	 * // => logs 'later' after one second
+	 */
+	var delay = restParam(function(func, wait, args) {
+	  return baseDelay(func, wait, args);
+	});
+
+	module.exports = delay;
+
+
+/***/ },
+/* 246 */
+/***/ function(module, exports) {
+
+	/** Used as the `TypeError` message for "Functions" methods. */
+	var FUNC_ERROR_TEXT = 'Expected a function';
+
+	/**
+	 * The base implementation of `_.delay` and `_.defer` which accepts an index
+	 * of where to slice the arguments to provide to `func`.
+	 *
+	 * @private
+	 * @param {Function} func The function to delay.
+	 * @param {number} wait The number of milliseconds to delay invocation.
+	 * @param {Object} args The arguments provide to `func`.
+	 * @returns {number} Returns the timer id.
+	 */
+	function baseDelay(func, wait, args) {
+	  if (typeof func != 'function') {
+	    throw new TypeError(FUNC_ERROR_TEXT);
+	  }
+	  return setTimeout(function() { func.apply(undefined, args); }, wait);
+	}
+
+	module.exports = baseDelay;
+
+
+/***/ },
+/* 247 */
+/***/ function(module, exports) {
+
+	/** Used as the `TypeError` message for "Functions" methods. */
+	var FUNC_ERROR_TEXT = 'Expected a function';
+
+	/* Native method references for those with the same name as other `lodash` methods. */
+	var nativeMax = Math.max;
+
+	/**
+	 * Creates a function that invokes `func` with the `this` binding of the
+	 * created function and arguments from `start` and beyond provided as an array.
+	 *
+	 * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/Web/JavaScript/Reference/Functions/rest_parameters).
+	 *
+	 * @static
+	 * @memberOf _
+	 * @category Function
+	 * @param {Function} func The function to apply a rest parameter to.
+	 * @param {number} [start=func.length-1] The start position of the rest parameter.
+	 * @returns {Function} Returns the new function.
+	 * @example
+	 *
+	 * var say = _.restParam(function(what, names) {
+	 *   return what + ' ' + _.initial(names).join(', ') +
+	 *     (_.size(names) > 1 ? ', & ' : '') + _.last(names);
+	 * });
+	 *
+	 * say('hello', 'fred', 'barney', 'pebbles');
+	 * // => 'hello fred, barney, & pebbles'
+	 */
+	function restParam(func, start) {
+	  if (typeof func != 'function') {
+	    throw new TypeError(FUNC_ERROR_TEXT);
+	  }
+	  start = nativeMax(start === undefined ? (func.length - 1) : (+start || 0), 0);
+	  return function() {
+	    var args = arguments,
+	        index = -1,
+	        length = nativeMax(args.length - start, 0),
+	        rest = Array(length);
+
+	    while (++index < length) {
+	      rest[index] = args[start + index];
+	    }
+	    switch (start) {
+	      case 0: return func.call(this, rest);
+	      case 1: return func.call(this, args[0], rest);
+	      case 2: return func.call(this, args[0], args[1], rest);
+	    }
+	    var otherArgs = Array(start + 1);
+	    index = -1;
+	    while (++index < start) {
+	      otherArgs[index] = args[index];
+	    }
+	    otherArgs[start] = rest;
+	    return func.apply(this, otherArgs);
+	  };
+	}
+
+	module.exports = restParam;
+
+
+/***/ },
+/* 248 */
 /***/ function(module, exports) {
 
 	module.exports = [
@@ -28221,7 +28525,7 @@
 	];
 
 /***/ },
-/* 228 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -28244,1421 +28548,281 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _componentsGuess = __webpack_require__(229);
+	var _componentsCard = __webpack_require__(250);
 
-	var _componentsGuess2 = _interopRequireDefault(_componentsGuess);
+	var _componentsCard2 = _interopRequireDefault(_componentsCard);
 
-	var _componentsScore_keeper = __webpack_require__(256);
+	var _componentsButton_group = __webpack_require__(251);
 
-	var _componentsScore_keeper2 = _interopRequireDefault(_componentsScore_keeper);
+	var Everyone = (function (_React$Component) {
+	  _inherits(Everyone, _React$Component);
 
-	var _lodashCollectionSample = __webpack_require__(261);
+	  function Everyone() {
+	    _classCallCheck(this, Everyone);
 
-	var _lodashCollectionSample2 = _interopRequireDefault(_lodashCollectionSample);
+	    _get(Object.getPrototypeOf(Everyone.prototype), 'constructor', this).apply(this, arguments);
 
-	var _lodashFunctionDelay = __webpack_require__(269);
-
-	var _lodashFunctionDelay2 = _interopRequireDefault(_lodashFunctionDelay);
-
-	var _lodashLangIsEqual = __webpack_require__(231);
-
-	var _lodashLangIsEqual2 = _interopRequireDefault(_lodashLangIsEqual);
-
-	var PEOPLE = __webpack_require__(227).filter(function (p) {
-	  return p.image_url;
-	});
-
-	var Deck = (function (_React$Component) {
-	  _inherits(Deck, _React$Component);
-
-	  function Deck() {
-	    var _this = this;
-
-	    _classCallCheck(this, Deck);
-
-	    _get(Object.getPrototypeOf(Deck.prototype), 'constructor', this).apply(this, arguments);
-
-	    this.state = { people: [], choices: [], currentPerson: null, scores: { right: 0, wrong: 0 } };
-
-	    this._handleGuess = function (person) {
-	      return function (e) {
-	        var delay = 600;
-
-	        if ((0, _lodashLangIsEqual2['default'])(_this.state.currentPerson, person)) {
-	          _this.state.scores.right++;
-	        } else {
-	          _this.state.scores.wrong++;
-	          delay = 1200;
-	        }
-	        _this.setState({ chosen: person, scores: _this.state.scores });
-
-	        (0, _lodashFunctionDelay2['default'])(_this.deal.bind(_this), delay);
-	      };
-	    };
+	    this.state = { people: __webpack_require__(248) };
 	  }
 
-	  _createClass(Deck, [{
-	    key: 'componentWillMount',
-	    value: function componentWillMount() {
-	      this.deal();
-	    }
-	  }, {
-	    key: 'deal',
-	    value: function deal() {
-	      var choices = (0, _lodashCollectionSample2['default'])(PEOPLE, 4);
-	      this.setState({
-	        people: PEOPLE,
-	        choices: choices,
-	        currentPerson: (0, _lodashCollectionSample2['default'])(choices),
-	        chosen: null
-	      });
-	    }
-	  }, {
+	  _createClass(Everyone, [{
 	    key: 'render',
 	    value: function render() {
-	      var choices = this.state.choices.map(function (person, i) {
-	        return _react2['default'].createElement(_componentsGuess2['default'], { key: i, person: person, correctPerson: this.state.currentPerson, chosen: this.state.chosen, onClick: this._handleGuess });
-	      }, this);
+	      var people = this.state.people.map(function (person, i) {
+	        return _react2['default'].createElement(_componentsCard2['default'], { key: i, title: person.fmt_name, body: [person.title, person.fmt_headline], image: person.image_url, url: person.linkedin_url });
+	      });
 	      return _react2['default'].createElement(
 	        'div',
-	        { id: 'flash-cards' },
-	        _react2['default'].createElement(_componentsScore_keeper2['default'], this.state.scores),
+	        { id: 'everyone' },
 	        _react2['default'].createElement(
-	          'h1',
+	          'span',
+	          { style: { float: 'left' } },
+	          'Sort by:',
+	          ' '
+	        ),
+	        _react2['default'].createElement(
+	          _componentsButton_group.ButtonGroup,
 	          null,
-	          'Who is ',
-	          this.state.currentPerson && this.state.currentPerson.fmt_name,
-	          '? ',
 	          _react2['default'].createElement(
-	            'small',
-	            null,
-	            this.state.currentPerson.title
+	            _componentsButton_group.ButtonGroupItem,
+	            { onClick: this._sortBy('id'), checked: true },
+	            'Date added'
+	          ),
+	          _react2['default'].createElement(
+	            _componentsButton_group.ButtonGroupItem,
+	            { onClick: this._sortBy('fmt_name') },
+	            'Name'
+	          ),
+	          _react2['default'].createElement(
+	            _componentsButton_group.ButtonGroupItem,
+	            { onClick: this._sortBy('title') },
+	            'Title'
 	          )
 	        ),
 	        _react2['default'].createElement(
 	          'div',
 	          { id: 'people' },
-	          choices
+	          people
 	        )
 	      );
 	    }
+	  }, {
+	    key: '_sortBy',
+	    value: function _sortBy(criteria) {
+	      return (function (e) {
+	        var sorted = this.state.people.sort(function (a, b) {
+	          return a[criteria] < b[criteria] ? -1 : 1;
+	        });
+	        this.setState({ people: sorted });
+	        return true;
+	      }).bind(this);
+	    }
 	  }]);
 
-	  return Deck;
+	  return Everyone;
 	})(_react2['default'].Component);
 
-	exports['default'] = Deck;
+	exports['default'] = Everyone;
 	module.exports = exports['default'];
-
-/***/ },
-/* 229 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var _react = __webpack_require__(1);
-
-	var _react2 = _interopRequireDefault(_react);
-
-	var _classnames = __webpack_require__(230);
-
-	var _classnames2 = _interopRequireDefault(_classnames);
-
-	var _lodashLangIsEqual = __webpack_require__(231);
-
-	var _lodashLangIsEqual2 = _interopRequireDefault(_lodashLangIsEqual);
-
-	var Guess = (function (_React$Component) {
-	  _inherits(Guess, _React$Component);
-
-	  function Guess() {
-	    _classCallCheck(this, Guess);
-
-	    _get(Object.getPrototypeOf(Guess.prototype), 'constructor', this).apply(this, arguments);
-	  }
-
-	  _createClass(Guess, [{
-	    key: 'render',
-	    value: function render() {
-	      return _react2['default'].createElement(
-	        'div',
-	        { className: this._classNames() },
-	        this._image(),
-	        this._answerText()
-	      );
-	    }
-	  }, {
-	    key: '_classNames',
-	    value: function _classNames() {
-	      return (0, _classnames2['default'])({
-	        card: true,
-	        guess: true,
-	        guessed: this.props.chosen,
-	        actual: this.props.chosen && (0, _lodashLangIsEqual2['default'])(this.props.person, this.props.correctPerson) && !this._guessedRight(),
-	        right: this._guessedRight(),
-	        wrong: this._guessedWrong()
-	      });
-	    }
-	  }, {
-	    key: '_guessedRight',
-	    value: function _guessedRight() {
-	      return this.props.chosen && (0, _lodashLangIsEqual2['default'])(this.props.chosen, this.props.person) && (0, _lodashLangIsEqual2['default'])(this.props.chosen, this.props.correctPerson);
-	    }
-	  }, {
-	    key: '_guessedWrong',
-	    value: function _guessedWrong() {
-	      return this.props.chosen && (0, _lodashLangIsEqual2['default'])(this.props.chosen, this.props.person) && !(0, _lodashLangIsEqual2['default'])(this.props.chosen, this.props.correctPerson);
-	    }
-	  }, {
-	    key: '_image',
-	    value: function _image() {
-	      return _react2['default'].createElement(
-	        'div',
-	        { className: 'card-image' },
-	        _react2['default'].createElement('img', { ref: 'img', src: this.props.person.image_url, alt: this.props.person.name,
-	          onError: this._handleImgError, onClick: this.props.onClick(this.props.person) })
-	      );
-	    }
-	  }, {
-	    key: '_answerText',
-	    value: function _answerText() {
-	      var message = [],
-	          title = this.props.person.title;
-	      title = title.replace(/ (at|@) <B>Influtitive<B>/).replace('&amp;', '&');
-
-	      if (this.props.chosen) {
-
-	        if (this._guessedWrong()) {
-	          message = ['Nope!', 'That\'s ' + this.props.person.fmt_name, title];
-	        }
-
-	        return _react2['default'].createElement(
-	          'div',
-	          { className: 'overlay' },
-	          _react2['default'].createElement(
-	            'p',
-	            null,
-	            message[0]
-	          ),
-	          _react2['default'].createElement(
-	            'p',
-	            null,
-	            message[1]
-	          ),
-	          _react2['default'].createElement(
-	            'p',
-	            null,
-	            message[2]
-	          )
-	        );
-	      }
-	    }
-	  }], [{
-	    key: 'propTypes',
-	    value: {
-	      person: _react2['default'].PropTypes.object.isRequired,
-	      correctPerson: _react2['default'].PropTypes.object.isRequired,
-	      chosen: _react2['default'].PropTypes.object,
-	      onClick: _react2['default'].PropTypes['function']
-	    },
-	    enumerable: true
-	  }, {
-	    key: 'defaultProps',
-	    value: {
-	      person: {},
-	      correctPerson: null,
-	      chosen: null,
-	      onClick: function onClick() {}
-	    },
-	    enumerable: true
-	  }]);
-
-	  return Guess;
-	})(_react2['default'].Component);
-
-	exports['default'] = Guess;
-	module.exports = exports['default'];
-
-/***/ },
-/* 230 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var __WEBPACK_AMD_DEFINE_RESULT__;/*!
-	  Copyright (c) 2015 Jed Watson.
-	  Licensed under the MIT License (MIT), see
-	  http://jedwatson.github.io/classnames
-	*/
-	/* global define */
-
-	(function () {
-		'use strict';
-
-		var hasOwn = {}.hasOwnProperty;
-
-		function classNames () {
-			var classes = '';
-
-			for (var i = 0; i < arguments.length; i++) {
-				var arg = arguments[i];
-				if (!arg) continue;
-
-				var argType = typeof arg;
-
-				if (argType === 'string' || argType === 'number') {
-					classes += ' ' + arg;
-				} else if (Array.isArray(arg)) {
-					classes += ' ' + classNames.apply(null, arg);
-				} else if (argType === 'object') {
-					for (var key in arg) {
-						if (hasOwn.call(arg, key) && arg[key]) {
-							classes += ' ' + key;
-						}
-					}
-				}
-			}
-
-			return classes.substr(1);
-		}
-
-		if (typeof module !== 'undefined' && module.exports) {
-			module.exports = classNames;
-		} else if (true) {
-			// register as 'classnames', consistent with npm package name
-			!(__WEBPACK_AMD_DEFINE_RESULT__ = function () {
-				return classNames;
-			}.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
-		} else {
-			window.classNames = classNames;
-		}
-	}());
-
-
-/***/ },
-/* 231 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIsEqual = __webpack_require__(232),
-	    bindCallback = __webpack_require__(254);
-
-	/**
-	 * Performs a deep comparison between two values to determine if they are
-	 * equivalent. If `customizer` is provided it's invoked to compare values.
-	 * If `customizer` returns `undefined` comparisons are handled by the method
-	 * instead. The `customizer` is bound to `thisArg` and invoked with up to
-	 * three arguments: (value, other [, index|key]).
-	 *
-	 * **Note:** This method supports comparing arrays, booleans, `Date` objects,
-	 * numbers, `Object` objects, regexes, and strings. Objects are compared by
-	 * their own, not inherited, enumerable properties. Functions and DOM nodes
-	 * are **not** supported. Provide a customizer function to extend support
-	 * for comparing other values.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @alias eq
-	 * @category Lang
-	 * @param {*} value The value to compare.
-	 * @param {*} other The other value to compare.
-	 * @param {Function} [customizer] The function to customize value comparisons.
-	 * @param {*} [thisArg] The `this` binding of `customizer`.
-	 * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
-	 * @example
-	 *
-	 * var object = { 'user': 'fred' };
-	 * var other = { 'user': 'fred' };
-	 *
-	 * object == other;
-	 * // => false
-	 *
-	 * _.isEqual(object, other);
-	 * // => true
-	 *
-	 * // using a customizer callback
-	 * var array = ['hello', 'goodbye'];
-	 * var other = ['hi', 'goodbye'];
-	 *
-	 * _.isEqual(array, other, function(value, other) {
-	 *   if (_.every([value, other], RegExp.prototype.test, /^h(?:i|ello)$/)) {
-	 *     return true;
-	 *   }
-	 * });
-	 * // => true
-	 */
-	function isEqual(value, other, customizer, thisArg) {
-	  customizer = typeof customizer == 'function' ? bindCallback(customizer, thisArg, 3) : undefined;
-	  var result = customizer ? customizer(value, other) : undefined;
-	  return  result === undefined ? baseIsEqual(value, other, customizer) : !!result;
-	}
-
-	module.exports = isEqual;
-
-
-/***/ },
-/* 232 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseIsEqualDeep = __webpack_require__(233),
-	    isObject = __webpack_require__(242),
-	    isObjectLike = __webpack_require__(243);
-
-	/**
-	 * The base implementation of `_.isEqual` without support for `this` binding
-	 * `customizer` functions.
-	 *
-	 * @private
-	 * @param {*} value The value to compare.
-	 * @param {*} other The other value to compare.
-	 * @param {Function} [customizer] The function to customize comparing values.
-	 * @param {boolean} [isLoose] Specify performing partial comparisons.
-	 * @param {Array} [stackA] Tracks traversed `value` objects.
-	 * @param {Array} [stackB] Tracks traversed `other` objects.
-	 * @returns {boolean} Returns `true` if the values are equivalent, else `false`.
-	 */
-	function baseIsEqual(value, other, customizer, isLoose, stackA, stackB) {
-	  if (value === other) {
-	    return true;
-	  }
-	  if (value == null || other == null || (!isObject(value) && !isObjectLike(other))) {
-	    return value !== value && other !== other;
-	  }
-	  return baseIsEqualDeep(value, other, baseIsEqual, customizer, isLoose, stackA, stackB);
-	}
-
-	module.exports = baseIsEqual;
-
-
-/***/ },
-/* 233 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var equalArrays = __webpack_require__(234),
-	    equalByTag = __webpack_require__(236),
-	    equalObjects = __webpack_require__(237),
-	    isArray = __webpack_require__(250),
-	    isTypedArray = __webpack_require__(253);
-
-	/** `Object#toString` result references. */
-	var argsTag = '[object Arguments]',
-	    arrayTag = '[object Array]',
-	    objectTag = '[object Object]';
-
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var objToString = objectProto.toString;
-
-	/**
-	 * A specialized version of `baseIsEqual` for arrays and objects which performs
-	 * deep comparisons and tracks traversed objects enabling objects with circular
-	 * references to be compared.
-	 *
-	 * @private
-	 * @param {Object} object The object to compare.
-	 * @param {Object} other The other object to compare.
-	 * @param {Function} equalFunc The function to determine equivalents of values.
-	 * @param {Function} [customizer] The function to customize comparing objects.
-	 * @param {boolean} [isLoose] Specify performing partial comparisons.
-	 * @param {Array} [stackA=[]] Tracks traversed `value` objects.
-	 * @param {Array} [stackB=[]] Tracks traversed `other` objects.
-	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
-	 */
-	function baseIsEqualDeep(object, other, equalFunc, customizer, isLoose, stackA, stackB) {
-	  var objIsArr = isArray(object),
-	      othIsArr = isArray(other),
-	      objTag = arrayTag,
-	      othTag = arrayTag;
-
-	  if (!objIsArr) {
-	    objTag = objToString.call(object);
-	    if (objTag == argsTag) {
-	      objTag = objectTag;
-	    } else if (objTag != objectTag) {
-	      objIsArr = isTypedArray(object);
-	    }
-	  }
-	  if (!othIsArr) {
-	    othTag = objToString.call(other);
-	    if (othTag == argsTag) {
-	      othTag = objectTag;
-	    } else if (othTag != objectTag) {
-	      othIsArr = isTypedArray(other);
-	    }
-	  }
-	  var objIsObj = objTag == objectTag,
-	      othIsObj = othTag == objectTag,
-	      isSameTag = objTag == othTag;
-
-	  if (isSameTag && !(objIsArr || objIsObj)) {
-	    return equalByTag(object, other, objTag);
-	  }
-	  if (!isLoose) {
-	    var objIsWrapped = objIsObj && hasOwnProperty.call(object, '__wrapped__'),
-	        othIsWrapped = othIsObj && hasOwnProperty.call(other, '__wrapped__');
-
-	    if (objIsWrapped || othIsWrapped) {
-	      return equalFunc(objIsWrapped ? object.value() : object, othIsWrapped ? other.value() : other, customizer, isLoose, stackA, stackB);
-	    }
-	  }
-	  if (!isSameTag) {
-	    return false;
-	  }
-	  // Assume cyclic values are equal.
-	  // For more information on detecting circular references see https://es5.github.io/#JO.
-	  stackA || (stackA = []);
-	  stackB || (stackB = []);
-
-	  var length = stackA.length;
-	  while (length--) {
-	    if (stackA[length] == object) {
-	      return stackB[length] == other;
-	    }
-	  }
-	  // Add `object` and `other` to the stack of traversed objects.
-	  stackA.push(object);
-	  stackB.push(other);
-
-	  var result = (objIsArr ? equalArrays : equalObjects)(object, other, equalFunc, customizer, isLoose, stackA, stackB);
-
-	  stackA.pop();
-	  stackB.pop();
-
-	  return result;
-	}
-
-	module.exports = baseIsEqualDeep;
-
-
-/***/ },
-/* 234 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var arraySome = __webpack_require__(235);
-
-	/**
-	 * A specialized version of `baseIsEqualDeep` for arrays with support for
-	 * partial deep comparisons.
-	 *
-	 * @private
-	 * @param {Array} array The array to compare.
-	 * @param {Array} other The other array to compare.
-	 * @param {Function} equalFunc The function to determine equivalents of values.
-	 * @param {Function} [customizer] The function to customize comparing arrays.
-	 * @param {boolean} [isLoose] Specify performing partial comparisons.
-	 * @param {Array} [stackA] Tracks traversed `value` objects.
-	 * @param {Array} [stackB] Tracks traversed `other` objects.
-	 * @returns {boolean} Returns `true` if the arrays are equivalent, else `false`.
-	 */
-	function equalArrays(array, other, equalFunc, customizer, isLoose, stackA, stackB) {
-	  var index = -1,
-	      arrLength = array.length,
-	      othLength = other.length;
-
-	  if (arrLength != othLength && !(isLoose && othLength > arrLength)) {
-	    return false;
-	  }
-	  // Ignore non-index properties.
-	  while (++index < arrLength) {
-	    var arrValue = array[index],
-	        othValue = other[index],
-	        result = customizer ? customizer(isLoose ? othValue : arrValue, isLoose ? arrValue : othValue, index) : undefined;
-
-	    if (result !== undefined) {
-	      if (result) {
-	        continue;
-	      }
-	      return false;
-	    }
-	    // Recursively compare arrays (susceptible to call stack limits).
-	    if (isLoose) {
-	      if (!arraySome(other, function(othValue) {
-	            return arrValue === othValue || equalFunc(arrValue, othValue, customizer, isLoose, stackA, stackB);
-	          })) {
-	        return false;
-	      }
-	    } else if (!(arrValue === othValue || equalFunc(arrValue, othValue, customizer, isLoose, stackA, stackB))) {
-	      return false;
-	    }
-	  }
-	  return true;
-	}
-
-	module.exports = equalArrays;
-
-
-/***/ },
-/* 235 */
-/***/ function(module, exports) {
-
-	/**
-	 * A specialized version of `_.some` for arrays without support for callback
-	 * shorthands and `this` binding.
-	 *
-	 * @private
-	 * @param {Array} array The array to iterate over.
-	 * @param {Function} predicate The function invoked per iteration.
-	 * @returns {boolean} Returns `true` if any element passes the predicate check,
-	 *  else `false`.
-	 */
-	function arraySome(array, predicate) {
-	  var index = -1,
-	      length = array.length;
-
-	  while (++index < length) {
-	    if (predicate(array[index], index, array)) {
-	      return true;
-	    }
-	  }
-	  return false;
-	}
-
-	module.exports = arraySome;
-
-
-/***/ },
-/* 236 */
-/***/ function(module, exports) {
-
-	/** `Object#toString` result references. */
-	var boolTag = '[object Boolean]',
-	    dateTag = '[object Date]',
-	    errorTag = '[object Error]',
-	    numberTag = '[object Number]',
-	    regexpTag = '[object RegExp]',
-	    stringTag = '[object String]';
-
-	/**
-	 * A specialized version of `baseIsEqualDeep` for comparing objects of
-	 * the same `toStringTag`.
-	 *
-	 * **Note:** This function only supports comparing values with tags of
-	 * `Boolean`, `Date`, `Error`, `Number`, `RegExp`, or `String`.
-	 *
-	 * @private
-	 * @param {Object} object The object to compare.
-	 * @param {Object} other The other object to compare.
-	 * @param {string} tag The `toStringTag` of the objects to compare.
-	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
-	 */
-	function equalByTag(object, other, tag) {
-	  switch (tag) {
-	    case boolTag:
-	    case dateTag:
-	      // Coerce dates and booleans to numbers, dates to milliseconds and booleans
-	      // to `1` or `0` treating invalid dates coerced to `NaN` as not equal.
-	      return +object == +other;
-
-	    case errorTag:
-	      return object.name == other.name && object.message == other.message;
-
-	    case numberTag:
-	      // Treat `NaN` vs. `NaN` as equal.
-	      return (object != +object)
-	        ? other != +other
-	        : object == +other;
-
-	    case regexpTag:
-	    case stringTag:
-	      // Coerce regexes to strings and treat strings primitives and string
-	      // objects as equal. See https://es5.github.io/#x15.10.6.4 for more details.
-	      return object == (other + '');
-	  }
-	  return false;
-	}
-
-	module.exports = equalByTag;
-
-
-/***/ },
-/* 237 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var keys = __webpack_require__(238);
-
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * A specialized version of `baseIsEqualDeep` for objects with support for
-	 * partial deep comparisons.
-	 *
-	 * @private
-	 * @param {Object} object The object to compare.
-	 * @param {Object} other The other object to compare.
-	 * @param {Function} equalFunc The function to determine equivalents of values.
-	 * @param {Function} [customizer] The function to customize comparing values.
-	 * @param {boolean} [isLoose] Specify performing partial comparisons.
-	 * @param {Array} [stackA] Tracks traversed `value` objects.
-	 * @param {Array} [stackB] Tracks traversed `other` objects.
-	 * @returns {boolean} Returns `true` if the objects are equivalent, else `false`.
-	 */
-	function equalObjects(object, other, equalFunc, customizer, isLoose, stackA, stackB) {
-	  var objProps = keys(object),
-	      objLength = objProps.length,
-	      othProps = keys(other),
-	      othLength = othProps.length;
-
-	  if (objLength != othLength && !isLoose) {
-	    return false;
-	  }
-	  var index = objLength;
-	  while (index--) {
-	    var key = objProps[index];
-	    if (!(isLoose ? key in other : hasOwnProperty.call(other, key))) {
-	      return false;
-	    }
-	  }
-	  var skipCtor = isLoose;
-	  while (++index < objLength) {
-	    key = objProps[index];
-	    var objValue = object[key],
-	        othValue = other[key],
-	        result = customizer ? customizer(isLoose ? othValue : objValue, isLoose? objValue : othValue, key) : undefined;
-
-	    // Recursively compare objects (susceptible to call stack limits).
-	    if (!(result === undefined ? equalFunc(objValue, othValue, customizer, isLoose, stackA, stackB) : result)) {
-	      return false;
-	    }
-	    skipCtor || (skipCtor = key == 'constructor');
-	  }
-	  if (!skipCtor) {
-	    var objCtor = object.constructor,
-	        othCtor = other.constructor;
-
-	    // Non `Object` object instances with different constructors are not equal.
-	    if (objCtor != othCtor &&
-	        ('constructor' in object && 'constructor' in other) &&
-	        !(typeof objCtor == 'function' && objCtor instanceof objCtor &&
-	          typeof othCtor == 'function' && othCtor instanceof othCtor)) {
-	      return false;
-	    }
-	  }
-	  return true;
-	}
-
-	module.exports = equalObjects;
-
-
-/***/ },
-/* 238 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getNative = __webpack_require__(239),
-	    isArrayLike = __webpack_require__(244),
-	    isObject = __webpack_require__(242),
-	    shimKeys = __webpack_require__(248);
-
-	/* Native method references for those with the same name as other `lodash` methods. */
-	var nativeKeys = getNative(Object, 'keys');
-
-	/**
-	 * Creates an array of the own enumerable property names of `object`.
-	 *
-	 * **Note:** Non-object values are coerced to objects. See the
-	 * [ES spec](http://ecma-international.org/ecma-262/6.0/#sec-object.keys)
-	 * for more details.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Object
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 *   this.b = 2;
-	 * }
-	 *
-	 * Foo.prototype.c = 3;
-	 *
-	 * _.keys(new Foo);
-	 * // => ['a', 'b'] (iteration order is not guaranteed)
-	 *
-	 * _.keys('hi');
-	 * // => ['0', '1']
-	 */
-	var keys = !nativeKeys ? shimKeys : function(object) {
-	  var Ctor = object == null ? undefined : object.constructor;
-	  if ((typeof Ctor == 'function' && Ctor.prototype === object) ||
-	      (typeof object != 'function' && isArrayLike(object))) {
-	    return shimKeys(object);
-	  }
-	  return isObject(object) ? nativeKeys(object) : [];
-	};
-
-	module.exports = keys;
-
-
-/***/ },
-/* 239 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isNative = __webpack_require__(240);
-
-	/**
-	 * Gets the native function at `key` of `object`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @param {string} key The key of the method to get.
-	 * @returns {*} Returns the function if it's native, else `undefined`.
-	 */
-	function getNative(object, key) {
-	  var value = object == null ? undefined : object[key];
-	  return isNative(value) ? value : undefined;
-	}
-
-	module.exports = getNative;
-
-
-/***/ },
-/* 240 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isFunction = __webpack_require__(241),
-	    isObjectLike = __webpack_require__(243);
-
-	/** Used to detect host constructors (Safari > 5). */
-	var reIsHostCtor = /^\[object .+?Constructor\]$/;
-
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to resolve the decompiled source of functions. */
-	var fnToString = Function.prototype.toString;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/** Used to detect if a method is native. */
-	var reIsNative = RegExp('^' +
-	  fnToString.call(hasOwnProperty).replace(/[\\^$.*+?()[\]{}|]/g, '\\$&')
-	  .replace(/hasOwnProperty|(function).*?(?=\\\()| for .+?(?=\\\])/g, '$1.*?') + '$'
-	);
-
-	/**
-	 * Checks if `value` is a native function.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a native function, else `false`.
-	 * @example
-	 *
-	 * _.isNative(Array.prototype.push);
-	 * // => true
-	 *
-	 * _.isNative(_);
-	 * // => false
-	 */
-	function isNative(value) {
-	  if (value == null) {
-	    return false;
-	  }
-	  if (isFunction(value)) {
-	    return reIsNative.test(fnToString.call(value));
-	  }
-	  return isObjectLike(value) && reIsHostCtor.test(value);
-	}
-
-	module.exports = isNative;
-
-
-/***/ },
-/* 241 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isObject = __webpack_require__(242);
-
-	/** `Object#toString` result references. */
-	var funcTag = '[object Function]';
-
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
-
-	/**
-	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var objToString = objectProto.toString;
-
-	/**
-	 * Checks if `value` is classified as a `Function` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
-	 * @example
-	 *
-	 * _.isFunction(_);
-	 * // => true
-	 *
-	 * _.isFunction(/abc/);
-	 * // => false
-	 */
-	function isFunction(value) {
-	  // The use of `Object#toString` avoids issues with the `typeof` operator
-	  // in older versions of Chrome and Safari which return 'function' for regexes
-	  // and Safari 8 which returns 'object' for typed array constructors.
-	  return isObject(value) && objToString.call(value) == funcTag;
-	}
-
-	module.exports = isFunction;
-
-
-/***/ },
-/* 242 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is the [language type](https://es5.github.io/#x8) of `Object`.
-	 * (e.g. arrays, functions, objects, regexes, `new Number(0)`, and `new String('')`)
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is an object, else `false`.
-	 * @example
-	 *
-	 * _.isObject({});
-	 * // => true
-	 *
-	 * _.isObject([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isObject(1);
-	 * // => false
-	 */
-	function isObject(value) {
-	  // Avoid a V8 JIT bug in Chrome 19-20.
-	  // See https://code.google.com/p/v8/issues/detail?id=2291 for more details.
-	  var type = typeof value;
-	  return !!value && (type == 'object' || type == 'function');
-	}
-
-	module.exports = isObject;
-
-
-/***/ },
-/* 243 */
-/***/ function(module, exports) {
-
-	/**
-	 * Checks if `value` is object-like.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is object-like, else `false`.
-	 */
-	function isObjectLike(value) {
-	  return !!value && typeof value == 'object';
-	}
-
-	module.exports = isObjectLike;
-
-
-/***/ },
-/* 244 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var getLength = __webpack_require__(245),
-	    isLength = __webpack_require__(247);
-
-	/**
-	 * Checks if `value` is array-like.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is array-like, else `false`.
-	 */
-	function isArrayLike(value) {
-	  return value != null && isLength(getLength(value));
-	}
-
-	module.exports = isArrayLike;
-
-
-/***/ },
-/* 245 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseProperty = __webpack_require__(246);
-
-	/**
-	 * Gets the "length" property value of `object`.
-	 *
-	 * **Note:** This function is used to avoid a [JIT bug](https://bugs.webkit.org/show_bug.cgi?id=142792)
-	 * that affects Safari on at least iOS 8.1-8.3 ARM64.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @returns {*} Returns the "length" value.
-	 */
-	var getLength = baseProperty('length');
-
-	module.exports = getLength;
-
-
-/***/ },
-/* 246 */
-/***/ function(module, exports) {
-
-	/**
-	 * The base implementation of `_.property` without support for deep paths.
-	 *
-	 * @private
-	 * @param {string} key The key of the property to get.
-	 * @returns {Function} Returns the new function.
-	 */
-	function baseProperty(key) {
-	  return function(object) {
-	    return object == null ? undefined : object[key];
-	  };
-	}
-
-	module.exports = baseProperty;
-
-
-/***/ },
-/* 247 */
-/***/ function(module, exports) {
-
-	/**
-	 * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
-	 * of an array-like value.
-	 */
-	var MAX_SAFE_INTEGER = 9007199254740991;
-
-	/**
-	 * Checks if `value` is a valid array-like length.
-	 *
-	 * **Note:** This function is based on [`ToLength`](http://ecma-international.org/ecma-262/6.0/#sec-tolength).
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is a valid length, else `false`.
-	 */
-	function isLength(value) {
-	  return typeof value == 'number' && value > -1 && value % 1 == 0 && value <= MAX_SAFE_INTEGER;
-	}
-
-	module.exports = isLength;
-
-
-/***/ },
-/* 248 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isArguments = __webpack_require__(249),
-	    isArray = __webpack_require__(250),
-	    isIndex = __webpack_require__(251),
-	    isLength = __webpack_require__(247),
-	    keysIn = __webpack_require__(252);
-
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * A fallback implementation of `Object.keys` which creates an array of the
-	 * own enumerable property names of `object`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 */
-	function shimKeys(object) {
-	  var props = keysIn(object),
-	      propsLength = props.length,
-	      length = propsLength && object.length;
-
-	  var allowIndexes = !!length && isLength(length) &&
-	    (isArray(object) || isArguments(object));
-
-	  var index = -1,
-	      result = [];
-
-	  while (++index < propsLength) {
-	    var key = props[index];
-	    if ((allowIndexes && isIndex(key, length)) || hasOwnProperty.call(object, key)) {
-	      result.push(key);
-	    }
-	  }
-	  return result;
-	}
-
-	module.exports = shimKeys;
-
-
-/***/ },
-/* 249 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isArrayLike = __webpack_require__(244),
-	    isObjectLike = __webpack_require__(243);
-
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/** Native method references. */
-	var propertyIsEnumerable = objectProto.propertyIsEnumerable;
-
-	/**
-	 * Checks if `value` is classified as an `arguments` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
-	 * @example
-	 *
-	 * _.isArguments(function() { return arguments; }());
-	 * // => true
-	 *
-	 * _.isArguments([1, 2, 3]);
-	 * // => false
-	 */
-	function isArguments(value) {
-	  return isObjectLike(value) && isArrayLike(value) &&
-	    hasOwnProperty.call(value, 'callee') && !propertyIsEnumerable.call(value, 'callee');
-	}
-
-	module.exports = isArguments;
-
 
 /***/ },
 /* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var getNative = __webpack_require__(239),
-	    isLength = __webpack_require__(247),
-	    isObjectLike = __webpack_require__(243);
+	'use strict';
 
-	/** `Object#toString` result references. */
-	var arrayTag = '[object Array]';
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
 
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-	/**
-	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var objToString = objectProto.toString;
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-	/* Native method references for those with the same name as other `lodash` methods. */
-	var nativeIsArray = getNative(Array, 'isArray');
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	/**
-	 * Checks if `value` is classified as an `Array` object.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
-	 * @example
-	 *
-	 * _.isArray([1, 2, 3]);
-	 * // => true
-	 *
-	 * _.isArray(function() { return arguments; }());
-	 * // => false
-	 */
-	var isArray = nativeIsArray || function(value) {
-	  return isObjectLike(value) && isLength(value.length) && objToString.call(value) == arrayTag;
-	};
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	module.exports = isArray;
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var Card = (function (_React$Component) {
+	  _inherits(Card, _React$Component);
+
+	  function Card() {
+	    _classCallCheck(this, Card);
+
+	    _get(Object.getPrototypeOf(Card.prototype), 'constructor', this).apply(this, arguments);
+	  }
+
+	  _createClass(Card, [{
+	    key: 'componentDidUpdate',
+	    value: function componentDidUpdate() {
+	      _react2['default'].findDOMNode(this.refs.img).className = '';
+	    }
+	  }, {
+	    key: 'render',
+	    value: function render() {
+	      return _react2['default'].createElement(
+	        'div',
+	        { className: 'card' },
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'card-image' },
+	          _react2['default'].createElement('img', { ref: 'img', src: this.props.image, alt: this.props.title, onError: this._handleImgError })
+	        ),
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'card-header' },
+	          this.props.title,
+	          ' ',
+	          this._linkedin()
+	        ),
+	        _react2['default'].createElement(
+	          'div',
+	          { className: 'card-copy' },
+	          _react2['default'].createElement(
+	            'p',
+	            null,
+	            this._formattedBody()
+	          )
+	        )
+	      );
+	    }
+	  }, {
+	    key: '_formattedBody',
+	    value: function _formattedBody() {
+	      if (this.props.body && this.props.body.length == 2) {
+	        var first = this.props.body[0].replace('&amp;', '&'),
+	            second = this.props.body[0].replace(/ (at|@) <B>Influtitive<B>/).replace('&amp;', '&');
+	        if (first == second) {
+	          return first;
+	        } else {
+	          return [first, second];
+	        }
+	      }
+
+	      return this.props.body;
+	    }
+	  }, {
+	    key: '_handleImgError',
+	    value: function _handleImgError(e) {
+	      e.target.src = '';
+	      e.target.className = 'error';
+	    }
+	  }, {
+	    key: '_linkedin',
+	    value: function _linkedin() {
+	      if (this.props.url) {
+	        return _react2['default'].createElement(
+	          'span',
+	          { className: 'badges', style: { float: 'right' } },
+	          _react2['default'].createElement(
+	            'a',
+	            { href: this.props.url, className: 'badge notice' },
+	            'in'
+	          )
+	        );
+	      }
+	    }
+	  }], [{
+	    key: 'defaultProps',
+	    value: { image: null,
+	      title: null,
+	      body: null,
+	      url: null
+	    },
+	    enumerable: true
+	  }]);
+
+	  return Card;
+	})(_react2['default'].Component);
+
+	exports['default'] = Card;
+	module.exports = exports['default'];
 
 /***/ },
 /* 251 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
-	/** Used to detect unsigned integer values. */
-	var reIsUint = /^\d+$/;
+	"use strict";
 
-	/**
-	 * Used as the [maximum length](http://ecma-international.org/ecma-262/6.0/#sec-number.max_safe_integer)
-	 * of an array-like value.
-	 */
-	var MAX_SAFE_INTEGER = 9007199254740991;
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-	/**
-	 * Checks if `value` is a valid array-like index.
-	 *
-	 * @private
-	 * @param {*} value The value to check.
-	 * @param {number} [length=MAX_SAFE_INTEGER] The upper bounds of a valid index.
-	 * @returns {boolean} Returns `true` if `value` is a valid index, else `false`.
-	 */
-	function isIndex(value, length) {
-	  value = (typeof value == 'number' || reIsUint.test(value)) ? +value : -1;
-	  length = length == null ? MAX_SAFE_INTEGER : length;
-	  return value > -1 && value % 1 == 0 && value < length;
-	}
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; desc = parent = getter = undefined; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; continue _function; } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
 
-	module.exports = isIndex;
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var ButtonGroup = (function (_React$Component) {
+	  _inherits(ButtonGroup, _React$Component);
+
+	  function ButtonGroup() {
+	    _classCallCheck(this, ButtonGroup);
+
+	    _get(Object.getPrototypeOf(ButtonGroup.prototype), "constructor", this).apply(this, arguments);
+	  }
+
+	  _createClass(ButtonGroup, [{
+	    key: "render",
+	    value: function render() {
+	      return _react2["default"].createElement(
+	        "div",
+	        { className: "button-group" },
+	        this.props.children
+	      );
+	    }
+	  }]);
+
+	  return ButtonGroup;
+	})(_react2["default"].Component);
+
+	var ButtonGroupItem = (function (_React$Component2) {
+	  _inherits(ButtonGroupItem, _React$Component2);
+
+	  function ButtonGroupItem() {
+	    _classCallCheck(this, ButtonGroupItem);
+
+	    _get(Object.getPrototypeOf(ButtonGroupItem.prototype), "constructor", this).apply(this, arguments);
+	  }
+
+	  _createClass(ButtonGroupItem, [{
+	    key: "render",
+	    value: function render() {
+	      return _react2["default"].createElement(
+	        "label",
+	        null,
+	        _react2["default"].createElement("input", { type: "radio", name: "button-group", value: this.props.children, checked: this.props.checked, onChange: this.props.onClick }),
+	        _react2["default"].createElement(
+	          "span",
+	          { className: "button-group-item" },
+	          this.props.children
+	        )
+	      );
+	    }
+	  }], [{
+	    key: "defaultProps",
+	    value: { checked: false, onClick: function onClick() {} },
+	    enumerable: true
+	  }]);
+
+	  return ButtonGroupItem;
+	})(_react2["default"].Component);
+
+	module.exports = { ButtonGroup: ButtonGroup, ButtonGroupItem: ButtonGroupItem };
 
 /***/ },
 /* 252 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isArguments = __webpack_require__(249),
-	    isArray = __webpack_require__(250),
-	    isIndex = __webpack_require__(251),
-	    isLength = __webpack_require__(247),
-	    isObject = __webpack_require__(242);
-
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
-
-	/** Used to check objects for own properties. */
-	var hasOwnProperty = objectProto.hasOwnProperty;
-
-	/**
-	 * Creates an array of the own and inherited enumerable property names of `object`.
-	 *
-	 * **Note:** Non-object values are coerced to objects.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Object
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property names.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 *   this.b = 2;
-	 * }
-	 *
-	 * Foo.prototype.c = 3;
-	 *
-	 * _.keysIn(new Foo);
-	 * // => ['a', 'b', 'c'] (iteration order is not guaranteed)
-	 */
-	function keysIn(object) {
-	  if (object == null) {
-	    return [];
-	  }
-	  if (!isObject(object)) {
-	    object = Object(object);
-	  }
-	  var length = object.length;
-	  length = (length && isLength(length) &&
-	    (isArray(object) || isArguments(object)) && length) || 0;
-
-	  var Ctor = object.constructor,
-	      index = -1,
-	      isProto = typeof Ctor == 'function' && Ctor.prototype === object,
-	      result = Array(length),
-	      skipIndexes = length > 0;
-
-	  while (++index < length) {
-	    result[index] = (index + '');
-	  }
-	  for (var key in object) {
-	    if (!(skipIndexes && isIndex(key, length)) &&
-	        !(key == 'constructor' && (isProto || !hasOwnProperty.call(object, key)))) {
-	      result.push(key);
-	    }
-	  }
-	  return result;
-	}
-
-	module.exports = keysIn;
-
-
-/***/ },
-/* 253 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isLength = __webpack_require__(247),
-	    isObjectLike = __webpack_require__(243);
-
-	/** `Object#toString` result references. */
-	var argsTag = '[object Arguments]',
-	    arrayTag = '[object Array]',
-	    boolTag = '[object Boolean]',
-	    dateTag = '[object Date]',
-	    errorTag = '[object Error]',
-	    funcTag = '[object Function]',
-	    mapTag = '[object Map]',
-	    numberTag = '[object Number]',
-	    objectTag = '[object Object]',
-	    regexpTag = '[object RegExp]',
-	    setTag = '[object Set]',
-	    stringTag = '[object String]',
-	    weakMapTag = '[object WeakMap]';
-
-	var arrayBufferTag = '[object ArrayBuffer]',
-	    float32Tag = '[object Float32Array]',
-	    float64Tag = '[object Float64Array]',
-	    int8Tag = '[object Int8Array]',
-	    int16Tag = '[object Int16Array]',
-	    int32Tag = '[object Int32Array]',
-	    uint8Tag = '[object Uint8Array]',
-	    uint8ClampedTag = '[object Uint8ClampedArray]',
-	    uint16Tag = '[object Uint16Array]',
-	    uint32Tag = '[object Uint32Array]';
-
-	/** Used to identify `toStringTag` values of typed arrays. */
-	var typedArrayTags = {};
-	typedArrayTags[float32Tag] = typedArrayTags[float64Tag] =
-	typedArrayTags[int8Tag] = typedArrayTags[int16Tag] =
-	typedArrayTags[int32Tag] = typedArrayTags[uint8Tag] =
-	typedArrayTags[uint8ClampedTag] = typedArrayTags[uint16Tag] =
-	typedArrayTags[uint32Tag] = true;
-	typedArrayTags[argsTag] = typedArrayTags[arrayTag] =
-	typedArrayTags[arrayBufferTag] = typedArrayTags[boolTag] =
-	typedArrayTags[dateTag] = typedArrayTags[errorTag] =
-	typedArrayTags[funcTag] = typedArrayTags[mapTag] =
-	typedArrayTags[numberTag] = typedArrayTags[objectTag] =
-	typedArrayTags[regexpTag] = typedArrayTags[setTag] =
-	typedArrayTags[stringTag] = typedArrayTags[weakMapTag] = false;
-
-	/** Used for native method references. */
-	var objectProto = Object.prototype;
-
-	/**
-	 * Used to resolve the [`toStringTag`](http://ecma-international.org/ecma-262/6.0/#sec-object.prototype.tostring)
-	 * of values.
-	 */
-	var objToString = objectProto.toString;
-
-	/**
-	 * Checks if `value` is classified as a typed array.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to check.
-	 * @returns {boolean} Returns `true` if `value` is correctly classified, else `false`.
-	 * @example
-	 *
-	 * _.isTypedArray(new Uint8Array);
-	 * // => true
-	 *
-	 * _.isTypedArray([]);
-	 * // => false
-	 */
-	function isTypedArray(value) {
-	  return isObjectLike(value) && isLength(value.length) && !!typedArrayTags[objToString.call(value)];
-	}
-
-	module.exports = isTypedArray;
-
-
-/***/ },
-/* 254 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var identity = __webpack_require__(255);
-
-	/**
-	 * A specialized version of `baseCallback` which only supports `this` binding
-	 * and specifying the number of arguments to provide to `func`.
-	 *
-	 * @private
-	 * @param {Function} func The function to bind.
-	 * @param {*} thisArg The `this` binding of `func`.
-	 * @param {number} [argCount] The number of arguments to provide to `func`.
-	 * @returns {Function} Returns the callback.
-	 */
-	function bindCallback(func, thisArg, argCount) {
-	  if (typeof func != 'function') {
-	    return identity;
-	  }
-	  if (thisArg === undefined) {
-	    return func;
-	  }
-	  switch (argCount) {
-	    case 1: return function(value) {
-	      return func.call(thisArg, value);
-	    };
-	    case 3: return function(value, index, collection) {
-	      return func.call(thisArg, value, index, collection);
-	    };
-	    case 4: return function(accumulator, value, index, collection) {
-	      return func.call(thisArg, accumulator, value, index, collection);
-	    };
-	    case 5: return function(value, other, key, object, source) {
-	      return func.call(thisArg, value, other, key, object, source);
-	    };
-	  }
-	  return function() {
-	    return func.apply(thisArg, arguments);
-	  };
-	}
-
-	module.exports = bindCallback;
-
-
-/***/ },
-/* 255 */
-/***/ function(module, exports) {
-
-	/**
-	 * This method returns the first argument provided to it.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Utility
-	 * @param {*} value Any value.
-	 * @returns {*} Returns `value`.
-	 * @example
-	 *
-	 * var object = { 'user': 'fred' };
-	 *
-	 * _.identity(object) === object;
-	 * // => true
-	 */
-	function identity(value) {
-	  return value;
-	}
-
-	module.exports = identity;
-
-
-/***/ },
-/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -29681,767 +28845,1415 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	__webpack_require__(257);
+	var _textileJs = __webpack_require__(253);
 
-	var ScoreKeeper = (function (_React$Component) {
-	  _inherits(ScoreKeeper, _React$Component);
+	var _textileJs2 = _interopRequireDefault(_textileJs);
 
-	  function ScoreKeeper() {
-	    _classCallCheck(this, ScoreKeeper);
+	var Colophon = (function (_React$Component) {
+	  _inherits(Colophon, _React$Component);
 
-	    _get(Object.getPrototypeOf(ScoreKeeper.prototype), 'constructor', this).apply(this, arguments);
+	  function Colophon() {
+	    _classCallCheck(this, Colophon);
+
+	    _get(Object.getPrototypeOf(Colophon.prototype), 'constructor', this).apply(this, arguments);
 	  }
 
-	  _createClass(ScoreKeeper, [{
+	  _createClass(Colophon, [{
 	    key: 'render',
 	    value: function render() {
-	      return _react2['default'].createElement(
-	        'div',
-	        { className: 'stats' },
-	        _react2['default'].createElement(
-	          'ul',
-	          null,
-	          _react2['default'].createElement('li', { dangerouslySetInnerHTML: { __html: this.props.right + '<span>Right</span>' } }),
-	          _react2['default'].createElement('li', { dangerouslySetInnerHTML: { __html: this.props.wrong + '<span>Wrong</span>' } })
-	        )
-	      );
+	      var content = (0, _textileJs2['default'])(__webpack_require__(255));
+	      return _react2['default'].createElement('article', { className: 'type-system-slab', dangerouslySetInnerHTML: { __html: content } });
 	    }
 	  }]);
 
-	  return ScoreKeeper;
+	  return Colophon;
 	})(_react2['default'].Component);
 
-	exports['default'] = ScoreKeeper;
+	exports['default'] = Colophon;
 	module.exports = exports['default'];
 
 /***/ },
-/* 257 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
-	// style-loader: Adds some css to the DOM by adding a <style> tag
-
-	// load the styles
-	var content = __webpack_require__(258);
-	if(typeof content === 'string') content = [[module.id, content, '']];
-	// add the styles to the DOM
-	var update = __webpack_require__(260)(content, {});
-	if(content.locals) module.exports = content.locals;
-	// Hot Module Replacement
-	if(false) {
-		// When the styles change, update the <style> tags
-		if(!content.locals) {
-			module.hot.accept("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js?includePaths[]=/Users/gabriel/Documents/Projects/Influitive/acquainted/node_modules/node-bourbon/node_modules/bourbon/app/assets/stylesheets&includePaths[]=/Users/gabriel/Documents/Projects/Influitive/acquainted/node_modules/node-neat/node_modules/bourbon-neat/app/assets/stylesheets&includePaths[]=/Users/gabriel/Documents/Projects/Influitive/acquainted/node_modules/node-refills/assets/stylesheets&!./refills_stats.scss", function() {
-				var newContent = require("!!./../../node_modules/css-loader/index.js!./../../node_modules/sass-loader/index.js?includePaths[]=/Users/gabriel/Documents/Projects/Influitive/acquainted/node_modules/node-bourbon/node_modules/bourbon/app/assets/stylesheets&includePaths[]=/Users/gabriel/Documents/Projects/Influitive/acquainted/node_modules/node-neat/node_modules/bourbon-neat/app/assets/stylesheets&includePaths[]=/Users/gabriel/Documents/Projects/Influitive/acquainted/node_modules/node-refills/assets/stylesheets&!./refills_stats.scss");
-				if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
-				update(newContent);
-			});
-		}
-		// When the module is disposed, remove the <style> tags
-		module.hot.dispose(function() { update(); });
-	}
-
-/***/ },
-/* 258 */
-/***/ function(module, exports, __webpack_require__) {
-
-	exports = module.exports = __webpack_require__(259)();
-	// imports
-
-
-	// module
-	exports.push([module.id, ".stats {\n  padding: 0.75em; }\n  .stats ul {\n    padding: 0; }\n  .stats li {\n    border-right: 1px solid rgba(51, 51, 51, 0.2);\n    color: #6f99d5;\n    display: inline;\n    float: left;\n    font-size: 1.2em;\n    line-height: 1.1em;\n    padding: 0 0.7em; }\n    .stats li:first-child {\n      padding-left: 0; }\n    .stats li:last-child {\n      border-right: 0; }\n  .stats span {\n    color: #333;\n    display: block;\n    font-size: 0.7em;\n    font-weight: normal; }\n", ""]);
-
-	// exports
+	module.exports = __webpack_require__(254);
 
 
 /***/ },
-/* 259 */
+/* 254 */
 /***/ function(module, exports) {
 
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
+	/* WEBPACK VAR INJECTION */(function(global) {/***
+	 * Textile parser for JavaScript
+	 *
+	 * Copyright (c) 2012 Borgar Þorsteinsson (MIT License).
+	 *
+	 */
+	/*jshint
+	  laxcomma:true
+	  laxbreak:true
+	  eqnull:true
+	  loopfunc:true
+	  sub:true
 	*/
-	// css base code, injected by the css-loader
-	module.exports = function() {
-		var list = [];
-
-		// return the list of modules as css string
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
-			}
-			return result.join("");
-		};
-
-		// import a list of modules into the list
-		list.i = function(modules, mediaQuery) {
-			if(typeof modules === "string")
-				modules = [[null, modules, ""]];
-			var alreadyImportedModules = {};
-			for(var i = 0; i < this.length; i++) {
-				var id = this[i][0];
-				if(typeof id === "number")
-					alreadyImportedModules[id] = true;
-			}
-			for(i = 0; i < modules.length; i++) {
-				var item = modules[i];
-				// skip already imported module
-				// this implementation is not 100% perfect for weird media query combinations
-				//  when a module is imported multiple times with different media queries.
-				//  I hope this will never occur (Hey this way we have smaller bundles)
-				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-					if(mediaQuery && !item[2]) {
-						item[2] = mediaQuery;
-					} else if(mediaQuery) {
-						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-					}
-					list.push(item);
-				}
-			}
-		};
-		return list;
-	};
-
-
-/***/ },
-/* 260 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	var stylesInDom = {},
-		memoize = function(fn) {
-			var memo;
-			return function () {
-				if (typeof memo === "undefined") memo = fn.apply(this, arguments);
-				return memo;
-			};
-		},
-		isOldIE = memoize(function() {
-			return /msie [6-9]\b/.test(window.navigator.userAgent.toLowerCase());
-		}),
-		getHeadElement = memoize(function () {
-			return document.head || document.getElementsByTagName("head")[0];
-		}),
-		singletonElement = null,
-		singletonCounter = 0;
-
-	module.exports = function(list, options) {
-		if(false) {
-			if(typeof document !== "object") throw new Error("The style-loader cannot be used in a non-browser environment");
-		}
-
-		options = options || {};
-		// Force single-tag solution on IE6-9, which has a hard limit on the # of <style>
-		// tags it will allow on a page
-		if (typeof options.singleton === "undefined") options.singleton = isOldIE();
-
-		var styles = listToStyles(list);
-		addStylesToDom(styles, options);
-
-		return function update(newList) {
-			var mayRemove = [];
-			for(var i = 0; i < styles.length; i++) {
-				var item = styles[i];
-				var domStyle = stylesInDom[item.id];
-				domStyle.refs--;
-				mayRemove.push(domStyle);
-			}
-			if(newList) {
-				var newStyles = listToStyles(newList);
-				addStylesToDom(newStyles, options);
-			}
-			for(var i = 0; i < mayRemove.length; i++) {
-				var domStyle = mayRemove[i];
-				if(domStyle.refs === 0) {
-					for(var j = 0; j < domStyle.parts.length; j++)
-						domStyle.parts[j]();
-					delete stylesInDom[domStyle.id];
-				}
-			}
-		};
-	}
-
-	function addStylesToDom(styles, options) {
-		for(var i = 0; i < styles.length; i++) {
-			var item = styles[i];
-			var domStyle = stylesInDom[item.id];
-			if(domStyle) {
-				domStyle.refs++;
-				for(var j = 0; j < domStyle.parts.length; j++) {
-					domStyle.parts[j](item.parts[j]);
-				}
-				for(; j < item.parts.length; j++) {
-					domStyle.parts.push(addStyle(item.parts[j], options));
-				}
-			} else {
-				var parts = [];
-				for(var j = 0; j < item.parts.length; j++) {
-					parts.push(addStyle(item.parts[j], options));
-				}
-				stylesInDom[item.id] = {id: item.id, refs: 1, parts: parts};
-			}
-		}
-	}
-
-	function listToStyles(list) {
-		var styles = [];
-		var newStyles = {};
-		for(var i = 0; i < list.length; i++) {
-			var item = list[i];
-			var id = item[0];
-			var css = item[1];
-			var media = item[2];
-			var sourceMap = item[3];
-			var part = {css: css, media: media, sourceMap: sourceMap};
-			if(!newStyles[id])
-				styles.push(newStyles[id] = {id: id, parts: [part]});
-			else
-				newStyles[id].parts.push(part);
-		}
-		return styles;
-	}
-
-	function createStyleElement() {
-		var styleElement = document.createElement("style");
-		var head = getHeadElement();
-		styleElement.type = "text/css";
-		head.appendChild(styleElement);
-		return styleElement;
-	}
-
-	function createLinkElement() {
-		var linkElement = document.createElement("link");
-		var head = getHeadElement();
-		linkElement.rel = "stylesheet";
-		head.appendChild(linkElement);
-		return linkElement;
-	}
-
-	function addStyle(obj, options) {
-		var styleElement, update, remove;
-
-		if (options.singleton) {
-			var styleIndex = singletonCounter++;
-			styleElement = singletonElement || (singletonElement = createStyleElement());
-			update = applyToSingletonTag.bind(null, styleElement, styleIndex, false);
-			remove = applyToSingletonTag.bind(null, styleElement, styleIndex, true);
-		} else if(obj.sourceMap &&
-			typeof URL === "function" &&
-			typeof URL.createObjectURL === "function" &&
-			typeof URL.revokeObjectURL === "function" &&
-			typeof Blob === "function" &&
-			typeof btoa === "function") {
-			styleElement = createLinkElement();
-			update = updateLink.bind(null, styleElement);
-			remove = function() {
-				styleElement.parentNode.removeChild(styleElement);
-				if(styleElement.href)
-					URL.revokeObjectURL(styleElement.href);
-			};
-		} else {
-			styleElement = createStyleElement();
-			update = applyToTag.bind(null, styleElement);
-			remove = function() {
-				styleElement.parentNode.removeChild(styleElement);
-			};
-		}
-
-		update(obj);
-
-		return function updateStyle(newObj) {
-			if(newObj) {
-				if(newObj.css === obj.css && newObj.media === obj.media && newObj.sourceMap === obj.sourceMap)
-					return;
-				update(obj = newObj);
-			} else {
-				remove();
-			}
-		};
-	}
-
-	var replaceText = (function () {
-		var textStore = [];
-
-		return function (index, replacement) {
-			textStore[index] = replacement;
-			return textStore.filter(Boolean).join('\n');
-		};
-	})();
-
-	function applyToSingletonTag(styleElement, index, remove, obj) {
-		var css = remove ? "" : obj.css;
-
-		if (styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = replaceText(index, css);
-		} else {
-			var cssNode = document.createTextNode(css);
-			var childNodes = styleElement.childNodes;
-			if (childNodes[index]) styleElement.removeChild(childNodes[index]);
-			if (childNodes.length) {
-				styleElement.insertBefore(cssNode, childNodes[index]);
-			} else {
-				styleElement.appendChild(cssNode);
-			}
-		}
-	}
-
-	function applyToTag(styleElement, obj) {
-		var css = obj.css;
-		var media = obj.media;
-		var sourceMap = obj.sourceMap;
-
-		if(media) {
-			styleElement.setAttribute("media", media)
-		}
-
-		if(styleElement.styleSheet) {
-			styleElement.styleSheet.cssText = css;
-		} else {
-			while(styleElement.firstChild) {
-				styleElement.removeChild(styleElement.firstChild);
-			}
-			styleElement.appendChild(document.createTextNode(css));
-		}
-	}
-
-	function updateLink(linkElement, obj) {
-		var css = obj.css;
-		var media = obj.media;
-		var sourceMap = obj.sourceMap;
-
-		if(sourceMap) {
-			// http://stackoverflow.com/a/26603875
-			css += "\n/*# sourceMappingURL=data:application/json;base64," + btoa(unescape(encodeURIComponent(JSON.stringify(sourceMap)))) + " */";
-		}
-
-		var blob = new Blob([css], { type: "text/css" });
-
-		var oldSrc = linkElement.href;
-
-		linkElement.href = URL.createObjectURL(blob);
-
-		if(oldSrc)
-			URL.revokeObjectURL(oldSrc);
-	}
-
-
-/***/ },
-/* 261 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseRandom = __webpack_require__(262),
-	    isIterateeCall = __webpack_require__(263),
-	    toArray = __webpack_require__(264),
-	    toIterable = __webpack_require__(268);
-
-	/* Native method references for those with the same name as other `lodash` methods. */
-	var nativeMin = Math.min;
-
-	/**
-	 * Gets a random element or `n` random elements from a collection.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Collection
-	 * @param {Array|Object|string} collection The collection to sample.
-	 * @param {number} [n] The number of elements to sample.
-	 * @param- {Object} [guard] Enables use as a callback for functions like `_.map`.
-	 * @returns {*} Returns the random sample(s).
-	 * @example
-	 *
-	 * _.sample([1, 2, 3, 4]);
-	 * // => 2
-	 *
-	 * _.sample([1, 2, 3, 4], 2);
-	 * // => [3, 1]
-	 */
-	function sample(collection, n, guard) {
-	  if (guard ? isIterateeCall(collection, n, guard) : n == null) {
-	    collection = toIterable(collection);
-	    var length = collection.length;
-	    return length > 0 ? collection[baseRandom(0, length - 1)] : undefined;
-	  }
-	  var index = -1,
-	      result = toArray(collection),
-	      length = result.length,
-	      lastIndex = length - 1;
-
-	  n = nativeMin(n < 0 ? 0 : (+n || 0), length);
-	  while (++index < n) {
-	    var rand = baseRandom(index, lastIndex),
-	        value = result[rand];
-
-	    result[rand] = result[index];
-	    result[index] = value;
-	  }
-	  result.length = n;
-	  return result;
-	}
-
-	module.exports = sample;
-
-
-/***/ },
-/* 262 */
-/***/ function(module, exports) {
-
-	/* Native method references for those with the same name as other `lodash` methods. */
-	var nativeFloor = Math.floor,
-	    nativeRandom = Math.random;
-
-	/**
-	 * The base implementation of `_.random` without support for argument juggling
-	 * and returning floating-point numbers.
-	 *
-	 * @private
-	 * @param {number} min The minimum possible value.
-	 * @param {number} max The maximum possible value.
-	 * @returns {number} Returns the random number.
-	 */
-	function baseRandom(min, max) {
-	  return min + nativeFloor(nativeRandom() * (max - min + 1));
-	}
-
-	module.exports = baseRandom;
-
-
-/***/ },
-/* 263 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isArrayLike = __webpack_require__(244),
-	    isIndex = __webpack_require__(251),
-	    isObject = __webpack_require__(242);
-
-	/**
-	 * Checks if the provided arguments are from an iteratee call.
-	 *
-	 * @private
-	 * @param {*} value The potential iteratee value argument.
-	 * @param {*} index The potential iteratee index or key argument.
-	 * @param {*} object The potential iteratee object argument.
-	 * @returns {boolean} Returns `true` if the arguments are from an iteratee call, else `false`.
-	 */
-	function isIterateeCall(value, index, object) {
-	  if (!isObject(object)) {
-	    return false;
-	  }
-	  var type = typeof index;
-	  if (type == 'number'
-	      ? (isArrayLike(object) && isIndex(index, object.length))
-	      : (type == 'string' && index in object)) {
-	    var other = object[index];
-	    return value === value ? (value === other) : (other !== other);
-	  }
-	  return false;
-	}
-
-	module.exports = isIterateeCall;
-
-
-/***/ },
-/* 264 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var arrayCopy = __webpack_require__(265),
-	    getLength = __webpack_require__(245),
-	    isLength = __webpack_require__(247),
-	    values = __webpack_require__(266);
-
-	/**
-	 * Converts `value` to an array.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Lang
-	 * @param {*} value The value to convert.
-	 * @returns {Array} Returns the converted array.
-	 * @example
-	 *
-	 * (function() {
-	 *   return _.toArray(arguments).slice(1);
-	 * }(1, 2, 3));
-	 * // => [2, 3]
-	 */
-	function toArray(value) {
-	  var length = value ? getLength(value) : 0;
-	  if (!isLength(length)) {
-	    return values(value);
-	  }
-	  if (!length) {
-	    return [];
-	  }
-	  return arrayCopy(value);
-	}
-
-	module.exports = toArray;
-
-
-/***/ },
-/* 265 */
-/***/ function(module, exports) {
-
-	/**
-	 * Copies the values of `source` to `array`.
-	 *
-	 * @private
-	 * @param {Array} source The array to copy values from.
-	 * @param {Array} [array=[]] The array to copy values to.
-	 * @returns {Array} Returns `array`.
-	 */
-	function arrayCopy(source, array) {
-	  var index = -1,
-	      length = source.length;
-
-	  array || (array = Array(length));
-	  while (++index < length) {
-	    array[index] = source[index];
-	  }
-	  return array;
-	}
-
-	module.exports = arrayCopy;
-
-
-/***/ },
-/* 266 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseValues = __webpack_require__(267),
-	    keys = __webpack_require__(238);
-
-	/**
-	 * Creates an array of the own enumerable property values of `object`.
-	 *
-	 * **Note:** Non-object values are coerced to objects.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Object
-	 * @param {Object} object The object to query.
-	 * @returns {Array} Returns the array of property values.
-	 * @example
-	 *
-	 * function Foo() {
-	 *   this.a = 1;
-	 *   this.b = 2;
-	 * }
-	 *
-	 * Foo.prototype.c = 3;
-	 *
-	 * _.values(new Foo);
-	 * // => [1, 2] (iteration order is not guaranteed)
-	 *
-	 * _.values('hi');
-	 * // => ['h', 'i']
-	 */
-	function values(object) {
-	  return baseValues(object, keys(object));
-	}
-
-	module.exports = values;
-
-
-/***/ },
-/* 267 */
-/***/ function(module, exports) {
-
-	/**
-	 * The base implementation of `_.values` and `_.valuesIn` which creates an
-	 * array of `object` property values corresponding to the property names
-	 * of `props`.
-	 *
-	 * @private
-	 * @param {Object} object The object to query.
-	 * @param {Array} props The property names to get values for.
-	 * @returns {Object} Returns the array of property values.
-	 */
-	function baseValues(object, props) {
-	  var index = -1,
-	      length = props.length,
-	      result = Array(length);
-
-	  while (++index < length) {
-	    result[index] = object[props[index]];
-	  }
-	  return result;
-	}
-
-	module.exports = baseValues;
-
-
-/***/ },
-/* 268 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var isArrayLike = __webpack_require__(244),
-	    isObject = __webpack_require__(242),
-	    values = __webpack_require__(266);
-
-	/**
-	 * Converts `value` to an array-like object if it's not one.
-	 *
-	 * @private
-	 * @param {*} value The value to process.
-	 * @returns {Array|Object} Returns the array-like object.
-	 */
-	function toIterable(value) {
-	  if (value == null) {
-	    return [];
-	  }
-	  if (!isArrayLike(value)) {
-	    return values(value);
-	  }
-	  return isObject(value) ? value : Object(value);
-	}
-
-	module.exports = toIterable;
-
-
-/***/ },
-/* 269 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var baseDelay = __webpack_require__(270),
-	    restParam = __webpack_require__(271);
-
-	/**
-	 * Invokes `func` after `wait` milliseconds. Any additional arguments are
-	 * provided to `func` when it's invoked.
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Function
-	 * @param {Function} func The function to delay.
-	 * @param {number} wait The number of milliseconds to delay invocation.
-	 * @param {...*} [args] The arguments to invoke the function with.
-	 * @returns {number} Returns the timer id.
-	 * @example
-	 *
-	 * _.delay(function(text) {
-	 *   console.log(text);
-	 * }, 1000, 'later');
-	 * // => logs 'later' after one second
-	 */
-	var delay = restParam(function(func, wait, args) {
-	  return baseDelay(func, wait, args);
-	});
-
-	module.exports = delay;
-
-
-/***/ },
-/* 270 */
-/***/ function(module, exports) {
-
-	/** Used as the `TypeError` message for "Functions" methods. */
-	var FUNC_ERROR_TEXT = 'Expected a function';
-
-	/**
-	 * The base implementation of `_.delay` and `_.defer` which accepts an index
-	 * of where to slice the arguments to provide to `func`.
-	 *
-	 * @private
-	 * @param {Function} func The function to delay.
-	 * @param {number} wait The number of milliseconds to delay invocation.
-	 * @param {Object} args The arguments provide to `func`.
-	 * @returns {number} Returns the timer id.
-	 */
-	function baseDelay(func, wait, args) {
-	  if (typeof func != 'function') {
-	    throw new TypeError(FUNC_ERROR_TEXT);
-	  }
-	  return setTimeout(function() { func.apply(undefined, args); }, wait);
-	}
-
-	module.exports = baseDelay;
-
-
-/***/ },
-/* 271 */
-/***/ function(module, exports) {
-
-	/** Used as the `TypeError` message for "Functions" methods. */
-	var FUNC_ERROR_TEXT = 'Expected a function';
-
-	/* Native method references for those with the same name as other `lodash` methods. */
-	var nativeMax = Math.max;
-
-	/**
-	 * Creates a function that invokes `func` with the `this` binding of the
-	 * created function and arguments from `start` and beyond provided as an array.
-	 *
-	 * **Note:** This method is based on the [rest parameter](https://developer.mozilla.org/Web/JavaScript/Reference/Functions/rest_parameters).
-	 *
-	 * @static
-	 * @memberOf _
-	 * @category Function
-	 * @param {Function} func The function to apply a rest parameter to.
-	 * @param {number} [start=func.length-1] The start position of the rest parameter.
-	 * @returns {Function} Returns the new function.
-	 * @example
-	 *
-	 * var say = _.restParam(function(what, names) {
-	 *   return what + ' ' + _.initial(names).join(', ') +
-	 *     (_.size(names) > 1 ? ', & ' : '') + _.last(names);
-	 * });
-	 *
-	 * say('hello', 'fred', 'barney', 'pebbles');
-	 * // => 'hello fred, barney, & pebbles'
-	 */
-	function restParam(func, start) {
-	  if (typeof func != 'function') {
-	    throw new TypeError(FUNC_ERROR_TEXT);
-	  }
-	  start = nativeMax(start === undefined ? (func.length - 1) : (+start || 0), 0);
-	  return function() {
-	    var args = arguments,
-	        index = -1,
-	        length = nativeMax(args.length - start, 0),
-	        rest = Array(length);
-
-	    while (++index < length) {
-	      rest[index] = args[start + index];
+	;(function(){
+	"use strict";
+
+	  /***
+	   * Regular Expression helper methods
+	   * 
+	   * This provides the `re` object, which contains several helper
+	   * methods for working with big regular expressions (soup).
+	   *
+	   */
+	  var re = {
+	    _cache: {}
+	  , pattern: {
+	      'punct': "[!-/:-@\\[\\\\\\]-`{-~]"
+	    , 'space': '\\s'
 	    }
-	    switch (start) {
-	      case 0: return func.call(this, rest);
-	      case 1: return func.call(this, args[0], rest);
-	      case 2: return func.call(this, args[0], args[1], rest);
+	  , escape: function ( src ) {
+	      return src.replace( /[\-\[\]\{\}\(\)\*\+\?\.\,\\\^\$\|\#\s]/g, "\\$&" );
 	    }
-	    var otherArgs = Array(start + 1);
-	    index = -1;
-	    while (++index < start) {
-	      otherArgs[index] = args[index];
+	  , collapse: function ( src ) {
+	      return src.replace( /(?:#.*?(?:\n|$))/g, '' )
+	                .replace( /\s+/g, '' )
+	                ;
 	    }
-	    otherArgs[start] = rest;
-	    return func.apply(this, otherArgs);
+	  , expand_patterns: function ( src ) {
+	      // TODO: provide escape for patterns: \[:pattern:] ?
+	      return src.replace( /\[\:\s*(\w+)\s*\:\]/g, function ( m, k ) {
+	          return ( k in re.pattern )
+	              ? re.expand_patterns( re.pattern[ k ] )
+	              : k
+	              ;
+	        })
+	        ;
+	    }
+	  , isRegExp: function ( r ) {
+	      return Object.prototype.toString.call( r ) === "[object RegExp]";
+	    }
+	  , compile: function ( src, flags ) {
+	      if ( re.isRegExp( src ) ) {
+	        if ( arguments.length === 1 ) { // no flags arg provided, use the RegExp one
+	          flags = ( src.global     ? 'g' : '' ) +
+	                  ( src.ignoreCase ? 'i' : '' ) +
+	                  ( src.multiline  ? 'm' : '' );
+	        }
+	        src = src.source;
+	      }
+	      // don't do the same thing twice
+	      var ckey = src + ( flags || '' );
+	      if ( ckey in re._cache ) { return re._cache[ ckey ]; }
+	      // allow classes
+	      var rx = re.expand_patterns( src );
+	      // allow verbose expressions
+	      if ( flags && /x/.test( flags ) ) {
+	        rx = re.collapse( rx );
+	      }
+	      // allow dotall expressions
+	      if ( flags && /s/.test( flags ) ) {
+	        rx = rx.replace( /([^\\])\./g, '$1[^\\0]' );
+	      }
+	      // TODO: test if MSIE and add replace \s with [\s\u00a0] if it is?
+	      // clean flags and output new regexp
+	      flags = ( flags || '' ).replace( /[^gim]/g, '' );
+	      return ( re._cache[ ckey ] = new RegExp( rx, flags ) );
+	    }
 	  };
-	}
 
-	module.exports = restParam;
 
+
+
+	  /***
+	   * JSONML helper methods - http://www.jsonml.org/
+	   * 
+	   * This provides the `JSONML` object, which contains helper
+	   * methods for rendering JSONML to HTML.
+	   *
+	   * Note that the tag ! is taken to mean comment, this is however
+	   * not specified in the JSONML spec.
+	   *
+	   */
+	  var JSONML = {
+	    escape: function ( text, esc_quotes ) {
+	      return text.replace( /&(?!(#\d{2,}|#x[\da-fA-F]{2,}|[a-zA-Z][a-zA-Z1-4]{1,6});)/g, "&amp;" )
+	                 .replace( /</g, "&lt;" )
+	                 .replace( />/g, "&gt;" )
+	                 .replace( /"/g, esc_quotes ? "&quot;" : '"' )
+	                 .replace( /'/g, esc_quotes ? "&#39;"  : "'" )
+	                 ;
+	    }
+	  , toHTML: function ( jsonml ) {
+
+	      jsonml = jsonml.concat();
+
+	      // basic case
+	      if ( typeof jsonml === "string" ) {
+	        return JSONML.escape( jsonml );
+	      }
+
+	      var tag = jsonml.shift()
+	        , attributes = {}
+	        , content = []
+	        , tag_attrs = ""
+	        , a
+	        ;
+	      if ( jsonml.length && typeof jsonml[ 0 ] === "object" && !_isArray( jsonml[ 0 ] ) ) {
+	        attributes = jsonml.shift();
+	      }
+
+	      while ( jsonml.length ) {
+	        content.push( JSONML.toHTML( jsonml.shift() ) );
+	      }
+
+	      for ( a in attributes ) {
+	        tag_attrs += ( attributes[ a ] == null )
+	                ? " " + a
+	                : " " + a + '="' + JSONML.escape( attributes[ a ], true ) + '"'
+	                ;
+	      }
+
+	      // be careful about adding whitespace here for inline elements
+	      if ( tag == "!" ) {
+	        return "<!--" + content.join( "" ) + "-->";
+	      }
+	      else if ( tag === "img" || tag === "br" || tag === "hr" || tag === "input" ) {
+	        return "<" + tag + tag_attrs + " />";
+	      }
+	      else {
+	        return "<" + tag + tag_attrs + ">" + content.join( "" ) + "</" + tag + ">";
+	      }
+	    }
+	  };
+
+
+	  // merge object b properties into obect a
+	  function merge ( a, b ) {
+	    for ( var k in b ) {
+	      a[ k ] = b[ k ];
+	    }
+	    return a;
+	  }
+
+
+	  var _isArray = Array.isArray || function ( a ) { return Object.prototype.toString.call(a) === '[object Array]'; };
+
+	  /* expressions */
+	  re.pattern[ 'blocks'    ] = '(?:b[qc]|div|notextile|pre|h[1-6]|fn\\d+|p|###)';
+	  re.pattern[ 'pba_class' ] = '\\([^\\)]+\\)';
+	  re.pattern[ 'pba_style' ] = '\\{[^\\}]+\\}';
+	  re.pattern[ 'pba_lang'  ] = '\\[[^\\[\\]]+\\]';
+	  re.pattern[ 'pba_align' ] = '(?:<>|<|>|=)';
+	  re.pattern[ 'pba_pad'   ] = '[\\(\\)]+';
+	  re.pattern[ 'pba_attr'  ] = '(?:[:pba_class:]|[:pba_style:]|[:pba_lang:]|[:pba_align:]|[:pba_pad:])*';
+	  re.pattern[ 'url_punct' ] = '[.,«»″‹›!?]';
+	  re.pattern[ 'html_id'   ] = '[a-zA-Z][a-zA-Z\\d:]*';
+	  re.pattern[ 'html_attr' ] = '(?:"[^"]+"|\'[^\']+\'|[^>\\s]+)';
+	  re.pattern[ 'tx_urlch'  ] = '[\\w"$\\-_.+!*\'(),";\\/?:@=&%#{}|\\\\^~\\[\\]`]';
+	  re.pattern[ 'tx_cite'   ] = ':((?:[^\\s()]|\\([^\\s()]+\\)|[()])+?)(?=[!-\\.:-@\\[\\\\\\]-`{-~]+(?:$|\\s)|$|\\s)';
+	  re.pattern[ 'ucaps'     ] = "A-Z"+
+	                              // Latin extended À-Þ
+	                              "\u00c0-\u00d6\u00d8-\u00de"+ 
+	                              // Latin caps with embelishments and ligatures...
+	                              "\u0100\u0102\u0104\u0106\u0108\u010a\u010c\u010e\u0110\u0112\u0114\u0116\u0118\u011a\u011c\u011e\u0120\u0122\u0124\u0126\u0128\u012a\u012c\u012e\u0130\u0132\u0134\u0136\u0139\u013b\u013d\u013f"+
+	                              "\u0141\u0143\u0145\u0147\u014a\u014c\u014e\u0150\u0152\u0154\u0156\u0158\u015a\u015c\u015e\u0160\u0162\u0164\u0166\u0168\u016a\u016c\u016e\u0170\u0172\u0174\u0176\u0178\u0179\u017b\u017d"+
+	                              "\u0181\u0182\u0184\u0186\u0187\u0189-\u018b\u018e-\u0191\u0193\u0194\u0196-\u0198\u019c\u019d\u019f\u01a0\u01a2\u01a4\u01a6\u01a7\u01a9\u01ac\u01ae\u01af\u01b1-\u01b3\u01b5\u01b7\u01b8\u01bc"+
+	                              "\u01c4\u01c7\u01ca\u01cd\u01cf\u01d1\u01d3\u01d5\u01d7\u01d9\u01db\u01de\u01e0\u01e2\u01e4\u01e6\u01e8\u01ea\u01ec\u01ee\u01f1\u01f4\u01f6-\u01f8\u01fa\u01fc\u01fe"+
+	                              "\u0200\u0202\u0204\u0206\u0208\u020a\u020c\u020e\u0210\u0212\u0214\u0216\u0218\u021a\u021c\u021e\u0220\u0222\u0224\u0226\u0228\u022a\u022c\u022e\u0230\u0232\u023a\u023b\u023d\u023e"+
+	                              "\u0241\u0243-\u0246\u0248\u024a\u024c\u024e"+
+	                              "\u1e00\u1e02\u1e04\u1e06\u1e08\u1e0a\u1e0c\u1e0e\u1e10\u1e12\u1e14\u1e16\u1e18\u1e1a\u1e1c\u1e1e\u1e20\u1e22\u1e24\u1e26\u1e28\u1e2a\u1e2c\u1e2e\u1e30\u1e32\u1e34\u1e36\u1e38\u1e3a\u1e3c\u1e3e\u1e40"+
+	                              "\u1e42\u1e44\u1e46\u1e48\u1e4a\u1e4c\u1e4e\u1e50\u1e52\u1e54\u1e56\u1e58\u1e5a\u1e5c\u1e5e\u1e60\u1e62\u1e64\u1e66\u1e68\u1e6a\u1e6c\u1e6e\u1e70\u1e72\u1e74\u1e76\u1e78\u1e7a\u1e7c\u1e7e"+
+	                              "\u1e80\u1e82\u1e84\u1e86\u1e88\u1e8a\u1e8c\u1e8e\u1e90\u1e92\u1e94\u1e9e\u1ea0\u1ea2\u1ea4\u1ea6\u1ea8\u1eaa\u1eac\u1eae\u1eb0\u1eb2\u1eb4\u1eb6\u1eb8\u1eba\u1ebc\u1ebe"+
+	                              "\u1ec0\u1ec2\u1ec4\u1ec6\u1ec8\u1eca\u1ecc\u1ece\u1ed0\u1ed2\u1ed4\u1ed6\u1ed8\u1eda\u1edc\u1ede\u1ee0\u1ee2\u1ee4\u1ee6\u1ee8\u1eea\u1eec\u1eee\u1ef0\u1ef2\u1ef4\u1ef6\u1ef8\u1efa\u1efc\u1efe"+
+	                              "\u2c60\u2c62-\u2c64\u2c67\u2c69\u2c6b\u2c6d-\u2c70\u2c72\u2c75\u2c7e\u2c7f"+
+	                              "\ua722\ua724\ua726\ua728\ua72a\ua72c\ua72e\ua732\ua734\ua736\ua738\ua73a\ua73c\ua73e"+
+	                              "\ua740\ua742\ua744\ua746\ua748\ua74a\ua74c\ua74e\ua750\ua752\ua754\ua756\ua758\ua75a\ua75c\ua75e\ua760\ua762\ua764\ua766\ua768\ua76a\ua76c\ua76e\ua779\ua77b\ua77d\ua77e"+
+	                              "\ua780\ua782\ua784\ua786\ua78b\ua78d\ua790\ua792\ua7a0\ua7a2\ua7a4\ua7a6\ua7a8\ua7aa";
+
+	  var re_block          = re.compile( /^([:blocks:])/ )
+	    , re_block_se       = re.compile( /^[:blocks:]$/ )
+	    , re_block_normal   = re.compile( /^(.*?)($|\r?\n(?:\s*\n|$)+)/, 's' )
+	    , re_block_extended = re.compile( /^(.*?)($|\r?\n+(?=[:blocks:][:pba_attr:]\.))/, 's' )
+	    , re_ruler          = /^(\-\-\-+|\*\*\*+|___+)(\r?\n\s+|$)/
+	    , re_list           = re.compile( /^((?:[\t ]*[\#\*]+[:pba_attr:] .+?(?:\r?\n|$))+)(\s*\r?\n)?/ )
+	    , re_list_item      = /^([\#\*]+)(.+?)(\r?\n|$)/
+	    , re_deflist        = /^((?:- (?:[^\n]\n?)+?)+:=(?: *\n[^\0]+?=:(?:\n|$)|(?:[^\0]+?(?:$|\n(?=\n|- )))))+/
+	    , re_deflist_item   = /^((?:- (?:[^\n]\n?)+?)+):=( *\n[^\0]+?=:\s*(?:\n|$)|(?:[^\0]+?(?:$|\n(?=\n|- ))))/
+	    , re_table          = re.compile( /^((?:table[:pba_attr:]\.\n)?(?:(?:[:pba_attr:]\.[^\n\S]*)?\|.*?\|[^\n\S]*(?:\n|$))+)([^\n\S]*\n)?/, 's' )
+	    , re_table_head     = /^table(_?)([^\n]+)\.\s?\n/
+	    , re_table_row      = re.compile( /^([:pba_attr:]\.[^\n\S]*)?\|(.*?)\|[^\n\S]*(\n|$)/, 's' )
+	    , re_fenced_phrase  = /^\[(__?|\*\*?|\?\?|[\-\+\^~@%])([^\n]+)\1\]/
+	    , re_phrase         = /^([\[\{]?)(__?|\*\*?|\?\?|[\-\+\^~@%])/
+	    , re_text           = re.compile( /^.+?(?=[\\<!\[_\*`]|\n|$)/, 's' )
+	    , re_image          = re.compile( /^!(?!\s)([:pba_attr:](?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]+|\([^\(\)]+\))+)\))?!(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?/ )
+	    , re_image_fenced   = re.compile( /^\[!(?!\s)([:pba_attr:](?:\.[^\n\S]|\.(?:[^\.\/]))?)([^!\s]+?) ?(?:\(((?:[^\(\)]+|\([^\(\)]+\))+)\))?!(?::([^\s]+?(?=[!-\.:-@\[\\\]-`{-~](?:$|\s)|\s|$)))?\]/ )
+	    // NB: there is an exception in here to prevent matching "TM)"
+	    , re_caps           = re.compile( /^((?!TM\)|tm\))[[:ucaps:]](?:[[:ucaps:]\d]{1,}(?=\()|[[:ucaps:]\d]{2,}))(?:\((.*?)\))?(?=\W|$)/ )
+	    , re_link           = re.compile( /^"(?!\s)((?:[^\n"]|"(?![\s:])[^\n"]+"(?!:))+)"[:tx_cite:]/ )
+	    , re_link_fenced    = /^\["([^\n]+?)":((?:\[[a-z0-9]*\]|[^\]])+)\]/
+	    , re_link_ref       = re.compile( /^\[([^\]]+)\]((?:https?:\/\/|\/)\S+)(?:\s*\n|$)/ )
+	    , re_link_title     = /\s*\(((?:\([^\(\)]*\)|[^\(\)])+)\)$/
+	    , re_footnote_def   = /^fn\d+$/
+	    , re_footnote       = /^\[(\d+)(\!?)\]/
+
+	    // HTML
+	    , re_html_tag_block = re.compile( /^\s*<([:html_id:](?::[a-zA-Z\d]+)*)((?:\s[^=\s\/]+(?:\s*=\s*[:html_attr:])?)+)?\s*(\/?)>(\n*)/ )
+	    , re_html_tag       = re.compile( /^<([:html_id:])((?:\s[^=\s\/]+(?:\s*=\s*[:html_attr:])?)+)?\s*(\/?)>(\n*)/ )
+	    , re_html_comment   = re.compile( /^<!--(.+?)-->/, 's' )
+	    , re_html_end_tag   = re.compile( /^<\/([:html_id:])([^>]*)>/ )
+	    , re_html_attr      = re.compile( /^\s*([^=\s]+)(?:\s*=\s*("[^"]+"|'[^']+'|[^>\s]+))?/ )
+	    , re_entity         = /&(#\d\d{2,}|#x[\da-fA-F]{2,}|[a-zA-Z][a-zA-Z1-4]{1,6});/
+
+	    // glyphs
+	    , re_dimsign        = /([\d\.,]+['"]? ?)x( ?)(?=[\d\.,]['"]?)/g
+	    , re_emdash         = /(^|[\s\w])--([\s\w]|$)/g
+	    , re_trademark      = /(\b ?|\s|^)(?:\((?:TM|tm)\)|\[(?:TM|tm)\])/g
+	    , re_registered     = /(\b ?|\s|^)(?:\(R\)|\[R\])/gi
+	    , re_copyright      = /(\b ?|\s|^)(?:\(C\)|\[C\])/gi
+	    , re_apostrophe     = /(\w)\'(\w)/g
+	    , re_double_prime   = re.compile( /(\d*[\.,]?\d+)"(?=\s|$|[:punct:])/g )
+	    , re_single_prime   = re.compile( /(\d*[\.,]?\d+)'(?=\s|$|[:punct:])/g )
+	    , re_closing_dquote = re.compile( /([^\s\[\(])"(?=$|\s|[:punct:])/g )
+	    , re_closing_squote = re.compile( /([^\s\[\(])'(?=$|\s|[:punct:])/g )
+
+	    // pba
+	    , re_pba_classid    = /^\(([^\(\)\n]+)\)/
+	    , re_pba_padding_l  = /^([\(]+)/
+	    , re_pba_padding_r  = /^([\)]+)/
+	    , re_pba_align_blk  = /^(<>|<|>|=)/
+	    , re_pba_align_img  = /^(<|>|=)/
+	    , re_pba_valign     = /^(~|\^|\-)/
+	    , re_pba_colspan    = /^\\(\d+)/
+	    , re_pba_rowspan    = /^\/(\d+)/
+	    , re_pba_styles     = /^\{([^\}]*)\}/
+	    , re_pba_css        = /^\s*([^:\s]+)\s*:\s*(.+)\s*$/
+	    , re_pba_lang       = /^\[([^\[\]\n]+)\]/
+	    ;
+
+	  var phrase_convert = {
+	    '*':  'strong'
+	  , '**': 'b'
+	  , '??': 'cite'
+	  , '_':  'em'
+	  , '__': 'i'
+	  , '-':  'del'
+	  , '%':  'span'
+	  , '+':  'ins'
+	  , '~':  'sub'
+	  , '^':  'sup'
+	  , '@':  'code'
+	  };
+
+	  // area, base, basefont, bgsound, br, col, command, embed, frame, hr, 
+	  // img, input, keygen, link, meta, param, source, track or wbr 
+	  var html_singletons = {
+	    'br': 1
+	  , 'hr': 1
+	  , 'img': 1
+	  , 'link': 1
+	  , 'meta': 1
+	  , 'wbr': 1
+	  , 'area': 1
+	  , 'param': 1
+	  , 'input': 1
+	  , 'option': 1
+	  , 'base': 1
+	  };
+
+	  var pba_align_lookup = {
+	    '<': 'left'
+	  , '=': 'center'
+	  , '>': 'right'
+	  , '<>': 'justify'
+	  };
+
+	  var pba_valign_lookup = {
+	    '~':'bottom'
+	  , '^':'top'
+	  , '-':'middle'
+	  };
+
+	  // HTML tags allowed in the document (root) level that trigger HTML parsing
+	  var allowed_blocktags = {
+	    'p': 0
+	  , 'hr': 0
+	  , 'ul': 1
+	  , 'ol': 0
+	  , 'li': 0
+	  , 'div': 1
+	  , 'pre': 0
+	  , 'object': 1
+	  , 'script': 0
+	  , 'noscript': 0
+	  , 'blockquote': 1
+	  , 'notextile': 1
+	  };
+
+
+	  function ribbon ( feed ) {
+	    var _slot = null
+	      , org = feed + ''
+	      , pos = 0
+	      ;
+	    return {
+	      save: function () {
+	        _slot = pos;
+	      }
+	    , load: function () {
+	        pos = _slot;
+	        feed = org.slice( pos );
+	      }
+	    , advance: function ( n ) {
+	        pos += ( typeof n === 'string' ) ? n.length : n;
+	        return ( feed = org.slice( pos ) );
+	      }
+	    , lookbehind: function ( nchars ) {
+	        nchars = nchars == null ? 1 : nchars;
+	        return org.slice( pos - nchars, pos );
+	      }
+	    , startsWith: function ( s ) {
+	        return feed.substring(0, s.length) === s;
+	      }
+	    , valueOf: function(){
+	        return feed;
+	      }
+	    , toString: function(){
+	        return feed;
+	      }
+	    };
+	  }
+
+
+	  function builder ( arr ) {
+	    var _arr = _isArray( arr ) ? arr : [];
+	    return {
+	      add: function ( node ) {
+	        if ( typeof node === 'string' &&
+	             typeof _arr[_arr.length - 1 ] === 'string' ) {
+	          // join if possible
+	          _arr[ _arr.length - 1 ] += node;
+	        }
+	        else if ( _isArray( node ) ) {
+	          var f = node.filter(function(s){ return s !== undefined; });
+	          _arr.push( f );
+	        }
+	        else if ( node ) {
+	          _arr.push( node );
+	        }
+	        return this;
+	      }
+	    , merge: function ( s ) {
+	        for (var i=0,l=s.length; i<l; i++) {
+	          this.add( s[i] );
+	        }
+	        return this;
+	      }
+	    , linebreak: function () {
+	        if ( _arr.length ) {
+	          this.add( '\n' );
+	        }
+	      }
+	    , get: function () {
+	        return _arr;
+	      }
+	    };
+	  }
+
+
+	  function copy_pba ( s, blacklist ) {
+	    if ( !s ) { return undefined; }
+	    var k, d = {};
+	    for ( k in s ) {
+	      if ( k in s && ( !blacklist || !(k in blacklist) ) ) {
+	        d[ k ] = s[ k ];
+	      }
+	    }
+	    return d;
+	  }
+
+
+	  function parse_html_attr ( attr ) {
+	    // parse ATTR and add to element
+	    var _attr = {}
+	      , m
+	      , val
+	      ;
+	    while ( (m = re_html_attr.exec( attr )) ) {
+	      _attr[ m[1] ] = ( typeof m[2] === 'string' )
+	          ? m[2].replace( /^(["'])(.*)\1$/, '$2' )
+	          : null
+	          ;
+	      attr = attr.slice( m[0].length );
+	    }
+	    return _attr;
+	  }
+
+
+	  // This "indesciminately" parses HTML text into a list of JSON-ML element
+	  // No steps are taken however to prevent things like <table><p><td> - user can still create nonsensical but "well-formed" markup
+	  function parse_html ( src, whitelist_tags ) {
+	    var org = src + ''
+	      , list = []
+	      , root = list
+	      , _stack = []
+	      , m
+	      , oktag = whitelist_tags ? function ( tag ) { return tag in whitelist_tags; } : function () { return true; }
+	      , tag
+	      ;
+	    src = (typeof src === 'string') ? ribbon( src ) : src;
+	    // loop
+	    do {
+
+	      if ( (m = re_html_comment.exec( src )) && oktag('!') ) {
+	        src.advance( m[0] );
+	        list.push( [ '!', m[1] ] );
+	      }
+
+	      // end tag
+	      else if ( (m = re_html_end_tag.exec( src )) && oktag(m[1]) ) {
+	        tag = m[1];
+	        var junk = m[2];
+	        if ( _stack.length ) {
+	          for (var i=_stack.length-1; i>=0; i--) {
+	            var head = _stack[i];
+	            if ( head[0] === tag ) {
+	              _stack.splice( i );
+	              list = _stack[ _stack.length - 1 ] || root;
+	              break;
+	            }
+	          }
+	        }
+	        src.advance( m[0] );
+	      }
+
+	      // open/void tag
+	      else if ( (m = re_html_tag.exec( src )) && oktag(m[1]) ) {
+	        src.advance( m[0] );
+	        tag = m[1];
+	        var single = m[3] || m[1] in html_singletons
+	          , tail = m[4]
+	          , element = [ tag ]
+	          ;
+
+	        // attributes
+	        if ( m[2] ) { element.push( parse_html_attr( m[2] ) ); }
+
+	        // tag
+	        if ( single ) { // single tag
+	          // let us add the element and continue our quest...
+	          list.push( element );
+	          if ( tail ) { list.push( tail ); }
+	        }
+	        else { // open tag
+	          if ( tail ) { element.push( tail ); }
+
+	          // TODO: some things auto close other things: <td>, <li>, <p>, <table>
+	          // if ( tag === 'p' && _stack.length ) {
+	          //   var seek = /^(p)$/;
+	          //   for (var i=_stack.length-1; i>=0; i--) {
+	          //     var head = _stack[i];
+	          //     if ( seek.test( head[0] ) /* === tag */ ) {
+	          //       //src.advance( m[0] );
+	          //       _stack.splice( i );
+	          //       list = _stack[i] || root;
+	          //     }
+	          //   }
+	          // }
+
+	          // TODO: some elements can move parser into "text" mode
+	          // style, xmp, iframe, noembed, noframe, textarea, title, script, noscript, plaintext
+	          //if ( /^(script)$/.test( tag ) ) { }
+
+	          _stack.push( element );
+	          list.push( element );
+	          list = element;
+
+	        }
+	      }
+	      else {
+
+	        // no match, move by all "uninteresting" chars
+	        m = /([^<]+|[^\0])/.exec( src );
+	        if ( m ) {
+	          list.push( m[0] );
+	        }
+	        src.advance( m ? m[0].length || 1 : 1 );
+
+	      }
+
+	    }
+	    while ( src.valueOf() );
+	    return root;
+	  }
+
+	  /* attribute parser */
+
+	  function parse_attr ( input, element, end_token ) {
+	    /*
+	    The attr bit causes massive problems for span elements when parentheses are used.
+	    Parentheses are a total mess and, unsurprisingly, cause trip-ups:
+
+	     RC: `_{display:block}(span) span (span)_` -> `<em style="display:block;" class="span">(span) span (span)</em>`
+	     PHP: `_{display:block}(span) span (span)_` -> `<em style="display:block;">(span) span (span)</em>`
+
+	    PHP and RC seem to mostly solve this by not parsing a final attr parens on spans if the
+	    following character is a non-space. I've duplicated that: Class/ID is not matched on spans
+	    if it is followed by `end_token` or <space>.
+
+	    Lang is not matched here if it is followed by the end token. Theoretically I could limit the lang
+	    attribute to /^\[[a-z]{2+}(\-[a-zA-Z0-9]+)*\]/ because Textile is layered on top of HTML which
+	    only accepts valid BCP 47 language tags, but who knows what atrocities are being preformed 
+	    out there in the real world. So this attempts to emulate the other libraries.
+	    */
+	    input += '';
+	    if ( !input || element === 'notextile' ) { return undefined; }
+
+	    var m
+	      , st = {}
+	      , o = { 'style': st }
+	      , remaining = input
+	      , is_block  = element === 'table' || element === 'td' || re_block_se.test( element ) // "in" test would be better but what about fn#.?
+	      , is_img    = element === 'img'
+	      , is_phrase = !is_block && !is_img && element !== 'a'
+	      , re_pba_align = ( is_img ) ? re_pba_align_img : re_pba_align_blk
+	      ;
+
+	    do {
+
+	      if ( (m = re_pba_styles.exec( remaining )) ) {
+	        m[1].split(';').forEach(function(p){
+	          var d = p.match( re_pba_css );
+	          if ( d ) { st[ d[1] ] = d[2]; }
+	        });
+	        remaining = remaining.slice( m[0].length );
+	        continue;
+	      }
+
+	      if ( (m = re_pba_lang.exec( remaining )) ) {
+	        var rm = remaining.slice( m[0].length );
+	        if (
+	            ( !rm && is_phrase ) ||
+	            ( end_token && end_token === rm.slice(0,end_token.length) )
+	           ) {
+	          m = null;
+	        }
+	        else {
+	          o['lang'] = m[1];
+	          remaining = remaining.slice( m[0].length );
+	        }
+	        continue;
+	      }
+
+	      if ( (m = re_pba_classid.exec( remaining )) ) {
+	        var rm = remaining.slice( m[0].length );
+	        if (
+	            ( !rm && is_phrase ) ||
+	            ( end_token && (rm[0] === ' ' || end_token === rm.slice(0,end_token.length)) )
+	           ) {
+	          m = null;
+	        }
+	        else {
+	          var bits = m[1].split( '#' );
+	          if ( bits[0] ) { o['class'] = bits[0]; }
+	          if ( bits[1] ) { o['id']    = bits[1]; }
+	          remaining = rm;
+	        }
+	        continue;
+	      }
+
+	      if ( is_block ) {
+	        if ( (m = re_pba_padding_l.exec( remaining )) ) {
+	          st[ "padding-left" ] = ( m[1].length ) + "em";
+	          remaining = remaining.slice( m[0].length );
+	          continue;
+	        }
+	        if ( (m = re_pba_padding_r.exec( remaining )) ) {
+	          st[ "padding-right" ] = ( m[1].length ) + "em";
+	          remaining = remaining.slice( m[0].length );
+	          continue;
+	        }
+	      }
+
+	      // only for blocks: 
+	      if ( is_img || is_block ) {
+	        if ( (m = re_pba_align.exec( remaining )) ) {
+	          var align = pba_align_lookup[ m[1] ];
+	          if ( is_img ) {
+	            o[ 'align' ] = align;
+	          }
+	          else {
+	            st[ 'text-align' ] = align;
+	          }
+	          remaining = remaining.slice( m[0].length );
+	          continue;
+	        }
+	      }
+
+	      // only for table cells
+	      if ( element === 'td' || element === 'tr' ) {
+	        if ( (m = re_pba_valign.exec( remaining )) ) {
+	          st[ "vertical-align" ] = pba_valign_lookup[ m[1] ];
+	          remaining = remaining.slice( m[0].length );
+	          continue;
+	        }
+	      }
+	      if ( element === 'td' ) {
+	        if ( (m = re_pba_colspan.exec( remaining )) ) {
+	          o[ "colspan" ] = m[1];
+	          remaining = remaining.slice( m[0].length );
+	          continue;
+	        }
+	        if ( (m = re_pba_rowspan.exec( remaining )) ) {
+	          o[ "rowspan" ] = m[1];
+	          remaining = remaining.slice( m[0].length );
+	          continue;
+	        }
+	      }
+
+	    }
+	    while ( m );
+
+	    // collapse styles
+	    var s = [];
+	    for ( var v in st ) { s.push( v + ':' + st[v] ); }
+	    if ( s.length ) { o.style = s.join(';'); } else { delete o.style; }
+
+	    return remaining == input
+	              ? undefined
+	              : [ input.length - remaining.length, o ]
+	              ;
+	  }
+
+
+
+	  /* glyph parser */
+
+	  function parse_glyphs ( src ) {
+	    if ( typeof src !== 'string' ) { return src; }
+	    // NB: order is important here ...
+	    return src
+	      // arrow
+	      .replace( /([^\-]|^)->/, '$1&#8594;' ) // arrow
+	      // dimensions
+	      .replace( re_dimsign, '$1&#215;$2' ) // dimension sign
+	      // ellipsis
+	      .replace( /([^.]?)\.{3}/g, '$1&#8230;' ) // ellipsis
+	      // dashes
+	      .replace( re_emdash, '$1&#8212;$2' ) // em dash
+	      .replace( / - /g, ' &#8211; ' ) // en dash
+	      // legal marks
+	      .replace( re_trademark, '$1&#8482;' )   // trademark
+	      .replace( re_registered, '$1&#174;'  )   // registered
+	      .replace( re_copyright, '$1&#169;'  )   // copyright
+	      // double quotes
+	      .replace( re_double_prime, '$1&#8243;' ) // double prime
+	      .replace( re_closing_dquote, '$1&#8221;' ) // double closing quote
+	      .replace( /"/g, '&#8220;' ) // double opening quote
+	      // single quotes
+	      .replace( re_single_prime, '$1&#8242;' )  // single prime
+	      .replace( re_apostrophe, '$1&#8217;$2' )    // I'm an apostrophe
+	      .replace( re_closing_squote, '$1&#8217;' )     // single closing quote
+	      .replace( /'/g, '&#8216;' )
+	      // fractions and degrees
+	      .replace( /[\(\[]1\/4[\]\)]/, '&#188;' )
+	      .replace( /[\(\[]1\/2[\]\)]/, '&#189;' )
+	      .replace( /[\(\[]3\/4[\]\)]/, '&#190;' )
+	      .replace( /[\(\[]o[\]\)]/, '&#176;' )
+	      .replace( /[\(\[]\+\/\-[\]\)]/, '&#177;' )
+	      ;
+	  }
+
+
+	  /* list parser */
+
+	  function parse_list ( src, options ) {
+
+	    src = ribbon( src.replace( /(^|\r?\n)[\t ]+/, '$1' ) );
+	    var pad = function ( n ) {
+	          var s = '\n';
+	          while ( n-- ) { s += '\t'; }
+	          return s;
+	        }
+	      , stack = []
+	      , m
+	      , s
+	      ;
+
+	    while ( (m = re_list_item.exec( src )) ) {
+
+	      var item = [ 'li' ]
+	        , pba = parse_attr( m[2], 'li' )
+	        ;
+	      if ( pba ) {
+	        m[2] = m[2].slice( pba[0] );
+	        pba = pba[1];
+	      }
+
+	      var dest_level = m[1].length
+	        , type = m[1].substr(-1) === '#' ? 'ol' : 'ul'
+	        , eqlev = stack.length === dest_level
+	        , new_li = null
+	        , lst
+	        , par
+	        , r
+	        ;
+	      // create nesting until we have correct level
+	      while ( stack.length < dest_level ) {
+	        lst = [ type, pad( stack.length + 1 ), (new_li = [ 'li' ]) ];
+	        par = stack[ stack.length - 1 ];
+	        if ( par ) {
+	          par.li.push( pad( stack.length ) );
+	          par.li.push( lst );
+	        }
+	        stack.push({ ul: lst, li: new_li });
+	      }
+	      // remove nesting until we have correct level
+	      while ( stack.length > dest_level ) {
+	        r = stack.pop();
+	        r.ul.push( pad( stack.length ) );
+	      }
+	      par = stack[ stack.length - 1 ];
+	      if ( !new_li ) {
+	        par.ul.push( pad( stack.length ), item );
+	        par.li = item;
+	      }
+	      if ( pba ) { par.li.push( pba ); }
+	      Array.prototype.push.apply( par.li, parse_inline( m[2].trim(), options ) );
+
+	      src.advance( m[0] );
+	    }
+
+	    while ( stack.length ) {
+	      s = stack.pop();
+	      s.ul.push( pad( stack.length ) );
+	    }
+
+	    return s.ul;
+	  }
+
+
+	  /* definitions list parser */
+
+	  function parse_deflist ( src, options ) {
+	    src = ribbon( src.trim() );
+	    var deflist = [ 'dl', '\n' ]
+	      , terms
+	      , def
+	      , m
+	      ;
+	    while ( (m = re_deflist_item.exec( src )) ) {
+	      // add terms
+	      terms = m[1].split( /(?:^|\n)\- / ).slice(1);
+	      while ( terms.length ) {
+	        deflist.push( '\t'
+	                  , [ 'dt' ].concat( parse_inline( terms.shift().trim(), options ) )
+	                  , '\n'
+	                  );
+	      }
+	      // add definitions
+	      def = m[2].trim();
+	      deflist.push( '\t'
+	                , [ 'dd' ].concat(
+	                    /=:$/.test( def )
+	                      ? parse_blocks( def.slice(0,-2).trim(), options )
+	                      : parse_inline( def, options )
+	                  )
+	                , '\n'
+	                );
+	      src.advance( m[0] );
+	    }
+	    return deflist;
+	  }
+
+
+	  /* table parser */
+
+	  function parse_table ( src, options ) {
+	    src = ribbon( src.trim() );
+	    var table = [ 'table' ]
+	      , row
+	      , inner
+	      , pba
+	      , more
+	      , m
+	      ;
+
+	    if ( (m = re_table_head.exec( src )) ) {
+	      // parse and apply table attr
+	      src.advance( m[0] );
+	      pba = parse_attr( m[2], 'table' );
+	      if ( pba ) {
+	        table.push( pba[1] );
+	      }
+	    }
+
+	    while ( (m = re_table_row.exec( src )) ) {
+	      row = [ 'tr' ];
+
+	      if ( m[1] && (pba = parse_attr( m[1], 'tr' )) ) {
+	        // FIXME: requires "\.\s?" -- else what ?
+	        row.push( pba[1] );
+	      }
+
+	      table.push( '\n\t', row );
+	      inner = ribbon( m[2] );
+
+	      do {
+	        inner.save();
+
+	        // cell loop
+	        var th = inner.startsWith( '_' )
+	          , cell = [ th ? 'th' : 'td' ]
+	          ;
+	        if ( th ) {
+	          inner.advance( 1 );
+	        }
+
+	        pba = parse_attr( inner, 'td' );
+	        if ( pba ) {
+	          inner.advance( pba[0] );
+	          cell.push( pba[1] ); // FIXME: don't do this if next text fails
+	        }
+
+	        if ( pba || th ) {
+	          var d = /^\.\s*/.exec( inner );
+	          if ( d ) {
+	            inner.advance( d[0] );
+	          }
+	          else {
+	            cell = [ 'td' ];
+	            inner.load();
+	          }
+	        }
+
+	        var mx = /^(==.*?==|[^\|])*/.exec( inner );
+	        cell = cell.concat( parse_inline( mx[0], options ) );
+	        row.push( '\n\t\t', cell );
+	        more = inner.valueOf().charAt( mx[0].length ) === '|';
+	        inner.advance( mx[0].length + 1 );
+
+	      }
+	      while ( more );
+
+	      row.push( '\n\t' );
+
+	      src.advance( m[0] );
+	    }
+	    table.push( '\n' );
+	    return table;
+
+	  }
+
+
+	  /* inline parser */
+
+	  function parse_inline ( src, options ) {
+
+	    src = ribbon( src );
+	    var list = builder()
+	      , m
+	      , pba
+	      ;
+
+	    // loop
+	    do {
+	      src.save();
+
+	      // linebreak -- having this first keeps it from messing to much with other phrases
+	      if ( src.startsWith( '\r\n' ) ) {
+	        src.advance( 1 ); // skip cartridge returns
+	      }
+	      if ( src.startsWith( '\n' ) ) {
+	        src.advance( 1 );
+
+	        if ( options.breaks ) {
+	          list.add( [ 'br' ] );
+	        }
+	        list.add( '\n' );
+	        continue;
+	      }
+
+	      // inline notextile
+	      if ( (m = /^==(.*?)==/.exec( src )) ) {
+	        src.advance( m[0] );
+	        list.add( m[1] );
+	        continue;
+	      }
+
+	      // lookbehind => /([\s>.,"'?!;:])$/
+	      var behind = src.lookbehind( 1 );
+	      var boundary = !behind || /^[\s>.,"'?!;:()]$/.test( behind );
+	      // FIXME: need to test right boundary for phrases as well
+	      if ( (m = re_phrase.exec( src )) && ( boundary || m[1] ) ) {
+	        src.advance( m[0] );
+	        var tok = m[2]
+	          , fence = m[1]
+	          , phrase_type = phrase_convert[ tok ]
+	          , code = phrase_type === 'code'
+	          ;
+	        if ( (pba = !code && parse_attr( src, phrase_type, tok )) ) {
+	          src.advance( pba[0] );
+	          pba = pba[1];
+	        }
+	        // FIXME: if we can't match the fence on the end, we should output fence-prefix as normal text
+	        // seek end
+	        var m_mid;
+	        var m_end;
+	        if ( fence === '[' ) {
+	          m_mid = '^(.*?)';
+	          m_end = '(?:])';
+	        }
+	        else if ( fence === '{' ) {
+	          m_mid = '^(.*?)';
+	          m_end = '(?:})';
+	        }
+	        else {
+	          var t1 = re.escape( tok.charAt(0) );
+	          m_mid = ( code )
+	                    ? '^(\\S+|\\S+.*?\\S)'
+	                    : '^([^\\s' + t1 + ']+|[^\\s' + t1 + '].*?\\S('+t1+'*))'
+	                    ;
+	          m_end = '(?=$|[\\s.,"\'!?;:()«»„“”‚‘’])';
+	        }
+	        var rx = re.compile( m_mid + '(' + re.escape( tok ) + ')' + m_end );
+	        if ( (m = rx.exec( src )) && m[1] ) {
+	          src.advance( m[0] );
+	          if ( code ) {
+	            list.add( [ phrase_type, m[1] ] );
+	          }
+	          else {
+	            list.add( [ phrase_type, pba ].concat( parse_inline( m[1], options ) ) );
+	          }
+	          continue;
+	        }
+	        // else 
+	        src.load();
+	      }
+
+	      // image
+	      if ( (m = re_image.exec( src )) || (m = re_image_fenced.exec( src )) ) {
+	        src.advance( m[0] );
+
+	        pba = m[1] && parse_attr( m[1], 'img' );
+	        var attr = pba ? pba[1] : { 'src':'' }
+	          , img = [ 'img', attr ]
+	          ;
+	        attr.src = m[2];
+	        attr.alt = m[3] ? ( attr.title = m[3] ) : '';
+
+	        if ( m[4] ) { // +cite causes image to be wraped with a link (or link_ref)?
+	          // TODO: support link_ref for image cite
+	          img = [ 'a', { 'href': m[4] }, img ];
+	        }
+	        list.add( img );
+	        continue;
+	      }
+
+	      // html comment
+	      if ( (m = re_html_comment.exec( src )) ) {
+	        src.advance( m[0] );
+	        list.add( [ '!', m[1] ] );
+	        continue;
+	      }
+	      // html tag
+	      // TODO: this seems to have a lot of overlap with block tags... DRY?
+	      if ( (m = re_html_tag.exec( src )) ) {
+	        src.advance( m[0] );
+	        var tag = m[1]
+	          , single = m[3] || m[1] in html_singletons
+	          , element = [ tag ]
+	          , tail = m[4]
+	          ;
+	        if ( m[2] ) {
+	          element.push( parse_html_attr( m[2] ) );
+	        }
+	        if ( single ) { // single tag
+	          list.add( element ).add( tail );
+	          continue;
+	        }
+	        else { // need terminator
+	          // gulp up the rest of this block... 
+	          var re_end_tag = re.compile( "^(.*?)(</" + tag + "\\s*>)", 's' );
+	          if ( (m = re_end_tag.exec( src )) ) {
+	            src.advance( m[0] );
+	            if ( tag === 'code' ) {
+	              element.push( tail, m[1] );
+	            }
+	            else if ( tag === 'notextile' ) {
+	              list.merge( parse_inline( m[1], options ) );
+	              continue;
+	            }
+	            else {
+	              element = element.concat( parse_inline( m[1], options ) );
+	            }
+	            list.add( element );
+	            continue;
+	          }
+	          // end tag is missing, treat tag as normal text...
+	        }
+	        src.load();
+	      }
+
+	      // footnote
+	      if ( (m = re_footnote.exec( src )) && /\S/.test( behind ) ) {
+	        src.advance( m[0] );
+	        list.add( [ 'sup', { 'class': 'footnote', 'id': 'fnr' + m[1] },
+	                    ( m[2] === '!' ? m[1] // "!" suppresses the link
+	                                   : [ 'a', { href: '#fn' + m[1] }, m[1] ] )
+	                  ] );
+	        continue;
+	      }
+
+	      // caps / abbr
+	      if ( (m = re_caps.exec( src )) ) {
+	        src.advance( m[0] );
+	        var caps = [ 'span', { 'class': 'caps' }, m[1] ];
+	        if ( m[2] ) {
+	          caps = [ 'acronym', { 'title': m[2] }, caps ]; // FIXME: use <abbr>, not acronym!
+	        }
+	        list.add( caps );
+	        continue;
+	      }
+
+	      // links
+	      if ( (boundary && (m = re_link.exec( src ))) || (m = re_link_fenced.exec( src )) ) {
+	        src.advance( m[0].length );
+	        var title = m[1].match( re_link_title )
+	          , inner = ( title ) ? m[1].slice( 0, m[1].length - title[0].length ) : m[1]
+	          ;
+	        if ( (pba = parse_attr( inner, 'a' )) ) {
+	          inner = inner.slice( pba[0] );
+	          pba = pba[1];
+	        }
+	        else {
+	          pba = {};
+	        }
+	        if ( title && !inner ) { inner = title[0]; title = ""; }
+	        pba.href = m[2];
+	        if ( title ) { pba.title = title[1]; }
+	        list.add( [ 'a', pba ].concat( parse_inline( inner.replace( /^(\.?\s*)/, '' ), options ) ) );
+	        continue;
+	      }
+
+	      // no match, move by all "uninteresting" chars
+	      m = /([a-zA-Z0-9,.':]+|[ \f\r\t\v\xA0\u2028\u2029]+|[^\0])/.exec( src );
+	      if ( m ) {
+	        list.add( m[0] );
+	      }
+	      src.advance( m ? m[0].length || 1 : 1 );
+
+	    }
+	    while ( src.valueOf() );
+
+	    return list.get().map( parse_glyphs );
+	  }
+
+
+	  /* block parser */
+
+	  function parse_blocks ( src, options ) {
+
+	    var list = builder()
+	      , paragraph = function ( s, tag, pba, linebreak ) {
+	          tag = tag || 'p';
+	          var out = [];
+	          s.split( /(?:\r?\n){2,}/ ).forEach(function( bit, i ) {
+	            if ( tag === 'p' && /^\s/.test( bit ) ) {
+	              // no-paragraphs
+	              // WTF?: Why does Textile not allow linebreaks in spaced lines
+	              bit = bit.replace( /\r?\n[\t ]/g, ' ' ).trim();
+	              out = out.concat( parse_inline( bit, options ) );
+	            }
+	            else {
+	              if ( linebreak && i ) { out.push( linebreak ); }
+	              out.push( pba ? [ tag, pba ].concat( parse_inline( bit, options ) )
+	                            : [ tag      ].concat( parse_inline( bit, options ) ) );
+	            }
+	          });
+	          return out;
+	        }
+	      , link_refs = {}
+	      , m
+	      ;
+	    src = ribbon( src.replace( /^( *\r?\n)+/, '' ) );
+
+	    // loop
+	    while ( src.valueOf() ) {
+	      src.save();
+
+	      // link_ref -- this goes first because it shouldn't trigger a linebreak
+	      if ( (m = re_link_ref.exec( src )) ) {
+	        src.advance( m[0] );
+	        link_refs[ m[1] ] = m[2];
+	        continue;
+	      }
+
+	      // add linebreak
+	      list.linebreak();
+
+	      // named block
+	      if ( (m = re_block.exec( src )) ) {
+	        src.advance( m[0] );
+	        var block_type = m[0]
+	          , pba = parse_attr( src, block_type )
+	          ;
+	        if ( pba ) {
+	          src.advance( pba[0] );
+	          pba = pba[1];
+	        }
+	        if ( (m = /^\.(\.?)(?:\s|(?=:))/.exec( src )) ) {
+	          // FIXME: this whole copy_pba seems rather strange?
+	          // slurp rest of block
+	          var extended = !!m[1];
+	          m = ( extended ? re_block_extended : re_block_normal ).exec( src.advance( m[0] ) );
+	          src.advance( m[0] );
+	          // bq | bc | notextile | pre | h# | fn# | p | ###
+	          if ( block_type === 'bq' ) {
+	            var cite, inner = m[1];
+	            if ( (m = /^:(\S+)\s+/.exec( inner )) ) {
+	              if ( !pba ) { pba = {}; }
+	              pba.cite = m[1];
+	              inner = inner.slice( m[0].length );
+	            }
+	            // RedCloth adds all attr to both: this is bad because it produces duplicate IDs
+	            list.add( [ 'blockquote', pba, '\n' ].concat(
+	                    paragraph( inner, 'p', copy_pba(pba, { 'cite':1, 'id':1 }), '\n' )
+	                  ).concat(['\n']) );
+	          }
+	          else if ( block_type === 'bc' ) {
+	            var sub_pba = ( pba ) ? copy_pba(pba, { 'id':1 }) : null;
+	            list.add( [ 'pre', pba, ( sub_pba ? [ 'code', sub_pba, m[1] ] : [ 'code', m[1] ] ) ] );
+	          }
+	          else if ( block_type === 'notextile' ) {
+	            list.merge( parse_html( m[1] ) );
+	          }
+	          else if ( block_type === '###' ) {
+	            // ignore the insides
+	          }
+	          else if ( block_type === 'pre' ) {
+	            // I disagree with RedCloth, but agree with PHP here:
+	            // "pre(foo#bar).. line1\n\nline2" prevents multiline preformat blocks
+	            // ...which seems like the whole point of having an extended pre block?
+	            list.add( [ 'pre', pba, m[1] ] );
+	          }
+	          else if ( re_footnote_def.test( block_type ) ) { // footnote
+	            // Need to be careful: RedCloth fails "fn1(foo#m). footnote" -- it confuses the ID
+	            var fnid = block_type.replace( /\D+/g, '' );
+	            if ( !pba ) { pba = {}; }
+	            pba['class'] = ( pba['class'] ? pba['class'] + ' ' : '' ) + 'footnote';
+	            pba['id'] = 'fn' + fnid;
+	            list.add( [ "p", pba, [ 'a', { 'href': '#fnr' + fnid }, [ 'sup', fnid ] ], ' ' ].concat( parse_inline( m[1], options ) ) );
+	          }
+	          else { // heading | paragraph
+	            list.merge( paragraph( m[1], block_type, pba, '\n' ) );
+	          }
+	          continue;
+	        }
+	        else {
+	          src.load();
+	        }
+	      }
+
+	      // HTML comment
+	      if ( (m = re_html_comment.exec( src )) ) {
+	        src.advance( m[0] + (/(?:\s*\n+)+/.exec( src ) || [])[0] );
+	        list.add( [ '!', m[1] ] );
+	        continue;
+	      }
+
+	      // block HTML
+	      if ( (m = re_html_tag_block.exec( src )) ) {
+	        var tag    = m[1]
+	          , single = m[3] || tag in html_singletons
+	          , tail   = m[4]
+	          ;
+	        // Unsurprisingly, all Textile implementations I have tested have trouble parsing simple HTML:
+	        //
+	        //    "<div>a\n<div>b\n</div>c\n</div>d"
+	        //
+	        // I simply match them here as there is no way anyone is using nested HTML today, or if they
+	        // are, then this will at least output less broken HTML as redundant tags will get quoted.
+
+	        // Is block tag? ... 
+	        if ( tag in allowed_blocktags ) {
+	          src.advance( m[0] );
+
+	          var element = [ tag ];
+
+	          if ( m[2] ) {
+	            element.push( parse_html_attr( m[2] ) );
+	          }
+
+	          if ( single ) { // single tag
+	            // let us add the element and continue our quest...
+	            list.add( element );
+	            continue;
+	          }
+	          else { // block
+	            
+	            // gulp up the rest of this block... 
+	            var re_end_tag = re.compile( "^(.*?)(\\s*)(</" + tag + "\\s*>)(\\s*)", 's' );
+	            if ( (m = re_end_tag.exec( src )) ) {
+	              src.advance( m[0] );
+	              if ( tag === 'pre' ) {
+	                element.push( tail );
+	                element = element.concat( parse_html( m[1].replace( /(\r?\n)+$/, '' ), { 'code': 1 } ) );
+	                if ( m[2] ) { element.push( m[2] ); }
+	                list.add( element );
+	              }
+	              else if ( tag === 'notextile' ) {
+	                element = parse_html( m[1].trim() );
+	                list.merge( element );
+	              }
+	              else if ( tag === 'script' || tag === 'noscript' ) {
+	                //element = parse_html( m[1].trim() );
+	                element.push( tail + m[1] );
+	                list.add( element );
+	              }
+	              else {
+	                // These strange (and unnecessary) linebreak tests are here to get the
+	                // tests working perfectly. In reality, this doesn't matter one bit.
+	                if ( /\n/.test( tail ) ) { element.push( '\n' ); }
+	                if ( /\n/.test( m[1] )  ) {
+	                  element = element.concat( parse_blocks( m[1], options ) );
+	                }
+	                else {
+	                  element = element.concat( parse_inline( m[1].replace( /^ +/, '' ), options ) );
+	                }
+	                if ( /\n/.test( m[2] ) ) { element.push( '\n' ); }
+
+	                list.add( element );
+	              }
+	              continue;
+	            }
+	            /*else {
+	              // end tag is missing, treat tag as normal text...
+	            }*/
+	          }
+	        }
+	        src.load();
+	      }
+
+	      // ruler
+	      if ( (m = re_ruler.exec( src )) ) {
+	        src.advance( m[0] );
+	        list.add( [ 'hr' ] );
+	        continue;
+	      }
+
+	      // list
+	      if ( (m = re_list.exec( src )) ) {
+	        src.advance( m[0] );
+	        list.add( parse_list( m[0], options ) );
+	        continue;
+	      }
+
+	      // definition list
+	      if ( (m = re_deflist.exec( src )) ) {
+	        src.advance( m[0] );
+	        list.add( parse_deflist( m[0], options ) );
+	        continue;
+	      }
+
+	      // table
+	      if ( (m = re_table.exec( src )) ) {
+	        src.advance( m[0] );
+	        list.add( parse_table( m[1], options ) );
+	        continue;
+	      }
+
+	      // paragraph
+	      m = re_block_normal.exec( src );
+	      list.merge( paragraph( m[1], 'p', undefined, "\n" ) );
+	      src.advance( m[0] );
+
+	    }
+
+	    return list.get().map( fix_links, link_refs );
+	  }
+
+
+	  // recurse the tree and swap out any "href" attributes 
+	  function fix_links ( jsonml ) {
+	    if ( _isArray( jsonml ) ) {
+	      if ( jsonml[0] === 'a' ) { // found a link
+	        var attr = jsonml[1];
+	        if ( typeof attr === "object" && 'href' in attr && attr.href in this ) {
+	          attr.href = this[ attr.href ];
+	        }
+	      }
+	      for (var i=1,l=jsonml.length; i<l; i++) {
+	        if ( _isArray( jsonml[i] ) ) {
+	          fix_links.call( this, jsonml[i] );
+	        }
+	      }
+	    }
+	    return jsonml;
+	  }
+
+
+
+	  /* exposed */
+
+	  function textile ( txt, opt ) {
+	    // get a throw-away copy of options
+	    opt = merge( merge( {}, textile.defaults ), opt || {} );
+	    // run the converter
+	    return parse_blocks( txt, opt ).map( JSONML.toHTML ).join( '' );
+	  }
+
+	  // options
+	  textile.defaults = {
+	    'breaks': true   // single-line linebreaks are converted to <br> by default
+	  };
+	  textile.setOptions = textile.setoptions = function ( opt ) {
+	    merge( textile.defaults, opt );
+	    return this;
+	  };
+
+
+	  textile.parse = textile.convert = textile;
+	  textile.html_parser = parse_html;
+	  textile.jsonml = function ( txt, opt ) {
+	    // get a throw-away copy of options
+	    opt = merge( merge( {}, textile.defaults ), opt || {} );
+	    // parse and return tree
+	    return [ 'html' ].concat( parse_blocks( txt, opt ) );
+	  };
+	  textile.serialize = JSONML.toHTML;
+
+	  if ( typeof module !== 'undefined' && module.exports ) {
+	    module.exports = textile;
+	  }
+	  else {
+	    this.textile = textile;
+	  }
+
+
+	}).call(function() {
+	  return this || (typeof window !== 'undefined' ? window : global);
+	}());
+
+	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
 
 /***/ },
-/* 272 */
+/* 255 */
+/***/ function(module, exports) {
+
+	module.exports = "h1. Because you're already well over the \"Dunbar number(the suggested cognitive limit to the number of people with whom one can maintain stable social relationships: roughly 150)\":https://en.wikipedia.org/wiki/Dunbar%27s_number.\n\np=. !awkward.png!\n\nStarting at a new company can be hard. There are so many new faces, names, and warm bodies floating around that it can sometimes be hard to keep track of who's who.\n\nYou have enough on your plate already. You don't need to suffer from \"introduction amnesia awkwardness\":https://xkcd.com/302/ on top of that.\n\n*Acquainted* makes it easy to learn the names and faces of the people you work around.\n\np(type). F.A.Q.\n\nh3. Do you not care enough about me to have the common decency to learn my name?\n\n_Nope!_ Just kidding. Rest assured, you are highly valued as an individual and a team member, but we can get overwhelmed with too much new information, and sometimes it takes time in order to properly absorb what we need to know.\n\nh3. I have an idea for how to make Acquainted even better!\n\nGreat! \"Fork the project on GitHub\":https://github.com/gabrielmansour/acquainted, push your feature branch, and then \"send a pull request\":https://github.com/gabrielmansour/acquainted/pulls. Or, if you're not so tech-savvy, you can \"log an issue or make a feature request\":https://github.com/gabrielmansour/acquainted/issues.\n"
+
+/***/ },
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(273);
+	var content = __webpack_require__(257);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(260)(content, {});
+	var update = __webpack_require__(236)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -30458,15 +30270,15 @@
 	}
 
 /***/ },
-/* 273 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(259)();
+	exports = module.exports = __webpack_require__(235)();
 	// imports
 
 
 	// module
-	exports.push([module.id, "@charset \"UTF-8\";\n/*! normalize.css v3.0.1 | MIT License | git.io/normalize */\n/**\n * 1. Set default font family to sans-serif.\n * 2. Prevent iOS text size adjust after orientation change, without disabling\n *    user zoom.\n */\nhtml {\n  font-family: sans-serif;\n  /* 1 */\n  -ms-text-size-adjust: 100%;\n  /* 2 */\n  -webkit-text-size-adjust: 100%;\n  /* 2 */ }\n\n/**\n * Remove default margin.\n */\nbody {\n  margin: 0; }\n\n/* HTML5 display definitions\n   ========================================================================== */\n/**\n * Correct `block` display not defined for any HTML5 element in IE 8/9.\n * Correct `block` display not defined for `details` or `summary` in IE 10/11 and Firefox.\n * Correct `block` display not defined for `main` in IE 11.\n */\narticle,\naside,\ndetails,\nfigcaption,\nfigure,\nfooter,\nheader,\nhgroup,\nmain,\nnav,\nsection,\nsummary {\n  display: block; }\n\n/**\n * 1. Correct `inline-block` display not defined in IE 8/9.\n * 2. Normalize vertical alignment of `progress` in Chrome, Firefox, and Opera.\n */\naudio,\ncanvas,\nprogress,\nvideo {\n  display: inline-block;\n  /* 1 */\n  vertical-align: baseline;\n  /* 2 */ }\n\n/**\n * Prevent modern browsers from displaying `audio` without controls.\n * Remove excess height in iOS 5 devices.\n */\naudio:not([controls]) {\n  display: none;\n  height: 0; }\n\n/**\n * Address `[hidden]` styling not present in IE 8/9/10.\n * Hide the `template` element in IE 8/9/11, Safari, and Firefox < 22.\n */\n[hidden],\ntemplate {\n  display: none; }\n\n/* Links\n   ========================================================================== */\n/**\n * Remove the gray background color from active links in IE 10.\n */\na {\n  background: transparent; }\n\n/**\n * Improve readability when focused and also mouse hovered in all browsers.\n */\na:active,\na:hover {\n  outline: 0; }\n\n/* Text-level semantics\n   ========================================================================== */\n/**\n * Address styling not present in IE 8/9/10/11, Safari, and Chrome.\n */\nabbr[title] {\n  border-bottom: 1px dotted; }\n\n/**\n * Address style set to `bolder` in Firefox 4+, Safari, and Chrome.\n */\nb,\nstrong {\n  font-weight: bold; }\n\n/**\n * Address styling not present in Safari and Chrome.\n */\ndfn {\n  font-style: italic; }\n\n/**\n * Address variable `h1` font-size and margin within `section` and `article`\n * contexts in Firefox 4+, Safari, and Chrome.\n */\nh1 {\n  font-size: 2em;\n  margin: 0.67em 0; }\n\n/**\n * Address styling not present in IE 8/9.\n */\nmark {\n  background: #ff0;\n  color: #000; }\n\n/**\n * Address inconsistent and variable font size in all browsers.\n */\nsmall {\n  font-size: 80%; }\n\n/**\n * Prevent `sub` and `sup` affecting `line-height` in all browsers.\n */\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline; }\n\nsup {\n  top: -0.5em; }\n\nsub {\n  bottom: -0.25em; }\n\n/* Embedded content\n   ========================================================================== */\n/**\n * Remove border when inside `a` element in IE 8/9/10.\n */\nimg {\n  border: 0; }\n\n/**\n * Correct overflow not hidden in IE 9/10/11.\n */\nsvg:not(:root) {\n  overflow: hidden; }\n\n/* Grouping content\n   ========================================================================== */\n/**\n * Address margin not present in IE 8/9 and Safari.\n */\nfigure {\n  margin: 1em 40px; }\n\n/**\n * Address differences between Firefox and other browsers.\n */\nhr {\n  -moz-box-sizing: content-box;\n  box-sizing: content-box;\n  height: 0; }\n\n/**\n * Contain overflow in all browsers.\n */\npre {\n  overflow: auto; }\n\n/**\n * Address odd `em`-unit font size rendering in all browsers.\n */\ncode,\nkbd,\npre,\nsamp {\n  font-family: monospace, monospace;\n  font-size: 1em; }\n\n/* Forms\n   ========================================================================== */\n/**\n * Known limitation: by default, Chrome and Safari on OS X allow very limited\n * styling of `select`, unless a `border` property is set.\n */\n/**\n * 1. Correct color not being inherited.\n *    Known issue: affects color of disabled elements.\n * 2. Correct font properties not being inherited.\n * 3. Address margins set differently in Firefox 4+, Safari, and Chrome.\n */\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  color: inherit;\n  /* 1 */\n  font: inherit;\n  /* 2 */\n  margin: 0;\n  /* 3 */ }\n\n/**\n * Address `overflow` set to `hidden` in IE 8/9/10/11.\n */\nbutton {\n  overflow: visible; }\n\n/**\n * Address inconsistent `text-transform` inheritance for `button` and `select`.\n * All other form control elements do not inherit `text-transform` values.\n * Correct `button` style inheritance in Firefox, IE 8/9/10/11, and Opera.\n * Correct `select` style inheritance in Firefox.\n */\nbutton,\nselect {\n  text-transform: none; }\n\n/**\n * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`\n *    and `video` controls.\n * 2. Correct inability to style clickable `input` types in iOS.\n * 3. Improve usability and consistency of cursor style between image-type\n *    `input` and others.\n */\nbutton,\nhtml input[type=\"button\"], input[type=\"reset\"],\ninput[type=\"submit\"] {\n  -webkit-appearance: button;\n  /* 2 */\n  cursor: pointer;\n  /* 3 */ }\n\n/**\n * Re-set default cursor for disabled elements.\n */\nbutton[disabled],\nhtml input[disabled] {\n  cursor: default; }\n\n/**\n * Remove inner padding and border in Firefox 4+.\n */\nbutton::-moz-focus-inner,\ninput::-moz-focus-inner {\n  border: 0;\n  padding: 0; }\n\n/**\n * Address Firefox 4+ setting `line-height` on `input` using `!important` in\n * the UA stylesheet.\n */\ninput {\n  line-height: normal; }\n\n/**\n * It's recommended that you don't attempt to style these elements.\n * Firefox's implementation doesn't respect box-sizing, padding, or width.\n *\n * 1. Address box sizing set to `content-box` in IE 8/9/10.\n * 2. Remove excess padding in IE 8/9/10.\n */\ninput[type=\"checkbox\"],\ninput[type=\"radio\"] {\n  box-sizing: border-box;\n  /* 1 */\n  padding: 0;\n  /* 2 */ }\n\n/**\n * Fix the cursor style for Chrome's increment/decrement buttons. For certain\n * `font-size` values of the `input`, it causes the cursor style of the\n * decrement button to change from `default` to `text`.\n */\ninput[type=\"number\"]::-webkit-inner-spin-button,\ninput[type=\"number\"]::-webkit-outer-spin-button {\n  height: auto; }\n\n/**\n * 1. Address `appearance` set to `searchfield` in Safari and Chrome.\n * 2. Address `box-sizing` set to `border-box` in Safari and Chrome\n *    (include `-moz` to future-proof).\n */\ninput[type=\"search\"] {\n  -webkit-appearance: textfield;\n  /* 1 */\n  -moz-box-sizing: content-box;\n  -webkit-box-sizing: content-box;\n  /* 2 */\n  box-sizing: content-box; }\n\n/**\n * Remove inner padding and search cancel button in Safari and Chrome on OS X.\n * Safari (but not Chrome) clips the cancel button when the search input has\n * padding (and `textfield` appearance).\n */\ninput[type=\"search\"]::-webkit-search-cancel-button,\ninput[type=\"search\"]::-webkit-search-decoration {\n  -webkit-appearance: none; }\n\n/**\n * Define consistent border, margin, and padding.\n */\nfieldset {\n  border: 1px solid #c0c0c0;\n  margin: 0 2px;\n  padding: 0.35em 0.625em 0.75em; }\n\n/**\n * 1. Correct `color` not being inherited in IE 8/9/10/11.\n * 2. Remove padding so people aren't caught out if they zero out fieldsets.\n */\nlegend {\n  border: 0;\n  /* 1 */\n  padding: 0;\n  /* 2 */ }\n\n/**\n * Remove default vertical scrollbar in IE 8/9/10/11.\n */\ntextarea {\n  overflow: auto; }\n\n/**\n * Don't inherit the `font-weight` (applied by a rule above).\n * NOTE: the default cannot safely be changed in Chrome and Safari on OS X.\n */\noptgroup {\n  font-weight: bold; }\n\n/* Tables\n   ========================================================================== */\n/**\n * Remove most spacing between table cells.\n */\ntable {\n  border-collapse: collapse;\n  border-spacing: 0; }\n\ntd,\nth {\n  padding: 0; }\n\n* {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box; }\n\n/* Bitters 0.10.0\n * http://bitters.bourbon.io\n * Copyright 2013–2014 thoughtbot, inc.\n * MIT License */\nbutton,\ninput[type=\"submit\"] {\n  -webkit-font-smoothing: antialiased;\n  background-color: #477DCA;\n  border-radius: 3px;\n  color: white;\n  display: inline-block;\n  font-size: 1em;\n  font-weight: bold;\n  line-height: 1;\n  padding: 0.75em 1em;\n  text-decoration: none; }\n  button:hover,\n  input[type=\"submit\"]:hover {\n    background-color: #2c5999;\n    color: white; }\n  button:disabled,\n  input[type=\"submit\"]:disabled {\n    cursor: not-allowed;\n    opacity: 0.5; }\n\nbody {\n  -webkit-font-smoothing: antialiased;\n  background-color: white;\n  color: #333;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 1em;\n  line-height: 1.5; }\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  line-height: 1.25;\n  margin: 0;\n  text-rendering: optimizeLegibility; }\n\nh1 {\n  font-size: 2.25em; }\n\nh2 {\n  font-size: 2em; }\n\nh3 {\n  font-size: 1.75em; }\n\nh4 {\n  font-size: 1.5em; }\n\nh5 {\n  font-size: 1.25em; }\n\nh6 {\n  font-size: 1em; }\n\np {\n  margin: 0 0 0.75em; }\n\na {\n  -webkit-transition: color 0.1s linear;\n  -moz-transition: color 0.1s linear;\n  transition: color 0.1s linear;\n  color: #477DCA;\n  text-decoration: none; }\n  a:hover {\n    color: #2c5999; }\n  a:active, a:focus {\n    color: #2c5999;\n    outline: none; }\n\nhr {\n  border-bottom: 1px solid #DDD;\n  border-left: none;\n  border-right: none;\n  border-top: none;\n  margin: 1.5em 0; }\n\nimg,\npicture {\n  margin: 0;\n  max-width: 100%; }\n\nblockquote {\n  border-left: 2px solid #DDD;\n  color: #595959;\n  margin: 1.5em 0;\n  padding-left: 0.75em; }\n\ncite {\n  color: #737373;\n  font-style: italic; }\n  cite:before {\n    content: \"\\2014   \\A0\"; }\n\nfieldset {\n  background: #f7f7f7;\n  border: 1px solid #DDD;\n  margin: 0 0 0.75em 0;\n  padding: 1.5em; }\n\ninput,\nlabel,\nselect {\n  display: block;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 1em; }\n\nlabel {\n  font-weight: bold;\n  margin-bottom: 0.375em; }\n  label.required:after {\n    content: \"*\"; }\n  label abbr {\n    display: none; }\n\ntextarea,\ninput[type=\"email\"], input[type=\"number\"], input[type=\"password\"], input[type=\"search\"], input[type=\"tel\"], input[type=\"text\"], .search-tools .filter > div, input[type=\"url\"], input[type=\"color\"], input[type=\"date\"], input[type=\"datetime\"], input[type=\"datetime-local\"], input[type=\"month\"], input[type=\"time\"], input[type=\"week\"],\nselect[multiple=multiple] {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -webkit-transition: border-color;\n  -moz-transition: border-color;\n  transition: border-color;\n  background-color: white;\n  border-radius: 3px;\n  border: 1px solid #DDD;\n  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 1em;\n  margin-bottom: 0.75em;\n  padding: 0.5em 0.5em;\n  width: 100%; }\n  textarea:hover,\n  input[type=\"email\"]:hover, input[type=\"number\"]:hover, input[type=\"password\"]:hover, input[type=\"search\"]:hover, input[type=\"tel\"]:hover, input[type=\"text\"]:hover, .search-tools .filter > div:hover, input[type=\"url\"]:hover, input[type=\"color\"]:hover, input[type=\"date\"]:hover, input[type=\"datetime\"]:hover, input[type=\"datetime-local\"]:hover, input[type=\"month\"]:hover, input[type=\"time\"]:hover, input[type=\"week\"]:hover,\n  select[multiple=multiple]:hover {\n    border-color: #c4c4c4; }\n  textarea:focus,\n  input[type=\"email\"]:focus, input[type=\"number\"]:focus, input[type=\"password\"]:focus, input[type=\"search\"]:focus, input[type=\"tel\"]:focus, input[type=\"text\"]:focus, .search-tools .filter > div:focus, input[type=\"url\"]:focus, input[type=\"color\"]:focus, input[type=\"date\"]:focus, input[type=\"datetime\"]:focus, input[type=\"datetime-local\"]:focus, input[type=\"month\"]:focus, input[type=\"time\"]:focus, input[type=\"week\"]:focus,\n  select[multiple=multiple]:focus {\n    border-color: #477DCA;\n    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 5px rgba(55, 112, 192, 0.7);\n    outline: none; }\n\ntextarea {\n  resize: vertical; }\n\ninput[type=\"search\"] {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  -ms-appearance: none;\n  -o-appearance: none;\n  appearance: none; }\n\ninput[type=\"checkbox\"],\ninput[type=\"radio\"] {\n  display: inline;\n  margin-right: 0.375em; }\n\ninput[type=\"file\"] {\n  padding-bottom: 0.75em;\n  width: 100%; }\n\nselect {\n  margin-bottom: 1.5em;\n  max-width: 100%;\n  width: auto; }\n\ntable {\n  border-collapse: collapse;\n  margin: 0.75em 0;\n  table-layout: fixed;\n  width: 100%; }\n\nth {\n  border-bottom: 1px solid #b7b7b7;\n  font-weight: bold;\n  padding: 0.75em 0;\n  text-align: left; }\n\ntd {\n  border-bottom: 1px solid #DDD;\n  padding: 0.75em 0; }\n\ntr,\ntd,\nth {\n  vertical-align: middle; }\n\nul,\nol {\n  margin: 0;\n  padding: 0;\n  list-style-type: none; }\n\ndl {\n  margin-bottom: 0.75em; }\n  dl dt {\n    font-weight: bold;\n    margin-top: 0.75em; }\n  dl dd {\n    margin: 0; }\n\nbutton,\ninput[type=\"submit\"] {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  -ms-appearance: none;\n  -o-appearance: none;\n  appearance: none;\n  border: none;\n  cursor: pointer;\n  user-select: none;\n  vertical-align: middle;\n  white-space: nowrap; }\n\nnav.bourbon {\n  *zoom: 1;\n  background-color: #5B5E63;\n  padding: 0 2em 0 1em; }\n  nav.bourbon:before,\n  nav.bourbon:after {\n    content: \" \";\n    display: table; }\n  nav.bourbon:after {\n    clear: both; }\n  @media screen and (max-width: 31.875em) {\n    nav.bourbon {\n      padding: 0; } }\n  nav.bourbon ul {\n    text-align: center; }\n    @media screen and (min-width: 56.3125em) {\n      nav.bourbon ul {\n        float: left;\n        text-align: left; } }\n  nav.bourbon li {\n    display: inline-block; }\n  nav.bourbon a {\n    background-position: 1em center;\n    background-repeat: no-repeat;\n    color: #fff;\n    display: inline-block;\n    font-weight: bold;\n    padding: 1em 1em 1em 3em; }\n    @media screen and (max-width: 32.1875em) {\n      nav.bourbon a {\n        padding: 0.75em 0.5em;\n        text-align: center; } }\n    @media screen and (max-width: 56.25em) {\n      nav.bourbon a {\n        display: block; } }\n    nav.bourbon a:hover {\n      background-color: #434548;\n      color: #fff; }\n    nav.bourbon a.current {\n      background-color: #4f5156; }\n    nav.bourbon a.bourbon {\n      background-image: url(\"/images/bourbon-nav/bourbon.png\"); }\n      @media only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (min--moz-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 1.3/1), only screen and (min-resolution: 125dpi), only screen and (min-resolution: 1.3dppx) {\n        nav.bourbon a.bourbon {\n          background-image: url(\"/images/bourbon-nav/bourbon@2x.png\");\n          background-size: 20%; } }\n      @media screen and (max-width: 32.1875em) {\n        nav.bourbon a.bourbon {\n          background-image: none; } }\n    nav.bourbon a.neat {\n      background-image: url(\"/images/bourbon-nav/neat.png\"); }\n      @media only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (min--moz-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 1.3/1), only screen and (min-resolution: 125dpi), only screen and (min-resolution: 1.3dppx) {\n        nav.bourbon a.neat {\n          background-image: url(\"/images/bourbon-nav/neat@2x.png\");\n          background-size: 20%; } }\n      @media screen and (max-width: 32.1875em) {\n        nav.bourbon a.neat {\n          background-image: none; } }\n    nav.bourbon a.bitters {\n      background-image: url(\"/images/bourbon-nav/bitters.png\"); }\n      @media only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (min--moz-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 1.3/1), only screen and (min-resolution: 125dpi), only screen and (min-resolution: 1.3dppx) {\n        nav.bourbon a.bitters {\n          background-image: url(\"/images/bourbon-nav/bitters@2x.png\");\n          background-size: 20%; } }\n      @media screen and (max-width: 32.1875em) {\n        nav.bourbon a.bitters {\n          background-image: none; } }\n    nav.bourbon a.refills {\n      background-image: url(\"/images/bourbon-nav/refills.png\"); }\n      @media only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (min--moz-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 1.3/1), only screen and (min-resolution: 125dpi), only screen and (min-resolution: 1.3dppx) {\n        nav.bourbon a.refills {\n          background-image: url(\"/images/bourbon-nav/refills@2x.png\");\n          background-size: 20%; } }\n      @media screen and (max-width: 32.1875em) {\n        nav.bourbon a.refills {\n          background-image: none; } }\n  nav.bourbon h1 {\n    color: rgba(255, 255, 255, 0.6);\n    float: right;\n    font-size: 1em; }\n    @media screen and (max-width: 56.25em) {\n      nav.bourbon h1 {\n        display: none; } }\n    nav.bourbon h1 a {\n      padding: 1em 0; }\n      nav.bourbon h1 a:hover {\n        background-color: transparent; }\n\nbody {\n  -webkit-backface-visibility: hidden;\n  background-color: white;\n  min-width: 320px; }\n\n.refills-header {\n  *zoom: 1;\n  background-color: #E7F1EC;\n  clear: both;\n  margin-bottom: 1em;\n  padding: 5em 0;\n  text-align: center;\n  width: 100%; }\n  .refills-header:before,\n  .refills-header:after {\n    content: \" \";\n    display: table; }\n  .refills-header:after {\n    clear: both; }\n  @media screen and (min-width: 40em) {\n    .refills-header {\n      margin-bottom: 4em;\n      padding: 6em 0; } }\n  @media screen and (min-width: 53.75em) {\n    .refills-header {\n      margin-bottom: 4em;\n      padding: 6em 0 11em 0; } }\n  .refills-header .refills-logo {\n    display: inline-block;\n    margin: 0 auto 1.4em auto;\n    max-width: 5em; }\n    @media screen and (min-width: 40em) {\n      .refills-header .refills-logo {\n        max-width: 8em; } }\n    .refills-header .refills-logo img {\n      background: white;\n      border-radius: 50%;\n      padding: .3em; }\n      @media screen and (min-width: 40em) {\n        .refills-header .refills-logo img {\n          padding: .5em; } }\n  .refills-header h2 {\n    font-family: Georgia, Cambria, \"Times New Roman\", Times, serif;\n    font-size: 1.4em;\n    font-weight: 100;\n    margin: 0 auto 2em auto;\n    max-width: 90%;\n    text-align: center; }\n    @media screen and (min-width: 40em) {\n      .refills-header h2 {\n        font-size: 3em;\n        margin-bottom: 1em;\n        max-width: 90%; } }\n    @media screen and (min-width: 53.75em) {\n      .refills-header h2 {\n        font-size: 3em;\n        margin-bottom: .8em;\n        max-width: 60%; } }\n  .refills-header h3 {\n    font-size: 1.3em;\n    font-weight: 200;\n    margin-bottom: 1em;\n    text-align: center; }\n  .refills-header a {\n    color: #F55481; }\n    .refills-header a:hover {\n      color: #f884a5; }\n  .refills-header p {\n    background: #e1ede7;\n    box-shadow: inset 0 1px 2px #d0e4da, 0 1px 1px rgba(255, 255, 255, 0.4);\n    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);\n    border-radius: 30px;\n    color: #87a898;\n    display: inline;\n    font-family: \"Oswald\", sans-serif;\n    font-size: .8em;\n    font-weight: 400;\n    padding: 0.5em 1.4em; }\n    @media screen and (min-width: 53.75em) {\n      .refills-header p {\n        font-size: .8em; } }\n\n.menu-wrapper {\n  *zoom: 1; }\n  .menu-wrapper:before,\n  .menu-wrapper:after {\n    content: \" \";\n    display: table; }\n  .menu-wrapper:after {\n    clear: both; }\n\nul.refills-menu {\n  font-weight: normal;\n  margin-bottom: 5em;\n  margin: -3.3em auto 0 auto;\n  text-align: center; }\n  @media screen and (min-width: 40em) {\n    ul.refills-menu {\n      margin: -6em auto 0 auto; } }\n  @media screen and (min-width: 53.75em) {\n    ul.refills-menu {\n      margin: -6.7em auto 0 auto; } }\n  ul.refills-menu .menu-item {\n    display: inline; }\n    ul.refills-menu .menu-item a {\n      border-radius: 3px;\n      color: #a7cbb9;\n      font-family: 'Lusitana', serif;\n      font-size: .9em;\n      padding: 0.5em 0.5em 2em; }\n      @media screen and (min-width: 40em) {\n        ul.refills-menu .menu-item a {\n          font-size: 1.1em;\n          padding: 0.5em 0.8em 2em; } }\n      @media screen and (min-width: 53.75em) {\n        ul.refills-menu .menu-item a {\n          font-size: 1.3em;\n          padding: 0.5em 1.3em 2em; } }\n      ul.refills-menu .menu-item a:hover {\n        color: #86b9a0; }\n\n.refills-patterns li.patterns a {\n  background: white; }\n  .refills-patterns li.patterns a:hover {\n    color: #a7cbb9; }\n\n.refills-components li.components a {\n  background: white; }\n  .refills-components li.components a:hover {\n    color: #a7cbb9; }\n\n.refills-type-systems li.type-systems a {\n  background: white; }\n  .refills-type-systems li.type-systems a:hover {\n    color: #a7cbb9; }\n\n#example {\n  padding-top: 6em; }\n\n.refill {\n  *zoom: 1;\n  margin-bottom: 2em;\n  padding-bottom: 1em;\n  position: relative; }\n  .refill:before,\n  .refill:after {\n    content: \" \";\n    display: table; }\n  .refill:after {\n    clear: both; }\n  .refill > h3 {\n    margin-bottom: 1.3em;\n    margin-top: 1em;\n    padding-top: 0.5em; }\n\n.refills-wrapper {\n  *zoom: 1;\n  max-width: 68em;\n  margin-left: auto;\n  margin-right: auto;\n  padding: 1em; }\n  .refills-wrapper:before,\n  .refills-wrapper:after {\n    content: \" \";\n    display: table; }\n  .refills-wrapper:after {\n    clear: both; }\n  .refills-wrapper h1.main-header {\n    background-color: #82caca;\n    display: inline-block;\n    padding: 0.5em; }\n\n.refill-centering {\n  text-align: center; }\n  .refill-centering > * {\n    display: inline-block; }\n    .refill-centering > * > * {\n      text-align: left; }\n  .refill-centering script {\n    display: none; }\n\n.line-behind-text {\n  border-bottom: 1px solid #CACACA;\n  text-align: center;\n  margin-bottom: 4.5em; }\n\n.line-behind-text h6 {\n  background: white;\n  color: gray;\n  display: inline-block;\n  font-family: \"Oswald\", sans-serif;\n  font-size: 1em;\n  font-weight: 500;\n  padding: 0 10px;\n  position: relative;\n  text-transform: uppercase;\n  top: 34px; }\n\n.refill h6 {\n  margin-bottom: 1.5em; }\n\n.js-hide-code,\n.js-show-code {\n  border-top: 1px dashed #BEBCBC;\n  color: #7E7A7A;\n  font-size: .8em;\n  text-transform: uppercase;\n  width: 9em; }\n  .js-hide-code:hover,\n  .js-show-code:hover {\n    color: #477DCA; }\n\n.js-show-code {\n  display: inline-block;\n  padding: 0.5em 1em; }\n\n.js-hide-code {\n  display: none;\n  padding: 0.5em 1em; }\n\n.refill-snippet {\n  margin-top: 4.5em;\n  padding: 0 1em; }\n\n.refill-control {\n  display: block;\n  margin-bottom: 2em;\n  text-align: center;\n  width: 100%; }\n\npre[class*=\"language-\"] {\n  background: #F8F8F8;\n  border-top: 2px solid silver;\n  height: 300px;\n  line-height: 1em; }\n\n.copy-source {\n  background-color: #666666;\n  border-radius: 10px;\n  color: white;\n  font-size: 0.5em;\n  font-weight: 800;\n  padding: 0.4em 1em;\n  text-transform: uppercase; }\n  .copy-source:hover, .copy-source:active {\n    background-color: #666666;\n    color: white; }\n\n.snippets-table {\n  display: none; }\n  .snippets-table td {\n    border-bottom: 0; }\n\n@media screen and (min-width: 40em) {\n  .snippet {\n    margin-bottom: 2em; } }\n\n.snippet code {\n  font-size: .6em;\n  line-height: 1.4em;\n  max-height: 25em;\n  overflow: scroll; }\n\n.token.variable {\n  background-color: transparent; }\n\nfooter.refills-footer {\n  color: silver;\n  padding-bottom: 2em;\n  padding-top: 1em;\n  text-align: center; }\n  footer.refills-footer a {\n    color: #F55481; }\n  footer.refills-footer img {\n    display: block;\n    height: 60px;\n    margin-bottom: 2em;\n    margin: auto; }\n  footer.refills-footer .footer-links {\n    background: #F3F3F3;\n    border-radius: 3em;\n    box-shadow: inset 0 1px 2px #e4e4e4;\n    display: inline-block;\n    font-size: .8em;\n    margin-bottom: 2em;\n    padding: .6em; }\n    @media screen and (min-width: 53.75em) {\n      footer.refills-footer .footer-links {\n        font-size: 1em;\n        padding: 1em; } }\n    footer.refills-footer .footer-links li {\n      display: inline;\n      padding: .4em; }\n      footer.refills-footer .footer-links li a {\n        color: #A7A7A7; }\n        footer.refills-footer .footer-links li a:hover {\n          color: #F55481; }\n\n@media screen and (min-width: 53.75em) {\n  .refill-smaller {\n    margin: auto;\n    width: 70%; } }\n\n@-webkit-keyframes fadeInAccordionTabsArticles {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n\n@-moz-keyframes fadeInAccordionTabsArticles {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n\n@-o-keyframes fadeInAccordionTabsArticles {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n\n@keyframes fadeInAccordionTabsArticles {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n\n.accordion-tabs-type-systems {\n  *zoom: 1;\n  border-radius: 3px;\n  border: 1px solid #DDD;\n  margin-bottom: 1.5em; }\n  .accordion-tabs-type-systems:before,\n  .accordion-tabs-type-systems:after {\n    content: \" \";\n    display: table; }\n  .accordion-tabs-type-systems:after {\n    clear: both; }\n  @media screen and (min-width: 40em) {\n    .accordion-tabs-type-systems {\n      border: none; } }\n  @media screen and (min-width: 40em) {\n    .accordion-tabs-type-systems .tab {\n      display: inline; } }\n  .accordion-tabs-type-systems .tab:first-child .tab-link {\n    border-top-left-radius: 3px;\n    border-top-right-radius: 3px; }\n  .accordion-tabs-type-systems .tab:last-child .tab-link {\n    border-bottom-left-radius: 3px;\n    border-bottom-right-radius: 3px; }\n    @media screen and (min-width: 40em) {\n      .accordion-tabs-type-systems .tab:last-child .tab-link {\n        border-bottom-left-radius: 0;\n        border-bottom-right-radius: 0; } }\n  .accordion-tabs-type-systems .tab .tab-link-type-system {\n    background-color: transparent;\n    border-bottom: 1px solid #DDD;\n    color: #333;\n    display: block;\n    font-size: .9em;\n    font-weight: 200;\n    letter-spacing: .6px;\n    padding: 0.75em 0.809em;\n    text-align: center; }\n    @media screen and (min-width: 40em) {\n      .accordion-tabs-type-systems .tab .tab-link-type-system {\n        display: inline-block;\n        vertical-align: baseline;\n        zoom: 1;\n        *display: inline;\n        *vertical-align: auto;\n        border-bottom: 0;\n        border-top-left-radius: 3px;\n        border-top-right-radius: 3px; } }\n    .accordion-tabs-type-systems .tab .tab-link-type-system:hover {\n      color: #477DCA; }\n    .accordion-tabs-type-systems .tab .tab-link-type-system:focus {\n      outline: none; }\n  .accordion-tabs-type-systems .tab section {\n    padding: 1.5em 1.618em;\n    background: white;\n    display: none;\n    overflow: hidden;\n    padding: 1.5 1.618em;\n    width: 100%; }\n    @media screen and (min-width: 40em) {\n      .accordion-tabs-type-systems .tab section {\n        border-bottom-left-radius: 3px;\n        border-bottom-right-radius: 3px;\n        border-top: 1px solid #DDD;\n        float: left;\n        left: 0;\n        padding: 0.75em 1.618em; } }\n    .accordion-tabs-type-systems .tab section .tab-content {\n      opacity: 0; }\n  .accordion-tabs-type-systems .tab.js-is-active {\n    border-bottom: 1px solid #DDD; }\n    @media screen and (min-width: 40em) {\n      .accordion-tabs-type-systems .tab.js-is-active {\n        border-bottom: 0; } }\n    .accordion-tabs-type-systems .tab.js-is-active .tab-link-type-system {\n      background-color: white;\n      border-bottom: 0; }\n      @media screen and (min-width: 40em) {\n        .accordion-tabs-type-systems .tab.js-is-active .tab-link-type-system {\n          background-color: white;\n          border-bottom: 1px solid white;\n          border: 1px solid #DDD;\n          margin-bottom: -1px; } }\n    .accordion-tabs-type-systems .tab.js-is-active section {\n      display: block; }\n      .accordion-tabs-type-systems .tab.js-is-active section .tab-content {\n        -webkit-animation-name: fadeInAccordionTabsArticles;\n        -moz-animation-name: fadeInAccordionTabsArticles;\n        animation-name: fadeInAccordionTabsArticles;\n        -webkit-animation-duration: 1s;\n        -moz-animation-duration: 1s;\n        animation-duration: 1s;\n        opacity: 1; }\n\nsection.inner-content {\n  margin-left: auto; }\n\n.refills-menu-anchor {\n  display: inline-block;\n  vertical-align: baseline;\n  zoom: 1;\n  *display: inline;\n  *vertical-align: auto;\n  cursor: pointer;\n  border: 1px solid #87a898;\n  height: 50px;\n  width: 50px;\n  padding: 0.7em 1em;\n  border-radius: 50%;\n  font-size: 1em;\n  margin-bottom: 1.5;\n  position: fixed;\n  top: 4.5em;\n  left: 1em;\n  z-index: 9999; }\n  .refills-menu-anchor.fixedsticky-on {\n    margin-top: -3.5em; }\n  .refills-menu-anchor.fixedsticky-off {\n    position: fixed; }\n  .refills-menu-anchor img {\n    height: 26px;\n    width: 30px; }\n\n.fixedsticky-dummy {\n  height: 0 !important; }\n\n.refills-menu-screen {\n  position: fixed;\n  top: 0px;\n  right: 0px;\n  bottom: 0px;\n  left: 0px;\n  -webkit-transition: all 0.15s ease-out 0;\n  -moz-transition: all 0.15s ease-out 0;\n  transition: all 0.15s ease-out 0;\n  background: teal;\n  opacity: 0;\n  visibility: hidden;\n  z-index: 999998; }\n  .refills-menu-screen.is-visible {\n    opacity: 0;\n    visibility: visible; }\n\n.er_toc_title {\n  display: none; }\n\n.er_toc_top {\n  display: none; }\n\n.er_toc {\n  position: fixed;\n  top: 0px;\n  right: auto;\n  bottom: 0px;\n  left: 0px;\n  width: 220px;\n  height: 100%;\n  -webkit-transform: translateX(-220px);\n  -moz-transform: translateX(-220px);\n  -ms-transform: translateX(-220px);\n  -o-transform: translateX(-220px);\n  transform: translateX(-220px);\n  -webkit-transition: all 0.2s linear;\n  -moz-transition: all 0.2s linear;\n  transition: all 0.2s linear;\n  overflow-y: scroll;\n  -webkit-overflow-scrolling: touch;\n  background: black;\n  z-index: 999999; }\n  .er_toc ul {\n    padding: 1em; }\n  .er_toc ul li a {\n    color: white;\n    font-weight: 300;\n    font-size: 1em; }\n    .er_toc ul li a:hover {\n      color: #FFF;\n      text-decoration: none; }\n  .er_toc ul ul {\n    margin-top: .5em;\n    margin-bottom: 1em;\n    padding: 0; }\n  .er_toc ul ul li a {\n    font-weight: 200; }\n  .er_toc.is-visible {\n    -webkit-transform: translateX(0);\n    -moz-transform: translateX(0);\n    -ms-transform: translateX(0);\n    -o-transform: translateX(0);\n    transform: translateX(0); }\n\n.cards {\n  *zoom: 1; }\n  .cards:before,\n  .cards:after {\n    content: \" \";\n    display: table; }\n  .cards:after {\n    clear: both; }\n\n.card {\n  -webkit-transition: all 0.2s ease-in-out;\n  -moz-transition: all 0.2s ease-in-out;\n  transition: all 0.2s ease-in-out;\n  background-color: #f7f7f7;\n  border-radius: 3px;\n  border: 1px solid #DDD;\n  margin-bottom: 1.5em;\n  cursor: pointer;\n  box-shadow: 0 2px 4px #e6e6e6;\n  position: relative; }\n  @media screen and (min-width: 53.75em) {\n    .card {\n      float: left;\n      display: block;\n      margin-right: 2.35765%;\n      width: 31.76157%; }\n      .card:last-child {\n        margin-right: 0; }\n      .card:nth-child(3n) {\n        margin-right: 0; }\n      .card:nth-child(3n+1) {\n        clear: left; } }\n  .card .card-image {\n    overflow: hidden;\n    max-height: 150px; }\n    .card .card-image img {\n      width: 100%;\n      -webkit-transition: all 0.2s ease-in-out;\n      -moz-transition: all 0.2s ease-in-out;\n      transition: all 0.2s ease-in-out;\n      background: #DBD199;\n      border-top-left-radius: 3px;\n      border-top-right-radius: 3px; }\n  .card .ribbon-wrapper {\n    width: 85px;\n    height: 85px;\n    overflow: hidden;\n    position: absolute;\n    top: -1px;\n    right: -1px; }\n    .card .ribbon-wrapper .ribbon {\n      font-size: .8em;\n      font-weight: 800;\n      text-align: center;\n      -webkit-transform: rotate(45deg);\n      -moz-transform: rotate(45deg);\n      -ms-transform: rotate(45deg);\n      -o-transform: rotate(45deg);\n      transform: rotate(45deg);\n      position: relative;\n      padding: 2px 7px;\n      left: -5px;\n      top: 15px;\n      width: 120px;\n      background-color: #477DCA;\n      color: white;\n      box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.3); }\n  .card .card-header {\n    -webkit-transition: all 0.2s ease-in-out;\n    -moz-transition: all 0.2s ease-in-out;\n    transition: all 0.2s ease-in-out;\n    background-color: #f7f7f7;\n    border-bottom: 1px solid #DDD;\n    border-radius: 3px 3px 0 0;\n    font-weight: bold;\n    padding: 0.5em 0.809em; }\n  .card .card-copy {\n    padding: 0.75em 0.809em;\n    font-size: .9em;\n    line-height: 1.5em; }\n  .card .card-stats {\n    padding: 0.75em 0.809em;\n    overflow: auto; }\n    .card .card-stats ul li {\n      display: inline;\n      color: #6f99d5;\n      font-weight: 800;\n      font-size: 1.2em;\n      float: left;\n      border-right: 1px solid rgba(51, 51, 51, 0.2);\n      line-height: 1.1em;\n      padding: 0 0.7em 0 0.7em; }\n      .card .card-stats ul li:first-child {\n        padding-left: 0; }\n      .card .card-stats ul li:last-child {\n        border-right: 0; }\n      .card .card-stats ul li span {\n        color: #333;\n        font-size: .7em;\n        display: block;\n        font-weight: normal; }\n  .card:hover {\n    background-color: white; }\n    .card:hover .card-image img {\n      background: #e2daac; }\n    .card:hover .card-header {\n      background-color: white; }\n  .card:active {\n    background-color: #f7f7f7; }\n    .card:active .card-header {\n      background-color: #f7f7f7; }\n\nheader.navigation {\n  background-color: #333;\n  border-bottom: 1px solid #1a1a1a;\n  height: 60px;\n  width: 100%;\n  z-index: 999; }\n  header.navigation .navigation-wrapper {\n    *zoom: 1;\n    *zoom: 1;\n    max-width: 68em;\n    margin-left: auto;\n    margin-right: auto;\n    position: relative;\n    z-index: 9999; }\n    header.navigation .navigation-wrapper:before,\n    header.navigation .navigation-wrapper:after {\n      content: \" \";\n      display: table; }\n    header.navigation .navigation-wrapper:after {\n      clear: both; }\n    header.navigation .navigation-wrapper:before,\n    header.navigation .navigation-wrapper:after {\n      content: \" \";\n      display: table; }\n    header.navigation .navigation-wrapper:after {\n      clear: both; }\n  header.navigation .logo {\n    float: left;\n    max-height: 60px;\n    padding-left: 1em;\n    padding-right: 2em; }\n    header.navigation .logo img {\n      max-height: 60px;\n      padding: .8em 0; }\n  header.navigation .navigation-menu-button {\n    color: rgba(255, 255, 255, 0.7);\n    display: block;\n    float: right;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-weight: 700;\n    line-height: 60px;\n    margin: 0;\n    padding-right: 1em;\n    text-transform: uppercase; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation .navigation-menu-button {\n        display: none; } }\n    header.navigation .navigation-menu-button:hover {\n      color: white; }\n  header.navigation .nav {\n    z-index: 9999999;\n    float: none; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation .nav {\n        float: left; } }\n  header.navigation ul#navigation-menu {\n    -webkit-transform-style: preserve-3d;\n    clear: both;\n    display: none;\n    margin: 0 auto;\n    overflow: visible;\n    padding: 0;\n    width: 100%;\n    z-index: 9999; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation ul#navigation-menu {\n        display: inline;\n        margin: 0;\n        padding: 0; } }\n  header.navigation ul li.nav-link {\n    background: #333;\n    display: block;\n    line-height: 60px;\n    overflow: hidden;\n    padding-right: .8em;\n    text-align: right;\n    width: 100%;\n    z-index: 9999; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation ul li.nav-link {\n        background: transparent;\n        display: inline;\n        line-height: 60px;\n        text-decoration: none;\n        width: auto; } }\n    header.navigation ul li.nav-link a {\n      color: rgba(255, 255, 255, 0.7);\n      display: inline-block;\n      font-weight: 400; }\n      @media screen and (min-width: 53.75em) {\n        header.navigation ul li.nav-link a {\n          padding-right: 1em; } }\n      header.navigation ul li.nav-link a:hover {\n        color: white; }\n  header.navigation .active-nav-item a {\n    border-bottom: 1px solid rgba(255, 255, 255, 0.5);\n    padding-bottom: 3px; }\n  header.navigation li.more.nav-link {\n    padding-right: 0; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation li.more.nav-link {\n        padding-right: 1em; } }\n    header.navigation li.more.nav-link > ul > li:first-child a {\n      padding-top: 1em; }\n    header.navigation li.more.nav-link a {\n      margin-right: 1em; }\n    header.navigation li.more.nav-link > a {\n      padding-right: 0.6em; }\n    header.navigation li.more.nav-link > a:after {\n      position: absolute;\n      top: auto;\n      right: -0.4em;\n      bottom: auto;\n      left: auto;\n      content: '\\25BE';\n      color: rgba(255, 255, 255, 0.7); }\n  header.navigation li.more {\n    overflow: visible;\n    padding-right: 0; }\n    header.navigation li.more a {\n      padding-right: .8em; }\n    header.navigation li.more > a {\n      padding-right: 1.6em;\n      position: relative; }\n      @media screen and (min-width: 53.75em) {\n        header.navigation li.more > a {\n          margin-right: 1em; } }\n      header.navigation li.more > a:after {\n        content: '\\203A';\n        font-size: 1.2em;\n        position: absolute;\n        right: 0.5em; }\n    header.navigation li.more:hover > .submenu {\n      display: block; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation li.more {\n        padding-right: .8em;\n        position: relative; } }\n  header.navigation ul.submenu {\n    display: none;\n    padding-left: 0; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation ul.submenu {\n        left: -1em;\n        position: absolute;\n        top: 1.5em; } }\n    @media screen and (min-width: 53.75em) {\n      header.navigation ul.submenu .submenu {\n        left: 11.8em;\n        top: 0; } }\n    header.navigation ul.submenu li {\n      display: block;\n      padding-right: 0; }\n      @media screen and (min-width: 53.75em) {\n        header.navigation ul.submenu li {\n          line-height: 46.15385px; }\n          header.navigation ul.submenu li:first-child > a {\n            border-top-left-radius: 3px;\n            border-top-right-radius: 3px; }\n          header.navigation ul.submenu li:last-child > a {\n            border-bottom-left-radius: 3px;\n            border-bottom-right-radius: 3px;\n            padding-bottom: .7em; } }\n      header.navigation ul.submenu li a {\n        background-color: #2b2b2b;\n        display: inline-block;\n        text-align: right;\n        width: 100%; }\n        @media screen and (min-width: 53.75em) {\n          header.navigation ul.submenu li a {\n            background-color: #333;\n            padding-left: 1em;\n            text-align: left;\n            width: 12em; } }\n  header.navigation .navigation-tools {\n    *zoom: 1;\n    display: block;\n    padding-right: 1em;\n    padding-left: 0.5em;\n    clear: both;\n    background: #505050; }\n    header.navigation .navigation-tools:before,\n    header.navigation .navigation-tools:after {\n      content: \" \";\n      display: table; }\n    header.navigation .navigation-tools:after {\n      clear: both; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation .navigation-tools {\n        background: transparent;\n        float: right;\n        clear: none; } }\n  header.navigation a.sign-up {\n    margin-top: 1.2em;\n    float: right;\n    -webkit-transition: all 0.2s ease-in-out;\n    -moz-transition: all 0.2s ease-in-out;\n    transition: all 0.2s ease-in-out;\n    display: inline;\n    background: #477DCA;\n    border-radius: 3px;\n    color: white;\n    font-size: .8em;\n    font-weight: 800;\n    text-transform: uppercase;\n    padding: 0.4em 0.5em; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation a.sign-up {\n        padding: 0.5em 1em; } }\n    header.navigation a.sign-up:hover {\n      background: #6f99d5; }\n  header.navigation .search-bar {\n    padding: 0.85em 0.6em;\n    float: left; }\n    header.navigation .search-bar .search-and-submit {\n      position: relative; }\n      header.navigation .search-bar .search-and-submit input[type=search] {\n        background: #404040;\n        border: 1px solid #262626;\n        padding: 0.6em 0.8em;\n        font-size: .9em;\n        font-style: italic;\n        color: rgba(255, 255, 255, 0.7);\n        border-radius: 6px;\n        margin: 0; }\n        @media screen and (min-width: 53.75em) {\n          header.navigation .search-bar .search-and-submit input[type=search] {\n            width: 100%; } }\n      header.navigation .search-bar .search-and-submit button[type=submit] {\n        border: 1px solid #363636;\n        border-radius: 3px;\n        box-shadow: inset 0 1px 0 0 gray;\n        color: white;\n        display: inline-block;\n        font-size: 11px;\n        font-weight: bold;\n        background-color: #595959;\n        background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #595959), color-stop(100%, #3d3d3d));\n        background-image: -webkit-linear-gradient(#595959, #3d3d3d);\n        background-image: linear-gradient(#595959, #3d3d3d);\n        padding: 7px 18px;\n        text-decoration: none;\n        text-shadow: 0 1px 0 #2b2b2b;\n        background-clip: padding-box;\n        position: absolute;\n        top: 0.3em;\n        right: 0.3em;\n        bottom: 0.3em;\n        left: auto;\n        outline: none;\n        padding: 0 15px; }\n        header.navigation .search-bar .search-and-submit button[type=submit]:hover:not(:disabled) {\n          box-shadow: inset 0 1px 0 0 #666666;\n          cursor: pointer;\n          background-color: #4d4d4d;\n          background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #4d4d4d), color-stop(100%, #363636));\n          background-image: -webkit-linear-gradient(#4d4d4d, #363636);\n          background-image: linear-gradient(#4d4d4d, #363636); }\n        header.navigation .search-bar .search-and-submit button[type=submit]:active:not(:disabled) {\n          border: 1px solid #363636;\n          box-shadow: inset 0 0 8px 4px #2e2e2e, inset 0 0 8px 4px #2e2e2e, 0 1px 1px 0 #eee; }\n        header.navigation .search-bar .search-and-submit button[type=submit]:disabled {\n          opacity: 0.5;\n          cursor: not-allowed; }\n        header.navigation .search-bar .search-and-submit button[type=submit] img {\n          height: 12px;\n          opacity: .7; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation .search-bar {\n        width: 16em;\n        position: relative;\n        display: inline-block; }\n        header.navigation .search-bar input {\n          -webkit-box-sizing: border-box;\n          -moz-box-sizing: border-box;\n          box-sizing: border-box;\n          display: block; } }\n\n.badges {\n  display: block;\n  margin-bottom: 1.5; }\n  .badges .badge {\n    display: inline-block;\n    vertical-align: baseline;\n    zoom: 1;\n    *display: inline;\n    *vertical-align: auto;\n    background: #999;\n    border-radius: 2em;\n    color: #fff;\n    font-size: 0.75em;\n    font-weight: 600;\n    line-height: 1;\n    padding: 0.25em 1em;\n    text-align: center; }\n    .badges .badge.dark {\n      background: #333; }\n    .badges .badge.error {\n      background: #FBE3E4;\n      color: #96151b; }\n    .badges .badge.notice {\n      background: #e5edf8;\n      color: #264d85; }\n    .badges .badge.success {\n      background: #E6EFC2;\n      color: #56651a; }\n\n.button-group input {\n  display: none; }\n\n.button-group label {\n  margin-bottom: 0; }\n  @media screen and (min-width: 53.75em) {\n    .button-group label {\n      float: left; } }\n  .button-group label .button-group-item {\n    background: white;\n    border-left: 1px solid silver;\n    border-radius: 0;\n    border-right: 1px solid silver;\n    color: gray;\n    cursor: pointer;\n    display: inline-block;\n    font-size: 1em;\n    font-weight: normal;\n    line-height: 1;\n    padding: 0.75em 1em;\n    width: 100%; }\n    @media screen and (min-width: 53.75em) {\n      .button-group label .button-group-item {\n        border-bottom: 1px solid silver;\n        border-left: 0;\n        border-right: 1px solid #eeeeee;\n        border-top: 1px solid silver;\n        width: auto; } }\n    .button-group label .button-group-item:hover {\n      background-color: #f7f7f7; }\n  .button-group label:first-child .button-group-item {\n    border-top-left-radius: 3px;\n    border-top-right-radius: 3px;\n    border-top: 1px solid silver; }\n    @media screen and (min-width: 53.75em) {\n      .button-group label:first-child .button-group-item {\n        border-bottom-left-radius: 3px;\n        border-left: 1px solid silver;\n        border-top-left-radius: 3px;\n        border-top-right-radius: 0; } }\n  .button-group label:last-child .button-group-item {\n    border-bottom-left-radius: 3px;\n    border-bottom-right-radius: 3px;\n    border-bottom: 1px solid silver; }\n    @media screen and (min-width: 53.75em) {\n      .button-group label:last-child .button-group-item {\n        border-bottom-left-radius: 0;\n        border-bottom-right-radius: 3px;\n        border-right: 1px solid silver;\n        border-top-right-radius: 3px; } }\n  .button-group label input:checked + .button-group-item {\n    background: #477DCA;\n    border: 1px solid #2c5999;\n    box-shadow: inset 0 1px 2px #3264ac;\n    color: white; }\n\n.image-gradient-dynamic {\n  position: relative;\n  line-height: 0;\n  width: 100%;\n  margin-bottom: 1.5; }\n  .image-gradient-dynamic img {\n    width: 100%;\n    height: auto;\n    position: relative;\n    top: 0;\n    left: 0; }\n  .image-gradient-dynamic .copy {\n    position: absolute;\n    top: 50%;\n    left: 50%;\n    margin: auto;\n    z-index: 999;\n    text-align: center;\n    -webkit-transform: translate(-50%, -50%);\n    -moz-transform: translate(-50%, -50%);\n    -ms-transform: translate(-50%, -50%);\n    -o-transform: translate(-50%, -50%);\n    transform: translate(-50%, -50%); }\n    .image-gradient-dynamic .copy p {\n      line-height: 1.5em;\n      padding: 1em 2em;\n      position: relative;\n      color: white;\n      font-weight: 800; }\n  .image-gradient-dynamic .overlay {\n    background-color: rgba(255, 0, 0, 0.1);\n    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(255, 0, 0, 0.1)), color-stop(100%, rgba(0, 128, 0, 0.4)));\n    background-image: -webkit-linear-gradient(-270deg, rgba(255, 0, 0, 0.1), rgba(0, 128, 0, 0.4));\n    background-image: linear-gradient(0deg,rgba(255, 0, 0, 0.1), rgba(0, 128, 0, 0.4));\n    display: block;\n    position: absolute;\n    top: 0px;\n    right: 0px;\n    bottom: 0px;\n    left: 0px; }\n    .image-gradient-dynamic .overlay:after {\n      content: '';\n      background-color: rgba(0, 128, 128, 0.2);\n      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(0, 128, 128, 0.2)), color-stop(100%, rgba(255, 255, 0, 0.2)));\n      background-image: -webkit-linear-gradient(-360deg, rgba(0, 128, 128, 0.2), rgba(255, 255, 0, 0.2));\n      background-image: linear-gradient(90deg,rgba(0, 128, 128, 0.2), rgba(255, 255, 0, 0.2));\n      display: block;\n      position: absolute;\n      top: 0px;\n      right: 0px;\n      bottom: 0px;\n      left: 0px; }\n\n.table-borders {\n  border: 1px solid #DDD;\n  border-left: 0px;\n  border-collapse: separate;\n  border-spacing: 0;\n  border-radius: 3px; }\n  .table-borders tbody {\n    background-color: #f7f7f7; }\n    .table-borders tbody tr:hover > td, .table-borders tbody tr:hover > th {\n      background-color: #eaeaea; }\n    .table-borders tbody tr:nth-child(even) {\n      background-color: #ececec; }\n      .table-borders tbody tr:nth-child(even):hover > td {\n        background-color: #e0e0e0; }\n  .table-borders thead:first-of-type tr:first-child > th:first-child {\n    border-top-left-radius: 3px; }\n  .table-borders thead:first-of-type tr:first-child > th:last-child {\n    border-top-right-radius: 3px; }\n  .table-borders tbody:last-child tr:last-child > td:first-child {\n    border-bottom-left-radius: 3px; }\n  .table-borders tbody:last-child tr:last-child > td:last-child {\n    border-bottom-right-radius: 3px; }\n  .table-borders thead th {\n    background-color: white;\n    padding: 0.5em;\n    border-left: 1px solid #DDD;\n    border-bottom: 0px; }\n  .table-borders tbody {\n    background-color: #f7f7f7; }\n    .table-borders tbody td {\n      padding: 0.5em;\n      border-left: 1px solid #DDD;\n      border-top: 1px solid #DDD;\n      border-bottom: 0px; }\n      .table-borders tbody td button {\n        border: 1px solid lightgray;\n        border-radius: 3px;\n        box-shadow: inset 0 1px 0 0 white;\n        color: #333333;\n        display: inline-block;\n        font-size: 11px;\n        font-weight: bold;\n        background-color: #f7f7f7;\n        background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f7f7f7), color-stop(100%, #dadada));\n        background-image: -webkit-linear-gradient(#f7f7f7, #dadada);\n        background-image: linear-gradient(#f7f7f7, #dadada);\n        padding: 7px 18px;\n        text-decoration: none;\n        text-shadow: 0 1px 0 white;\n        background-clip: padding-box;\n        margin-right: 0.5em;\n        display: inline-block;\n        width: 100%;\n        margin-bottom: .3em;\n        outline: none; }\n        .table-borders tbody td button:hover:not(:disabled) {\n          box-shadow: inset 0 1px 0 0 white;\n          cursor: pointer;\n          background-color: #eaeaea;\n          background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eaeaea), color-stop(100%, lightgray));\n          background-image: -webkit-linear-gradient(#eaeaea, lightgray);\n          background-image: linear-gradient(#eaeaea, lightgray); }\n        .table-borders tbody td button:active:not(:disabled) {\n          border: 1px solid lightgray;\n          box-shadow: inset 0 0 8px 4px #cbcbcb, inset 0 0 8px 4px #cbcbcb, 0 1px 1px 0 #eee; }\n        .table-borders tbody td button:disabled {\n          opacity: 0.5;\n          cursor: not-allowed; }\n        @media screen and (min-width: 40em) {\n          .table-borders tbody td button {\n            width: auto;\n            margin-bottom: 0; } }\n\n.table-minimal {\n  border-collapse: separate;\n  border-spacing: 0; }\n  .table-minimal tbody tr:hover > td, .table-minimal tbody tr:hover > th {\n    background-color: #fafafa; }\n  .table-minimal tbody tr:first-child td {\n    border-top: 2px solid #DDD; }\n  .table-minimal thead th {\n    background-color: white;\n    padding: 0.5em;\n    border-bottom: 0px; }\n  .table-minimal tbody {\n    background-color: white; }\n    .table-minimal tbody td {\n      padding: 0.5em;\n      border-top: 1px solid #DDD;\n      border-bottom: 0px; }\n      .table-minimal tbody td button {\n        border: 1px solid #dbdbdb;\n        border-radius: 3px;\n        box-shadow: inset 0 1px 0 0 white;\n        color: #333333;\n        display: inline-block;\n        font-size: 11px;\n        font-weight: bold;\n        background-color: white;\n        background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #e3e3e3));\n        background-image: -webkit-linear-gradient(white, #e3e3e3);\n        background-image: linear-gradient(white, #e3e3e3);\n        padding: 7px 18px;\n        text-decoration: none;\n        text-shadow: 0 1px 0 white;\n        background-clip: padding-box;\n        margin-right: 0.5em;\n        display: inline-block;\n        width: 100%;\n        margin-bottom: .3em;\n        outline: none; }\n        .table-minimal tbody td button:hover:not(:disabled) {\n          box-shadow: inset 0 1px 0 0 white;\n          cursor: pointer;\n          background-color: #f2f2f2;\n          background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f2f2f2), color-stop(100%, #dbdbdb));\n          background-image: -webkit-linear-gradient(#f2f2f2, #dbdbdb);\n          background-image: linear-gradient(#f2f2f2, #dbdbdb); }\n        .table-minimal tbody td button:active:not(:disabled) {\n          border: 1px solid #dbdbdb;\n          box-shadow: inset 0 0 8px 4px #d4d4d4, inset 0 0 8px 4px #d4d4d4, 0 1px 1px 0 #eee; }\n        .table-minimal tbody td button:disabled {\n          opacity: 0.5;\n          cursor: not-allowed; }\n        @media screen and (min-width: 40em) {\n          .table-minimal tbody td button {\n            width: auto;\n            margin-bottom: 0; } }\n\n.tooltip-item {\n  border: 1px solid #DDD;\n  padding: 0.5em 1em;\n  border-radius: 3px;\n  position: relative;\n  margin-bottom: 1.5; }\n  .tooltip-item:hover .tooltip {\n    opacity: 1;\n    visibility: visible; }\n  .tooltip-item .tooltip {\n    position: absolute;\n    left: 50%;\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n    -webkit-transition: all 0.2s ease-in-out;\n    -moz-transition: all 0.2s ease-in-out;\n    transition: all 0.2s ease-in-out;\n    bottom: 140%;\n    background-color: white;\n    border-radius: 3px;\n    color: #333;\n    font-size: .9em;\n    line-height: 1.5em;\n    margin-left: -8em;\n    opacity: 0;\n    padding: 1em;\n    box-shadow: 0 2px 2px silver;\n    text-align: center;\n    visibility: hidden;\n    min-width: 16em;\n    z-index: 10;\n    font-family: Georgia, Cambria, \"Times New Roman\", Times, serif; }\n    .tooltip-item .tooltip p {\n      margin-bottom: 0; }\n    .tooltip-item .tooltip:after {\n      position: absolute;\n      left: 46%;\n      margin-left: -8px;\n      border: 8px solid transparent;\n      color: white;\n      content: '\\25BC';\n      text-shadow: 0 2px 2px silver;\n      font-size: 1.4em;\n      pointer-events: none;\n      bottom: -27.2px; }\n\n.vertical-tabs-container {\n  *zoom: 1;\n  border-radius: 3px;\n  border: 1px solid #DDD;\n  margin-bottom: 1.5em;\n  overflow: hidden; }\n  .vertical-tabs-container:before,\n  .vertical-tabs-container:after {\n    content: \" \";\n    display: table; }\n  .vertical-tabs-container:after {\n    clear: both; }\n  .vertical-tabs-container .vertical-tabs {\n    display: none; }\n    @media screen and (min-width: 40em) {\n      .vertical-tabs-container .vertical-tabs {\n        background-color: white;\n        display: inline;\n        float: left;\n        height: 18.75em;\n        width: 20%; } }\n  @media screen and (min-width: 40em) {\n    .vertical-tabs-container .vertical-tab {\n      border-bottom: 1px solid #DDD;\n      display: block;\n      font-weight: bold;\n      margin-right: -1px;\n      padding: 0.75em 0.809em; }\n      .vertical-tabs-container .vertical-tab.is-active {\n        background-color: #f7f7f7;\n        margin-right: -1px; } }\n  .vertical-tabs-container .vertical-tab:focus {\n    outline: none; }\n  .vertical-tabs-container .vertical-tab-content-container {\n    display: block;\n    margin: 0 auto; }\n    .vertical-tabs-container .vertical-tab-content-container a:focus {\n      outline: none; }\n    @media screen and (min-width: 40em) {\n      .vertical-tabs-container .vertical-tab-content-container {\n        display: inline-block;\n        vertical-align: baseline;\n        zoom: 1;\n        *display: inline;\n        *vertical-align: auto;\n        width: 80%;\n        height: 18.75em;\n        background-color: #f7f7f7; } }\n  .vertical-tabs-container .vertical-tab-content {\n    background-color: #f7f7f7;\n    padding: 1.5em 1.618em; }\n    @media screen and (min-width: 40em) {\n      .vertical-tabs-container .vertical-tab-content {\n        border: none;\n        display: none; } }\n  .vertical-tabs-container .vertical-tab-accordion-heading {\n    background-color: white;\n    border-top: 1px solid #DDD;\n    cursor: pointer;\n    display: block;\n    font-weight: bold;\n    padding: 0.75em 0.809em; }\n    .vertical-tabs-container .vertical-tab-accordion-heading:hover {\n      color: #477DCA; }\n    .vertical-tabs-container .vertical-tab-accordion-heading:first-child {\n      border-top: none; }\n    .vertical-tabs-container .vertical-tab-accordion-heading.is-active {\n      background: #f7f7f7;\n      border-bottom: none; }\n    @media screen and (min-width: 40em) {\n      .vertical-tabs-container .vertical-tab-accordion-heading {\n        display: none; } }\n\n.hover-tile-outer {\n  background-position: bottom;\n  background-size: cover;\n  background: url(\"/images/mountains.png\");\n  background-size: cover;\n  background-color: #BEB56E;\n  border: 1px solid #DDD;\n  height: 10em;\n  margin-bottom: 1.5;\n  cursor: pointer; }\n  @media screen and (min-width: 40em) {\n    .hover-tile-outer {\n      width: 40%; } }\n  .hover-tile-outer .hover-tile-container {\n    height: 10em;\n    overflow: hidden; }\n  .hover-tile-outer .hover-tile-container:hover > .hover-tile {\n    -webkit-transform: translate(0, -100%);\n    -moz-transform: translate(0, -100%);\n    -ms-transform: translate(0, -100%);\n    -o-transform: translate(0, -100%);\n    transform: translate(0, -100%); }\n  .hover-tile-outer .hover-tile {\n    -webkit-transition: all, 0.2s ease-in-out;\n    -moz-transition: all, 0.2s ease-in-out;\n    transition: all, 0.2s ease-in-out;\n    background: inherit;\n    color: white;\n    height: inherit;\n    padding: 1em 1.5em; }\n  .hover-tile-outer .hover-tile-visible {\n    color: rgba(255, 255, 255, 0.7);\n    font-size: 2em;\n    font-weight: 200;\n    padding-top: 2em;\n    text-align: center; }\n  .hover-tile-outer .hover-tile-hidden {\n    background: rgba(0, 0, 0, 0.5); }\n    .hover-tile-outer .hover-tile-hidden h4 {\n      margin-bottom: .5em; }\n    .hover-tile-outer .hover-tile-hidden p {\n      color: rgba(255, 255, 255, 0.7); }\n\n.bullets {\n  overflow: auto;\n  margin-bottom: 1.5; }\n  @media screen and (min-width: 53.75em) {\n    .bullets .two-col-bullet {\n      float: left;\n      display: block;\n      margin-right: 2.35765%;\n      width: 48.82117%; }\n      .bullets .two-col-bullet:last-child {\n        margin-right: 0; }\n      .bullets .two-col-bullet:nth-child(2n) {\n        margin-right: 0; }\n      .bullets .two-col-bullet:nth-child(2n+1) {\n        clear: left; } }\n  @media screen and (min-width: 53.75em) {\n    .bullets .three-col-bullet {\n      float: left;\n      display: block;\n      margin-right: 2.35765%;\n      width: 31.76157%; }\n      .bullets .three-col-bullet:last-child {\n        margin-right: 0; }\n      .bullets .three-col-bullet:nth-child(3n) {\n        margin-right: 0; }\n      .bullets .three-col-bullet:nth-child(3n+1) {\n        clear: left; } }\n  @media screen and (min-width: 53.75em) {\n    .bullets .four-col-bullet {\n      float: left;\n      display: block;\n      margin-right: 2.35765%;\n      width: 23.23176%; }\n      .bullets .four-col-bullet:last-child {\n        margin-right: 0; }\n      .bullets .four-col-bullet:nth-child(4n) {\n        margin-right: 0; }\n      .bullets .four-col-bullet:nth-child(4n+1) {\n        clear: left; } }\n  .bullets .bullet-icon {\n    float: left;\n    background: #477DCA;\n    padding: 0.875em;\n    border-radius: 50%;\n    width: 3.5em;\n    height: 3.5em; }\n  .bullets .bullet-icon-1 {\n    background: #477DCA; }\n  .bullets .bullet-icon-2 {\n    background: #47caaa; }\n  .bullets .bullet-icon-3 {\n    background: #a9ca47; }\n  .bullets .bullet-content {\n    margin-left: 4.9em;\n    margin-bottom: 2em; }\n  .bullets h2 {\n    font-size: 1.4em;\n    padding-top: 0.5em;\n    margin-bottom: 0.58333em;\n    border-bottom: 1px solid rgba(51, 51, 51, 0.2);\n    display: inline-block; }\n\n.grid-items {\n  *zoom: 1; }\n  .grid-items:before,\n  .grid-items:after {\n    content: \" \";\n    display: table; }\n  .grid-items:after {\n    clear: both; }\n  .grid-items .grid-item {\n    -webkit-transition: all 0.2s ease-in-out;\n    -moz-transition: all 0.2s ease-in-out;\n    transition: all 0.2s ease-in-out;\n    height: 14em;\n    background: #6b83a6;\n    width: 100%;\n    overflow: hidden;\n    float: left;\n    padding: 2em;\n    border-top: 0;\n    border-bottom: 9px solid white;\n    border-left: 4.5px solid white;\n    border-right: 4.5px solid white;\n    text-align: center;\n    cursor: pointer; }\n    @media screen and (min-width: 53.75em) {\n      .grid-items .grid-item {\n        width: 33.33333%; } }\n    .grid-items .grid-item:nth-child(1) {\n      background-color: #6b83a6;\n      box-shadow: inset 0px 0px 1px 2px #536a8b; }\n      .grid-items .grid-item:nth-child(1):hover {\n        background-color: #536a8b;\n        background-repeat: no-repeat;\n        background-position: top;\n        background-size: cover; }\n    .grid-items .grid-item:nth-child(2) {\n      background-color: #3581A5;\n      box-shadow: inset 0px 0px 1px 2px #29637e; }\n      .grid-items .grid-item:nth-child(2):hover {\n        background-color: #29637e;\n        background-repeat: no-repeat;\n        background-position: top;\n        background-size: cover; }\n    .grid-items .grid-item:nth-child(3) {\n      background-color: #5FBEBE;\n      box-shadow: inset 0px 0px 1px 2px #44a6a6; }\n      .grid-items .grid-item:nth-child(3):hover {\n        background-color: #44a6a6;\n        background-repeat: no-repeat;\n        background-position: top;\n        background-size: cover; }\n    .grid-items .grid-item:nth-child(4) {\n      background-color: #98C79A;\n      box-shadow: inset 0px 0px 1px 2px #77b57a; }\n      .grid-items .grid-item:nth-child(4):hover {\n        background-color: #77b57a;\n        background-repeat: no-repeat;\n        background-position: top;\n        background-size: cover; }\n    .grid-items .grid-item:nth-child(5) {\n      background-color: #A7A891;\n      box-shadow: inset 0px 0px 1px 2px #909175; }\n      .grid-items .grid-item:nth-child(5):hover {\n        background-color: #909175;\n        background-repeat: no-repeat;\n        background-position: top;\n        background-size: cover; }\n    .grid-items .grid-item:nth-child(6) {\n      background-color: #BDCC97;\n      box-shadow: inset 0px 0px 1px 2px #a7bb75; }\n      .grid-items .grid-item:nth-child(6):hover {\n        background-color: #a7bb75;\n        background-repeat: no-repeat;\n        background-position: top;\n        background-size: cover; }\n    .grid-items .grid-item:nth-child(7) {\n      background-color: #979EA0;\n      box-shadow: inset 0px 0px 1px 2px #7c8588; }\n      .grid-items .grid-item:nth-child(7):hover {\n        background-color: #7c8588;\n        background-repeat: no-repeat;\n        background-position: top;\n        background-size: cover; }\n  .grid-items .grid-item img {\n    display: block;\n    height: 3em;\n    margin: auto;\n    margin-bottom: 1em; }\n  .grid-items .grid-item h1 {\n    color: white;\n    font-size: 1.3em;\n    margin-bottom: .4em; }\n  .grid-items .grid-item p {\n    margin: auto;\n    color: rgba(255, 255, 255, 0.7); }\n    @media screen and (min-width: 40em) {\n      .grid-items .grid-item p {\n        max-width: 70%; } }\n  @media screen and (min-width: 53.75em) {\n    .grid-items .grid-item-big {\n      width: 66.66667%; } }\n  @media screen and (min-width: 40em) {\n    .grid-items .grid-item-big p {\n      max-width: 60%; } }\n  .grid-items .grid-item-image {\n    background: url(/images/lake-transparent.png);\n    background-color: #6b83a6;\n    background-repeat: no-repeat;\n    background-position: top;\n    background-size: cover; }\n\n.grid-items-lines {\n  *zoom: 1;\n  position: relative; }\n  .grid-items-lines:before,\n  .grid-items-lines:after {\n    content: \" \";\n    display: table; }\n  .grid-items-lines:after {\n    clear: both; }\n  .grid-items-lines .grid-item {\n    -webkit-transition: all 0.2s ease-in-out;\n    -moz-transition: all 0.2s ease-in-out;\n    transition: all 0.2s ease-in-out;\n    height: 14em;\n    background: white;\n    width: 100%;\n    overflow: hidden;\n    float: left;\n    padding: 2em;\n    border-right: 1px solid rgba(51, 51, 51, 0.2);\n    border-bottom: 1px solid rgba(51, 51, 51, 0.2);\n    cursor: pointer; }\n    @media screen and (min-width: 53.75em) {\n      .grid-items-lines .grid-item {\n        width: 33.33333%; } }\n    .grid-items-lines .grid-item:hover {\n      background: rgba(51, 51, 51, 0.05); }\n  .grid-items-lines .grid-item img {\n    display: block;\n    height: 2.5em;\n    margin-bottom: 1.2em;\n    opacity: .2; }\n  .grid-items-lines .grid-item h1 {\n    color: #333;\n    font-size: 1.3em;\n    margin-bottom: .4em; }\n  .grid-items-lines .grid-item p {\n    color: rgba(51, 51, 51, 0.6); }\n    @media screen and (min-width: 40em) {\n      .grid-items-lines .grid-item p {\n        max-width: 70%; } }\n  @media screen and (min-width: 53.75em) {\n    .grid-items-lines .grid-item-big {\n      width: 66.66667%; } }\n  @media screen and (min-width: 40em) {\n    .grid-items-lines .grid-item-big p {\n      max-width: 60%; } }\n  .grid-items-lines .bottom-cover {\n    position: absolute;\n    bottom: 0px;\n    width: 100%;\n    height: 3px;\n    background: white; }\n  .grid-items-lines .right-cover {\n    position: absolute;\n    right: 0px;\n    height: 100%;\n    width: 4px;\n    background: white; }\n\n.comment {\n  display: table;\n  width: 100%;\n  margin-bottom: 1.5em;\n  padding-bottom: 1em;\n  border-bottom: 1px solid rgba(51, 51, 51, 0.1); }\n  .comment .comment-image,\n  .comment .comment-content {\n    display: table-cell;\n    vertical-align: top; }\n  .comment .comment-image {\n    padding-right: 1.4em; }\n    .comment .comment-image > img {\n      width: 4em;\n      height: auto;\n      border-radius: 3px;\n      padding: 0.7em;\n      background: #82a7db;\n      display: block;\n      max-width: none; }\n    .comment-reverse-order .comment .comment-image {\n      padding-right: 0;\n      padding-left: 10px; }\n  .comment .comment-content {\n    width: 100%; }\n    .comment .comment-content h1 {\n      font-size: 1em;\n      margin-bottom: .5em; }\n    .comment .comment-content p {\n      margin-bottom: .5em; }\n    .comment .comment-content p.comment-detail {\n      font-style: italic;\n      font-size: .9em;\n      color: rgba(51, 51, 51, 0.5); }\n\n.browsers {\n  display: inline-block;\n  padding-top: 0;\n  text-align: center;\n  width: 100%; }\n  @media screen and (min-width: 53.75em) {\n    .browsers {\n      padding-top: 2em; } }\n\n.browser-top-bar {\n  background-color: #ececec;\n  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ececec), color-stop(100%, #e7e7e7));\n  background-image: -webkit-linear-gradient(#ececec, #e7e7e7);\n  background-image: linear-gradient(#ececec, #e7e7e7);\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n  border: 0px;\n  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);\n  height: 1.5em;\n  width: 100%; }\n\n.browser-circle {\n  border-radius: 1em;\n  box-shadow: 0 1px 0px rgba(255, 255, 255, 0.5), inset 0 1px 1px rgba(0, 0, 0, 0.2);\n  display: inline-block;\n  width: 0.5em;\n  height: 0.5em;\n  margin: 0.5em 0; }\n\n.browser-circle:nth-child(1) {\n  background: #FF6F55;\n  margin-left: 0.5em; }\n\n.browser-circle:nth-child(2) {\n  background: #F5B01D;\n  margin-left: 0.16667em; }\n\n.browser-circle:nth-child(3) {\n  background: #51B151;\n  margin-left: 0.16667em; }\n\n.browser {\n  border-bottom: none;\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);\n  display: inline-block;\n  text-align: left;\n  width: 20%; }\n\n.browser:nth-child(1) {\n  background-color: #F0F0F0;\n  display: none; }\n  @media screen and (min-width: 53.75em) {\n    .browser:nth-child(1) {\n      display: inline-block; } }\n  .browser:nth-child(1) .browser-content {\n    background: url(https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/refills-screenshot1.png);\n    background-color: #F0F0F0;\n    background-position: top;\n    background-repeat: no-repeat;\n    background-size: cover; }\n\n.browser:nth-child(2) {\n  -webkit-transform: scale(1);\n  -moz-transform: scale(1);\n  -ms-transform: scale(1);\n  -o-transform: scale(1);\n  transform: scale(1);\n  background-color: white;\n  width: 90%; }\n  @media screen and (min-width: 53.75em) {\n    .browser:nth-child(2) {\n      -webkit-transform: scale(1.2);\n      -moz-transform: scale(1.2);\n      -ms-transform: scale(1.2);\n      -o-transform: scale(1.2);\n      transform: scale(1.2);\n      width: 40%; } }\n  .browser:nth-child(2) .browser-content {\n    background: url(https://raw.githubusercontent.com/thoughtbot/refills/9c16f8b69d857c296c85f2d8c434e825f813a566/source/images/refills-screenshot2.jpg);\n    background-color: white;\n    background-position: top;\n    background-repeat: no-repeat;\n    background-size: cover; }\n\n.browser:nth-child(3) {\n  background-color: #F0F0F0;\n  display: none; }\n  @media screen and (min-width: 53.75em) {\n    .browser:nth-child(3) {\n      display: inline-block; } }\n  .browser:nth-child(3) .browser-content {\n    background: url(https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/refills-screenshot3.png);\n    background-color: #F0F0F0;\n    background-position: top;\n    background-repeat: no-repeat;\n    background-size: cover; }\n\n.browser-content {\n  border-left: 0px;\n  border-right: 0px;\n  height: 17em;\n  overflow: hidden; }\n  @media screen and (min-width: 53.75em) {\n    .browser-content {\n      height: 18em; } }\n\n.cover {\n  background: white;\n  border-top: 1px solid #E6E6E6;\n  height: 3.2em;\n  margin-top: -1em;\n  position: relative;\n  width: 100%;\n  z-index: 999; }\n\n.centered-navigation {\n  background-color: #E7F1EC;\n  border-bottom: 1px solid #d4e6dd;\n  font-family: Georgia, Cambria, \"Times New Roman\", Times, serif;\n  height: 60px;\n  width: 100%;\n  z-index: 9999; }\n  .centered-navigation .mobile-logo {\n    display: inline;\n    float: left;\n    max-height: 60px;\n    padding-left: 1em; }\n    .centered-navigation .mobile-logo img {\n      max-height: 60px;\n      opacity: .6;\n      padding: .8em 0; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation .mobile-logo {\n        display: none; } }\n  .centered-navigation .centered-navigation-menu-button {\n    color: rgba(51, 51, 51, 0.7);\n    display: block;\n    float: right;\n    font-weight: 700;\n    line-height: 60px;\n    margin: 0;\n    padding-right: 1em;\n    text-transform: uppercase; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation .centered-navigation-menu-button {\n        display: none; } }\n    .centered-navigation .centered-navigation-menu-button:hover {\n      color: #333; }\n  .centered-navigation .centered-navigation-wrapper {\n    *zoom: 1;\n    max-width: 68em;\n    margin-left: auto;\n    margin-right: auto;\n    *zoom: 1;\n    position: relative;\n    z-index: 999; }\n    .centered-navigation .centered-navigation-wrapper:before,\n    .centered-navigation .centered-navigation-wrapper:after {\n      content: \" \";\n      display: table; }\n    .centered-navigation .centered-navigation-wrapper:after {\n      clear: both; }\n    .centered-navigation .centered-navigation-wrapper:before,\n    .centered-navigation .centered-navigation-wrapper:after {\n      content: \" \";\n      display: table; }\n    .centered-navigation .centered-navigation-wrapper:after {\n      clear: both; }\n  .centered-navigation ul.centered-navigation-menu {\n    -webkit-transform-style: preserve-3d;\n    clear: both;\n    display: none;\n    margin: 0 auto;\n    overflow: visible;\n    padding: 0;\n    width: 100%;\n    z-index: 99999; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation ul.centered-navigation-menu {\n        display: block;\n        text-align: center; } }\n  @media screen and (min-width: 53.75em) {\n    .centered-navigation .nav-link:first-child {\n      margin-left: 2.2em; } }\n  .centered-navigation ul li.nav-link {\n    background: #E7F1EC;\n    display: block;\n    line-height: 60px;\n    overflow: hidden;\n    padding-right: 1em;\n    text-align: right;\n    width: 100%;\n    z-index: 9999; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation ul li.nav-link {\n        background: transparent;\n        display: inline;\n        line-height: 60px; }\n        .centered-navigation ul li.nav-link a {\n          padding-right: 1em; } }\n    .centered-navigation ul li.nav-link a {\n      color: rgba(51, 51, 51, 0.7);\n      display: inline-block; }\n      .centered-navigation ul li.nav-link a:hover {\n        color: #333; }\n  .centered-navigation li.logo.nav-link {\n    display: none;\n    line-height: 0; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation li.logo.nav-link {\n        display: inline; } }\n  .centered-navigation .logo img {\n    margin-bottom: -0.66667em;\n    max-height: 2em;\n    opacity: .6; }\n  .centered-navigation li.more.nav-link {\n    padding-right: 0; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation li.more.nav-link {\n        padding-right: 1em; } }\n    .centered-navigation li.more.nav-link > ul > li:first-child a {\n      padding-top: 1em; }\n    .centered-navigation li.more.nav-link a {\n      margin-right: 1em; }\n    .centered-navigation li.more.nav-link > a {\n      padding-right: 0.6em; }\n    .centered-navigation li.more.nav-link > a:after {\n      position: absolute;\n      top: auto;\n      right: -0.4em;\n      bottom: auto;\n      left: auto;\n      color: rgba(51, 51, 51, 0.7);\n      content: '\\25BE'; }\n  .centered-navigation li.more {\n    overflow: visible;\n    padding-right: 0; }\n    .centered-navigation li.more a {\n      padding-right: 1em; }\n    .centered-navigation li.more > a {\n      padding-right: 1.6em;\n      position: relative; }\n      @media screen and (min-width: 53.75em) {\n        .centered-navigation li.more > a {\n          margin-right: 1em; } }\n      .centered-navigation li.more > a:after {\n        content: '\\203A';\n        font-size: 1.2em;\n        position: absolute;\n        right: 0.5em; }\n    .centered-navigation li.more:hover > .submenu {\n      display: block; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation li.more {\n        padding-right: 1em;\n        position: relative; } }\n  .centered-navigation ul.submenu {\n    display: none;\n    padding-left: 0; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation ul.submenu {\n        left: -1em;\n        position: absolute;\n        top: 1.5em; } }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation ul.submenu .submenu {\n        left: 11.8em;\n        top: 0; } }\n    .centered-navigation ul.submenu li {\n      display: block;\n      padding-right: 0; }\n      @media screen and (min-width: 53.75em) {\n        .centered-navigation ul.submenu li {\n          line-height: 46.15385px; }\n          .centered-navigation ul.submenu li:first-child > a {\n            border-top-left-radius: 3px;\n            border-top-right-radius: 3px; }\n          .centered-navigation ul.submenu li:last-child > a {\n            border-bottom-left-radius: 3px;\n            border-bottom-right-radius: 3px;\n            padding-bottom: .7em; } }\n      .centered-navigation ul.submenu li a {\n        background-color: #ddebe4;\n        display: inline-block;\n        text-align: right;\n        width: 100%; }\n        @media screen and (min-width: 53.75em) {\n          .centered-navigation ul.submenu li a {\n            background-color: #E7F1EC;\n            padding-left: 1em;\n            text-align: left;\n            width: 12em; } }\n\n.search-tools {\n  *zoom: 1;\n  border: 1px solid #DDD;\n  background: #f7f7f7;\n  padding: 0.809em;\n  border-radius: 3px; }\n  .search-tools:before,\n  .search-tools:after {\n    content: \" \";\n    display: table; }\n  .search-tools:after {\n    clear: both; }\n  .search-tools .filter {\n    margin-bottom: 1em; }\n    @media screen and (min-width: 53.75em) {\n      .search-tools .filter {\n        float: left;\n        display: block;\n        margin-right: 2.35765%;\n        width: 27.49666%;\n        margin-bottom: 0; }\n        .search-tools .filter:last-child {\n          margin-right: 0; } }\n    .search-tools .filter > div {\n      position: relative; }\n      .search-tools .filter > div label {\n        font-weight: 400;\n        cursor: pointer;\n        margin-bottom: 0; }\n    .search-tools .filter ol label {\n      display: inline; }\n    .search-tools .filter button {\n      border: 1px solid #dbdbdb;\n      border-radius: 3px;\n      box-shadow: inset 0 1px 0 0 white;\n      color: #333333;\n      display: inline-block;\n      font-size: 11px;\n      font-weight: bold;\n      background-color: white;\n      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #e3e3e3));\n      background-image: -webkit-linear-gradient(white, #e3e3e3);\n      background-image: linear-gradient(white, #e3e3e3);\n      padding: 7px 18px;\n      text-decoration: none;\n      text-shadow: 0 1px 0 white;\n      background-clip: padding-box;\n      position: absolute;\n      top: 5px;\n      right: 5px;\n      bottom: auto;\n      left: auto;\n      font-size: .7em; }\n      .search-tools .filter button:hover:not(:disabled) {\n        box-shadow: inset 0 1px 0 0 white;\n        cursor: pointer;\n        background-color: #f2f2f2;\n        background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f2f2f2), color-stop(100%, #dbdbdb));\n        background-image: -webkit-linear-gradient(#f2f2f2, #dbdbdb);\n        background-image: linear-gradient(#f2f2f2, #dbdbdb); }\n      .search-tools .filter button:active:not(:disabled) {\n        border: 1px solid #dbdbdb;\n        box-shadow: inset 0 0 8px 4px #d4d4d4, inset 0 0 8px 4px #d4d4d4, 0 1px 1px 0 #eee; }\n      .search-tools .filter button:disabled {\n        opacity: 0.5;\n        cursor: not-allowed; }\n    .search-tools .filter .hide-options {\n      margin-bottom: 0; }\n      .search-tools .filter .hide-options ol, .search-tools .filter .hide-options button {\n        display: none; }\n  .search-tools .trigger {\n    width: 100%; }\n    @media screen and (min-width: 53.75em) {\n      .search-tools .trigger {\n        float: left;\n        display: block;\n        margin-right: 2.35765%;\n        width: 10.43705%; }\n        .search-tools .trigger:last-child {\n          margin-right: 0; } }\n    .search-tools .trigger button {\n      width: 100%;\n      margin-top: 1em;\n      padding-top: .7em;\n      padding-bottom: .7em; }\n      @media screen and (min-width: 53.75em) {\n        .search-tools .trigger button {\n          margin-top: 1.95em; } }\n\n.device-background {\n  background-color: #162C4C;\n  background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/mountains.png\"), -webkit-linear-gradient(-280deg, #0A120D, #162C4C), no-repeat #162C4C scroll;\n  background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/mountains.png\"), linear-gradient(10deg, #0A120D, #162C4C), no-repeat #162C4C scroll;\n  background-repeat: no-repeat;\n  background-size: cover;\n  width: 100%;\n  height: 20em; }\n  .device-background button {\n    border: 1px solid #dbdbdb;\n    border-radius: 3px;\n    box-shadow: inset 0 1px 0 0 white;\n    color: #333333;\n    display: inline-block;\n    font-size: 11px;\n    font-weight: bold;\n    background-color: white;\n    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #e3e3e3));\n    background-image: -webkit-linear-gradient(white, #e3e3e3);\n    background-image: linear-gradient(white, #e3e3e3);\n    padding: 7px 18px;\n    text-decoration: none;\n    text-shadow: 0 1px 0 white;\n    background-clip: padding-box;\n    font-size: 1em;\n    outline: none; }\n    .device-background button:hover:not(:disabled) {\n      box-shadow: inset 0 1px 0 0 white;\n      cursor: pointer;\n      background-color: #f2f2f2;\n      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f2f2f2), color-stop(100%, #dbdbdb));\n      background-image: -webkit-linear-gradient(#f2f2f2, #dbdbdb);\n      background-image: linear-gradient(#f2f2f2, #dbdbdb); }\n    .device-background button:active:not(:disabled) {\n      border: 1px solid #dbdbdb;\n      box-shadow: inset 0 0 8px 4px #d4d4d4, inset 0 0 8px 4px #d4d4d4, 0 1px 1px 0 #eee; }\n    .device-background button:disabled {\n      opacity: 0.5;\n      cursor: not-allowed; }\n\n.device-text {\n  color: white;\n  padding: 2em; }\n  @media screen and (min-width: 53.75em) {\n    .device-text {\n      max-width: 50%;\n      padding: 4em;\n      float: left; } }\n  .device-text h4 {\n    margin-bottom: .5em;\n    padding-bottom: .5em;\n    border-bottom: 1px solid rgba(255, 255, 255, 0.3); }\n  .device-text p {\n    font-family: Georgia, Cambria, \"Times New Roman\", Times, serif;\n    margin-bottom: 1.5em; }\n\n.device {\n  display: none;\n  position: relative; }\n  @media screen and (min-width: 53.75em) {\n    .device {\n      -webkit-transform: perspective(800px) translateX(0px) translateY(-100px) translateZ(50px) rotateX(0deg) rotateY(-20deg) rotateZ(0deg);\n      -moz-transform: perspective(800px) translateX(0px) translateY(-100px) translateZ(50px) rotateX(0deg) rotateY(-20deg) rotateZ(0deg);\n      -ms-transform: perspective(800px) translateX(0px) translateY(-100px) translateZ(50px) rotateX(0deg) rotateY(-20deg) rotateZ(0deg);\n      -o-transform: perspective(800px) translateX(0px) translateY(-100px) translateZ(50px) rotateX(0deg) rotateY(-20deg) rotateZ(0deg);\n      transform: perspective(800px) translateX(0px) translateY(-100px) translateZ(50px) rotateX(0deg) rotateY(-20deg) rotateZ(0deg);\n      display: block;\n      float: right;\n      margin-bottom: -12em;\n      margin-right: 5em;\n      padding: 5em 0;\n      width: 14.8em;\n      border-radius: 2em;\n      background: #1a1a1a;\n      box-shadow: 1px 0px #343434, 4px 0px #060606, 7px 0px black, 10px 0px black, 13px 0px black;\n      z-index: 99999; }\n      .device .screen {\n        width: 14em;\n        height: 25em;\n        background-image: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/cosmin_capitanu_screen.jpg\");\n        background-size: cover;\n        box-shadow: inset 0 1px 8px rgba(0, 0, 0, 0.5);\n        margin: auto;\n        border-radius: .2em; } }\n\n.dropdown {\n  text-align: center; }\n\n.dropdown-container {\n  display: inline-block;\n  position: relative; }\n\n.dropdown-description {\n  background: white;\n  border-bottom-left-radius: 3px;\n  border-bottom: 1px solid silver;\n  border-left: 1px solid silver;\n  border-top-left-radius: 3px;\n  border-top: 1px solid silver;\n  color: #999999;\n  float: left;\n  font-size: .7em;\n  line-height: 40px;\n  margin-bottom: 0;\n  padding: 0 0.5em 0 1em; }\n  @media screen and (min-width: 53.75em) {\n    .dropdown-description {\n      font-size: 1em; } }\n\n.dropdown-button {\n  background: white;\n  border-bottom-right-radius: 3px;\n  border-top-right-radius: 3px;\n  border-top: 1px solid silver;\n  border-right: 1px solid silver;\n  border-bottom: 1px solid silver;\n  cursor: pointer;\n  float: right;\n  font-size: .7em;\n  font-weight: 800;\n  line-height: 40px;\n  margin-bottom: 0;\n  padding: 0 3.5em 0 0.5em;\n  position: relative; }\n  @media screen and (min-width: 53.75em) {\n    .dropdown-button {\n      font-size: 1em;\n      padding: 0 2.5em 0 0.5em; } }\n\n.dropdown-button:hover {\n  background-color: #f7f7f7; }\n\n.dropdown-button:after {\n  color: #333;\n  content: \"\\25BE\";\n  display: block;\n  position: absolute;\n  right: 1em;\n  top: 0; }\n\n.menu {\n  -webkit-transition: all 0.2s ease-in-out;\n  -moz-transition: all 0.2s ease-in-out;\n  transition: all 0.2s ease-in-out;\n  background: white;\n  border-radius: 3px;\n  border: 1px solid silver;\n  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);\n  color: #333;\n  cursor: pointer;\n  display: none;\n  overflow: show;\n  position: absolute;\n  right: 0;\n  top: 50px;\n  width: 228px;\n  z-index: 99999; }\n  .menu:before {\n    position: absolute;\n    right: 1em;\n    color: white;\n    content: \"\\25B2\";\n    font-size: 1.4em;\n    pointer-events: none;\n    text-shadow: 0 -2px 2px rgba(0, 0, 0, 0.3);\n    top: -1em; }\n\n.menu li {\n  border-bottom: 1px solid silver;\n  color: #333;\n  padding: 0.5em; }\n\n.menu li:hover {\n  background: #f7f7f7; }\n\n.menu li:first-child {\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px; }\n\n.menu li:last-child {\n  border: none;\n  border-bottom-left-radius: 3px;\n  border-bottom-right-radius: 3px; }\n\n.show-menu {\n  display: block; }\n\n.texture {\n  height: 5em;\n  width: 100%; }\n\n.texture-normal {\n  background-color: #e1f2f1;\n  background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/diagonal-noise.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), center no-repeat #e1f2f1 scroll;\n  background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/diagonal-noise.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), center no-repeat #e1f2f1 scroll;\n  float: left;\n  height: 5em;\n  width: 50%; }\n\n.texture-inverted {\n  background-color: #e1f2f1;\n  background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/diagonal-noise.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), center no-repeat #e1f2f1 scroll;\n  background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/diagonal-noise.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), center no-repeat #e1f2f1 scroll;\n  float: left;\n  height: 5em;\n  width: 50%; }\n\n.intro-text {\n  margin-bottom: 5em;\n  margin-top: 4em;\n  text-align: center; }\n  .intro-text h2 {\n    font-family: Georgia, Cambria, \"Times New Roman\", Times, serif;\n    font-weight: 800;\n    margin-bottom: .3em; }\n    @media screen and (min-width: 53.75em) {\n      .intro-text h2 {\n        font-size: 3em;\n        margin-bottom: .4em; } }\n  .intro-text h3 {\n    background: #477DCA;\n    color: white;\n    display: inline-block;\n    font-size: .7em;\n    font-weight: 800;\n    margin-bottom: 2em;\n    padding: 3px 8px;\n    text-transform: uppercase; }\n    @media screen and (min-width: 53.75em) {\n      .intro-text h3 {\n        margin-bottom: 3.3em; } }\n  .intro-text h4 {\n    color: #666666;\n    font-size: 1.3em;\n    font-weight: 300;\n    line-height: 1.4em;\n    margin: 0 auto 1em; }\n    @media screen and (min-width: 53.75em) {\n      .intro-text h4 {\n        font-size: 1.7em;\n        line-height: 1.35em;\n        margin: 0 auto 1em;\n        width: 60%; } }\n  .intro-text p {\n    margin: auto; }\n    @media screen and (min-width: 53.75em) {\n      .intro-text p {\n        width: 60%; } }\n    .intro-text p a {\n      font-size: .8em;\n      font-weight: 400;\n      text-transform: uppercase; }\n      .intro-text p a span {\n        font-size: 1.3em;\n        line-height: 0; }\n\narticle.type-system-slab {\n  *zoom: 1;\n  text-align: left; }\n  article.type-system-slab:before,\n  article.type-system-slab:after {\n    content: \" \";\n    display: table; }\n  article.type-system-slab:after {\n    clear: both; }\n  article.type-system-slab .type {\n    border-bottom: 1px solid;\n    display: inline-block;\n    font-family: \"Open Sans\", sans-serif;\n    font-size: .7em;\n    font-weight: 600;\n    margin-bottom: 2em;\n    padding: .1em 0;\n    text-align: left;\n    text-transform: uppercase; }\n  article.type-system-slab h1 {\n    font-family: \"Roboto Slab\", serif;\n    font-size: 1.6em;\n    font-weight: 400;\n    margin-bottom: .6em; }\n    @media screen and (min-width: 40em) {\n      article.type-system-slab h1 {\n        font-size: 2.4em; } }\n  article.type-system-slab h2 {\n    font-family: \"Open Sans\", sans-serif;\n    font-size: 1.1em;\n    font-weight: 400;\n    line-height: 1.5em;\n    margin-bottom: 1.2em; }\n    @media screen and (min-width: 40em) {\n      article.type-system-slab h2 {\n        font-size: 1.3em; } }\n  article.type-system-slab code {\n    white-space: nowrap;\n    background: #F7F7F7;\n    border: 1px solid #E0E0E0;\n    border-radius: 4.5px;\n    padding: 0.1em 0.4em;\n    font-size: .8em;\n    font-style: normal; }\n  article.type-system-slab h3 {\n    font-family: \"Roboto Slab\", serif;\n    font-size: 1em;\n    font-weight: 600;\n    text-transform: uppercase;\n    line-height: 1.4em;\n    margin-bottom: .5em; }\n  article.type-system-slab p.date {\n    color: rgba(51, 51, 51, 0.4);\n    font-family: \"Roboto Slab\", serif;\n    font-size: .8em;\n    margin-bottom: .5em; }\n  article.type-system-slab p {\n    font-family: \"Roboto Slab\", serif;\n    font-weight: 300;\n    letter-spacing: 1;\n    margin-bottom: 1.5em; }\n    article.type-system-slab p span {\n      font-family: \"Open Sans\", sans-serif;\n      font-weight: 600;\n      font-size: .8em;\n      text-transform: uppercase; }\n  article.type-system-slab a.read-more {\n    display: inline-block;\n    font-family: \"Roboto Slab\", serif;\n    font-weight: 700;\n    font-size: .8em;\n    text-transform: uppercase;\n    margin-left: .2em;\n    position: relative; }\n    article.type-system-slab a.read-more span {\n      position: absolute;\n      font-size: 1.8em;\n      top: -2px;\n      right: -12px; }\n  article.type-system-slab hr {\n    width: 3em; }\n  article.type-system-slab p.author {\n    font-family: \"Roboto Slab\", serif; }\n\n.texture-examples {\n  *zoom: 1;\n  border-radius: 6px;\n  border: 1px solid silver;\n  margin-bottom: 3em;\n  padding: 1em; }\n  .texture-examples:before,\n  .texture-examples:after {\n    content: \" \";\n    display: table; }\n  .texture-examples:after {\n    clear: both; }\n  .texture-examples .texture-examples-container {\n    *zoom: 1; }\n    .texture-examples .texture-examples-container:before,\n    .texture-examples .texture-examples-container:after {\n      content: \" \";\n      display: table; }\n    .texture-examples .texture-examples-container:after {\n      clear: both; }\n  .texture-examples h3 {\n    color: #CDCDCD;\n    font-size: 1em;\n    margin-bottom: 1.5em;\n    text-align: center;\n    text-transform: uppercase; }\n  .texture-examples h4 {\n    color: gray;\n    font-size: .8em;\n    font-weight: 200;\n    line-height: 2.2em;\n    padding-left: .5em;\n    text-align: center; }\n  .texture-examples .instructions {\n    clear: both;\n    display: block;\n    padding-top: 2em;\n    text-align: center; }\n  .texture-examples b {\n    font-weight: 800; }\n  .texture-examples p {\n    color: #909090;\n    font-size: .9em;\n    margin: 1em auto 1em auto;\n    max-width: 74%; }\n\n.examples {\n  height: 2.5em;\n  width: 100%; }\n\n.example-normal {\n  border-bottom-left-radius: 6px;\n  border-top-left-radius: 6px;\n  float: left;\n  height: 100%;\n  width: 50%; }\n\n.example-inverted {\n  border-bottom-right-radius: 6px;\n  border-top-right-radius: 6px;\n  float: left;\n  height: 100%;\n  width: 50%; }\n\n.texture-1 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-1 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/paper.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/paper.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-1 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/paper.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/paper.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-2 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-2 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/rice_paper.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/rice_paper.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-2 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/rice_paper.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/rice_paper.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-3 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-3 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noise_lines.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noise_lines.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-3 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noise_lines.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noise_lines.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-4 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-4 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/fabric_plaid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/fabric_plaid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-4 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/fabric_plaid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/fabric_plaid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-5 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-5 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/first_aid_kit.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/first_aid_kit.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-5 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/first_aid_kit.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/first_aid_kit.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-6 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-6 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/texturetastic_gray.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/texturetastic_gray.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-6 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/texturetastic_gray.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/texturetastic_gray.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-7 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-7 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/lil_fiber.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/lil_fiber.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-7 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/lil_fiber.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/lil_fiber.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-8 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-8 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/tex2res5.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/tex2res5.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-8 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/tex2res5.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/tex2res5.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-9 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-9 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/skin_side_up.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/skin_side_up.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-9 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/skin_side_up.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/skin_side_up.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-10 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-10 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/light_noise_diagonal.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/light_noise_diagonal.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-10 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/light_noise_diagonal.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/light_noise_diagonal.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-11 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-11 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/chruch.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/chruch.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-11 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/chruch.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/chruch.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-12 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-12 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/45degreee_fabric.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/45degreee_fabric.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-12 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/45degreee_fabric.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/45degreee_fabric.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-13 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-13 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/bgnoise_lg.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/bgnoise_lg.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-13 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/bgnoise_lg.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/bgnoise_lg.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-14 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-14 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/little_pluses.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/little_pluses.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-14 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/little_pluses.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/little_pluses.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-15 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-15 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/squairy_light.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/squairy_light.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-15 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/squairy_light.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/squairy_light.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-16 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-16 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/white_texture.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/white_texture.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-16 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/white_texture.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/white_texture.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-17 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-17 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/binding_light.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/binding_light.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-17 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/binding_light.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/binding_light.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-18 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-18 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/double_lined.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/double_lined.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-18 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/double_lined.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/double_lined.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-19 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-19 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-19 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-20 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-20 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/absurdidad.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/absurdidad.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-20 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/absurdidad.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/absurdidad.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-21 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-21 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grid_noise.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grid_noise.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-21 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grid_noise.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grid_noise.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-22 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-22 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/fancy_deboss.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/fancy_deboss.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-22 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/fancy_deboss.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/fancy_deboss.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-23 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-23 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/graphy.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/graphy.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-23 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/graphy.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/graphy.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-24 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-24 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noise_pattern_with_crosslines.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noise_pattern_with_crosslines.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-24 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noise_pattern_with_crosslines.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noise_pattern_with_crosslines.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-25 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-25 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/old_mathematics.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/old_mathematics.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-25 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/old_mathematics.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/old_mathematics.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-26 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-26 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/ps_neutral.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/ps_neutral.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-26 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/ps_neutral.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/ps_neutral.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-27 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-27 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_freckles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_freckles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-27 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_freckles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_freckles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-28 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-28 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/wavegrid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/wavegrid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-28 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/wavegrid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/wavegrid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-29 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-29 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/az_subtle.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/az_subtle.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-29 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/az_subtle.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/az_subtle.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-30 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-30 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/tiny_grid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/tiny_grid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-30 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/tiny_grid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/tiny_grid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-31 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-31 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/wavegrid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/wavegrid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-31 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/wavegrid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/wavegrid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-32 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-32 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/gridme.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/gridme.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-32 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/gridme.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/gridme.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-33 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-33 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noisy_grid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noisy_grid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-33 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noisy_grid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noisy_grid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-34 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-34 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtlenet2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtlenet2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-34 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtlenet2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtlenet2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-35 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-35 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/white_carbon.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/white_carbon.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-35 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/white_carbon.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/white_carbon.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-36 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-36 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/lghtmesh.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/lghtmesh.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-36 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/lghtmesh.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/lghtmesh.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-37 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-37 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/p5.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/p5.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-37 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/p5.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/p5.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-38 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-38 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/worn_dots.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/worn_dots.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-38 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/worn_dots.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/worn_dots.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-39 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-39 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_dots.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_dots.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-39 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_dots.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_dots.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-40 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-40 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/brillant.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/brillant.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-40 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/brillant.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/brillant.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-41 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-41 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/farmer.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/farmer.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-41 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/farmer.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/farmer.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-42 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-42 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/retina_dust.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/retina_dust.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-42 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/retina_dust.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/retina_dust.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-43 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-43 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/pinstripe.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/pinstripe.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-43 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/pinstripe.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/pinstripe.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-44 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-44 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_horizontal1.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_horizontal1.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-44 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_horizontal1.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_horizontal1.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-45 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-45 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_horizontal2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_horizontal2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-45 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_horizontal2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_horizontal2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-46 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-46 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/linen.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/linen.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-46 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/linen.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/linen.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-47 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-47 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/vintage_speckles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/vintage_speckles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-47 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/vintage_speckles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/vintage_speckles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-48 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-48 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_grunge.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_grunge.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-48 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_grunge.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_grunge.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-49 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-49 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/old_wall.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/old_wall.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-49 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/old_wall.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/old_wall.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-50 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-50 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/brushed.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/brushed.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-50 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/brushed.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/brushed.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-51 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-51 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/stucco.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/stucco.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-51 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/stucco.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/stucco.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-52 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-52 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/mooning.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/mooning.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-52 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/mooning.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/mooning.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-53 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-53 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/husk.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/husk.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-53 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/husk.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/husk.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-54 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-54 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/concrete_wall_2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/concrete_wall_2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-54 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/concrete_wall_2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/concrete_wall_2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-55 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-55 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noisy.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noisy.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-55 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noisy.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noisy.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-56 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-56 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/concrete_wall_3.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/concrete_wall_3.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-56 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/concrete_wall_3.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/concrete_wall_3.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-57 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-57 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_surface.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_surface.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-57 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_surface.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_surface.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-58 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-58 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/dust.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/dust.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-58 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/dust.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/dust.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-59 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-59 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/light_alu.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/light_alu.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-59 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/light_alu.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/light_alu.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-60 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-60 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/corrugation.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/corrugation.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-60 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/corrugation.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/corrugation.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-61 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-61 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/kindajean.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/kindajean.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-61 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/kindajean.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/kindajean.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-62 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-62 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_diagonal1.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_diagonal1.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-62 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_diagonal1.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_diagonal1.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-63 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-63 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_diagonal2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_diagonal2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-63 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_diagonal2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_diagonal2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-64 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-64 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/groovepaper.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/groovepaper.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-64 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/groovepaper.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/groovepaper.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-65 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-65 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/brushed_alu.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/brushed_alu.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-65 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/brushed_alu.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/brushed_alu.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-66 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-66 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/rough_diagonal.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/rough_diagonal.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-66 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/rough_diagonal.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/rough_diagonal.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-67 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-67 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/diagonal-noise.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/diagonal-noise.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-67 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/diagonal-noise.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/diagonal-noise.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-68 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-68 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/cross_scratches.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/cross_scratches.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-68 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/cross_scratches.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/cross_scratches.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-69 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-69 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/striped_lens.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/striped_lens.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-69 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/striped_lens.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/striped_lens.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-70 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-70 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/debut_light.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/debut_light.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-70 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/debut_light.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/debut_light.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-71 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-71 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/diagonal_waves.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/diagonal_waves.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-71 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/diagonal_waves.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/diagonal_waves.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-72 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-72 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/honey_im_subtle.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/honey_im_subtle.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-72 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/honey_im_subtle.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/honey_im_subtle.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-73 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-73 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/pw_maze_white.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/pw_maze_white.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-73 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/pw_maze_white.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/pw_maze_white.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-74 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-74 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_zebra_3d.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_zebra_3d.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-74 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_zebra_3d.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_zebra_3d.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-75 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-75 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/white_wave.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/white_wave.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-75 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/white_wave.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/white_wave.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-76 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-76 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/circles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/circles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-76 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/circles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/circles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-77 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-77 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/crosses.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/crosses.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-77 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/crosses.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/crosses.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-78 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-78 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grilled.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grilled.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-78 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grilled.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grilled.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-79 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-79 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/pw_pattern.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/pw_pattern.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-79 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/pw_pattern.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/pw_pattern.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-80 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-80 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/struckaxiom.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/struckaxiom.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-80 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/struckaxiom.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/struckaxiom.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-81 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-81 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/vichy.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/vichy.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-81 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/vichy.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/vichy.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-82 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-82 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/wavecut.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/wavecut.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-82 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/wavecut.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/wavecut.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-83 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-83 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/whitey.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/whitey.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-83 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/whitey.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/whitey.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-84 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-84 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/cream_pixels.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/cream_pixels.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-84 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/cream_pixels.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/cream_pixels.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-85 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-85 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grey.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grey.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-85 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grey.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grey.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-86 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-86 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/shinedotted.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/shinedotted.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-86 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/shinedotted.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/shinedotted.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-87 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-87 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/stacked_circles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/stacked_circles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-87 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/stacked_circles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/stacked_circles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-88 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-88 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noisy_grid_simple.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noisy_grid_simple.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-88 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noisy_grid_simple.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noisy_grid_simple.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\nheader.centered-navigation {\n  margin-bottom: 2em; }\n\n.card {\n  float: none;\n  display: inline-block; }\n  .card .card-image {\n    max-height: none; }\n  .card img:not([src]), .card img[src=\"\"], .card img.error {\n    max-height: 328px; }\n  .card .card-copy {\n    height: 3em;\n    box-sizing: content-box; }\n\n#everyone {\n  max-width: 90%;\n  margin: 0 auto; }\n\n.button-group {\n  *zoom: 1;\n  margin-bottom: 1em; }\n  .button-group:before,\n  .button-group:after {\n    content: \" \";\n    display: table; }\n  .button-group:after {\n    clear: both; }\n\nh1 {\n  width: 80%;\n  margin: 0 auto; }\n  h1 small {\n    font-weight: normal;\n    opacity: 0.7;\n    font-size: 0.6em; }\n\n#flash-cards #people {\n  width: 50%;\n  margin: 0 auto; }\n  @media screen and (min-width: 53.75em) {\n    #flash-cards #people .card {\n      box-sizing: border-box;\n      width: 40%;\n      margin: 2em; }\n      #flash-cards #people .card img {\n        max-height: 285px; } }\n  #flash-cards #people .guess {\n    position: relative; }\n    #flash-cards #people .guess.guessed {\n      opacity: 0.1;\n      transition: all 500ms ease-in-out; }\n    #flash-cards #people .guess.actual {\n      opacity: 1;\n      border: 2px solid;\n      transition: all 200ms ease-in-out; }\n    #flash-cards #people .guess.wrong {\n      transition: all 1200ms ease-in; }\n      #flash-cards #people .guess.wrong .overlay {\n        background: rgba(255, 0, 0, 0.8); }\n    #flash-cards #people .guess.right .overlay {\n      background: rgba(0, 128, 0, 0.8); }\n    #flash-cards #people .guess .overlay {\n      position: absolute;\n      top: 0;\n      left: 0;\n      z-index: 10;\n      width: 100%;\n      height: 100%;\n      color: #fff;\n      text-align: center;\n      font-weight: bold;\n      padding: 2em 1.5em; }\n\n.stats {\n  float: right; }\n", ""]);
+	exports.push([module.id, "@charset \"UTF-8\";\n/*! normalize.css v3.0.1 | MIT License | git.io/normalize */\n/**\n * 1. Set default font family to sans-serif.\n * 2. Prevent iOS text size adjust after orientation change, without disabling\n *    user zoom.\n */\nhtml {\n  font-family: sans-serif;\n  /* 1 */\n  -ms-text-size-adjust: 100%;\n  /* 2 */\n  -webkit-text-size-adjust: 100%;\n  /* 2 */ }\n\n/**\n * Remove default margin.\n */\nbody {\n  margin: 0; }\n\n/* HTML5 display definitions\n   ========================================================================== */\n/**\n * Correct `block` display not defined for any HTML5 element in IE 8/9.\n * Correct `block` display not defined for `details` or `summary` in IE 10/11 and Firefox.\n * Correct `block` display not defined for `main` in IE 11.\n */\narticle,\naside,\ndetails,\nfigcaption,\nfigure,\nfooter,\nheader,\nhgroup,\nmain,\nnav,\nsection,\nsummary {\n  display: block; }\n\n/**\n * 1. Correct `inline-block` display not defined in IE 8/9.\n * 2. Normalize vertical alignment of `progress` in Chrome, Firefox, and Opera.\n */\naudio,\ncanvas,\nprogress,\nvideo {\n  display: inline-block;\n  /* 1 */\n  vertical-align: baseline;\n  /* 2 */ }\n\n/**\n * Prevent modern browsers from displaying `audio` without controls.\n * Remove excess height in iOS 5 devices.\n */\naudio:not([controls]) {\n  display: none;\n  height: 0; }\n\n/**\n * Address `[hidden]` styling not present in IE 8/9/10.\n * Hide the `template` element in IE 8/9/11, Safari, and Firefox < 22.\n */\n[hidden],\ntemplate {\n  display: none; }\n\n/* Links\n   ========================================================================== */\n/**\n * Remove the gray background color from active links in IE 10.\n */\na {\n  background: transparent; }\n\n/**\n * Improve readability when focused and also mouse hovered in all browsers.\n */\na:active,\na:hover {\n  outline: 0; }\n\n/* Text-level semantics\n   ========================================================================== */\n/**\n * Address styling not present in IE 8/9/10/11, Safari, and Chrome.\n */\nabbr[title] {\n  border-bottom: 1px dotted; }\n\n/**\n * Address style set to `bolder` in Firefox 4+, Safari, and Chrome.\n */\nb,\nstrong {\n  font-weight: bold; }\n\n/**\n * Address styling not present in Safari and Chrome.\n */\ndfn {\n  font-style: italic; }\n\n/**\n * Address variable `h1` font-size and margin within `section` and `article`\n * contexts in Firefox 4+, Safari, and Chrome.\n */\nh1 {\n  font-size: 2em;\n  margin: 0.67em 0; }\n\n/**\n * Address styling not present in IE 8/9.\n */\nmark {\n  background: #ff0;\n  color: #000; }\n\n/**\n * Address inconsistent and variable font size in all browsers.\n */\nsmall {\n  font-size: 80%; }\n\n/**\n * Prevent `sub` and `sup` affecting `line-height` in all browsers.\n */\nsub,\nsup {\n  font-size: 75%;\n  line-height: 0;\n  position: relative;\n  vertical-align: baseline; }\n\nsup {\n  top: -0.5em; }\n\nsub {\n  bottom: -0.25em; }\n\n/* Embedded content\n   ========================================================================== */\n/**\n * Remove border when inside `a` element in IE 8/9/10.\n */\nimg {\n  border: 0; }\n\n/**\n * Correct overflow not hidden in IE 9/10/11.\n */\nsvg:not(:root) {\n  overflow: hidden; }\n\n/* Grouping content\n   ========================================================================== */\n/**\n * Address margin not present in IE 8/9 and Safari.\n */\nfigure {\n  margin: 1em 40px; }\n\n/**\n * Address differences between Firefox and other browsers.\n */\nhr {\n  -moz-box-sizing: content-box;\n  box-sizing: content-box;\n  height: 0; }\n\n/**\n * Contain overflow in all browsers.\n */\npre {\n  overflow: auto; }\n\n/**\n * Address odd `em`-unit font size rendering in all browsers.\n */\ncode,\nkbd,\npre,\nsamp {\n  font-family: monospace, monospace;\n  font-size: 1em; }\n\n/* Forms\n   ========================================================================== */\n/**\n * Known limitation: by default, Chrome and Safari on OS X allow very limited\n * styling of `select`, unless a `border` property is set.\n */\n/**\n * 1. Correct color not being inherited.\n *    Known issue: affects color of disabled elements.\n * 2. Correct font properties not being inherited.\n * 3. Address margins set differently in Firefox 4+, Safari, and Chrome.\n */\nbutton,\ninput,\noptgroup,\nselect,\ntextarea {\n  color: inherit;\n  /* 1 */\n  font: inherit;\n  /* 2 */\n  margin: 0;\n  /* 3 */ }\n\n/**\n * Address `overflow` set to `hidden` in IE 8/9/10/11.\n */\nbutton {\n  overflow: visible; }\n\n/**\n * Address inconsistent `text-transform` inheritance for `button` and `select`.\n * All other form control elements do not inherit `text-transform` values.\n * Correct `button` style inheritance in Firefox, IE 8/9/10/11, and Opera.\n * Correct `select` style inheritance in Firefox.\n */\nbutton,\nselect {\n  text-transform: none; }\n\n/**\n * 1. Avoid the WebKit bug in Android 4.0.* where (2) destroys native `audio`\n *    and `video` controls.\n * 2. Correct inability to style clickable `input` types in iOS.\n * 3. Improve usability and consistency of cursor style between image-type\n *    `input` and others.\n */\nbutton,\nhtml input[type=\"button\"], input[type=\"reset\"],\ninput[type=\"submit\"] {\n  -webkit-appearance: button;\n  /* 2 */\n  cursor: pointer;\n  /* 3 */ }\n\n/**\n * Re-set default cursor for disabled elements.\n */\nbutton[disabled],\nhtml input[disabled] {\n  cursor: default; }\n\n/**\n * Remove inner padding and border in Firefox 4+.\n */\nbutton::-moz-focus-inner,\ninput::-moz-focus-inner {\n  border: 0;\n  padding: 0; }\n\n/**\n * Address Firefox 4+ setting `line-height` on `input` using `!important` in\n * the UA stylesheet.\n */\ninput {\n  line-height: normal; }\n\n/**\n * It's recommended that you don't attempt to style these elements.\n * Firefox's implementation doesn't respect box-sizing, padding, or width.\n *\n * 1. Address box sizing set to `content-box` in IE 8/9/10.\n * 2. Remove excess padding in IE 8/9/10.\n */\ninput[type=\"checkbox\"],\ninput[type=\"radio\"] {\n  box-sizing: border-box;\n  /* 1 */\n  padding: 0;\n  /* 2 */ }\n\n/**\n * Fix the cursor style for Chrome's increment/decrement buttons. For certain\n * `font-size` values of the `input`, it causes the cursor style of the\n * decrement button to change from `default` to `text`.\n */\ninput[type=\"number\"]::-webkit-inner-spin-button,\ninput[type=\"number\"]::-webkit-outer-spin-button {\n  height: auto; }\n\n/**\n * 1. Address `appearance` set to `searchfield` in Safari and Chrome.\n * 2. Address `box-sizing` set to `border-box` in Safari and Chrome\n *    (include `-moz` to future-proof).\n */\ninput[type=\"search\"] {\n  -webkit-appearance: textfield;\n  /* 1 */\n  -moz-box-sizing: content-box;\n  -webkit-box-sizing: content-box;\n  /* 2 */\n  box-sizing: content-box; }\n\n/**\n * Remove inner padding and search cancel button in Safari and Chrome on OS X.\n * Safari (but not Chrome) clips the cancel button when the search input has\n * padding (and `textfield` appearance).\n */\ninput[type=\"search\"]::-webkit-search-cancel-button,\ninput[type=\"search\"]::-webkit-search-decoration {\n  -webkit-appearance: none; }\n\n/**\n * Define consistent border, margin, and padding.\n */\nfieldset {\n  border: 1px solid #c0c0c0;\n  margin: 0 2px;\n  padding: 0.35em 0.625em 0.75em; }\n\n/**\n * 1. Correct `color` not being inherited in IE 8/9/10/11.\n * 2. Remove padding so people aren't caught out if they zero out fieldsets.\n */\nlegend {\n  border: 0;\n  /* 1 */\n  padding: 0;\n  /* 2 */ }\n\n/**\n * Remove default vertical scrollbar in IE 8/9/10/11.\n */\ntextarea {\n  overflow: auto; }\n\n/**\n * Don't inherit the `font-weight` (applied by a rule above).\n * NOTE: the default cannot safely be changed in Chrome and Safari on OS X.\n */\noptgroup {\n  font-weight: bold; }\n\n/* Tables\n   ========================================================================== */\n/**\n * Remove most spacing between table cells.\n */\ntable {\n  border-collapse: collapse;\n  border-spacing: 0; }\n\ntd,\nth {\n  padding: 0; }\n\n* {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box; }\n\n/* Bitters 0.10.0\n * http://bitters.bourbon.io\n * Copyright 2013–2014 thoughtbot, inc.\n * MIT License */\nbutton,\ninput[type=\"submit\"] {\n  -webkit-font-smoothing: antialiased;\n  background-color: #477DCA;\n  border-radius: 3px;\n  color: white;\n  display: inline-block;\n  font-size: 1em;\n  font-weight: bold;\n  line-height: 1;\n  padding: 0.75em 1em;\n  text-decoration: none; }\n  button:hover,\n  input[type=\"submit\"]:hover {\n    background-color: #2c5999;\n    color: white; }\n  button:disabled,\n  input[type=\"submit\"]:disabled {\n    cursor: not-allowed;\n    opacity: 0.5; }\n\nbody {\n  -webkit-font-smoothing: antialiased;\n  background-color: white;\n  color: #333;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 1em;\n  line-height: 1.5; }\n\nh1,\nh2,\nh3,\nh4,\nh5,\nh6 {\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  line-height: 1.25;\n  margin: 0;\n  text-rendering: optimizeLegibility; }\n\nh1 {\n  font-size: 2.25em; }\n\nh2 {\n  font-size: 2em; }\n\nh3 {\n  font-size: 1.75em; }\n\nh4 {\n  font-size: 1.5em; }\n\nh5 {\n  font-size: 1.25em; }\n\nh6 {\n  font-size: 1em; }\n\np {\n  margin: 0 0 0.75em; }\n\na {\n  -webkit-transition: color 0.1s linear;\n  -moz-transition: color 0.1s linear;\n  transition: color 0.1s linear;\n  color: #477DCA;\n  text-decoration: none; }\n  a:hover {\n    color: #2c5999; }\n  a:active, a:focus {\n    color: #2c5999;\n    outline: none; }\n\nhr {\n  border-bottom: 1px solid #DDD;\n  border-left: none;\n  border-right: none;\n  border-top: none;\n  margin: 1.5em 0; }\n\nimg,\npicture {\n  margin: 0;\n  max-width: 100%; }\n\nblockquote {\n  border-left: 2px solid #DDD;\n  color: #595959;\n  margin: 1.5em 0;\n  padding-left: 0.75em; }\n\ncite {\n  color: #737373;\n  font-style: italic; }\n  cite:before {\n    content: \"\\2014   \\A0\"; }\n\nfieldset {\n  background: #f7f7f7;\n  border: 1px solid #DDD;\n  margin: 0 0 0.75em 0;\n  padding: 1.5em; }\n\ninput,\nlabel,\nselect {\n  display: block;\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 1em; }\n\nlabel {\n  font-weight: bold;\n  margin-bottom: 0.375em; }\n  label.required:after {\n    content: \"*\"; }\n  label abbr {\n    display: none; }\n\ntextarea,\ninput[type=\"email\"], input[type=\"number\"], input[type=\"password\"], input[type=\"search\"], input[type=\"tel\"], input[type=\"text\"], .search-tools .filter > div, input[type=\"url\"], input[type=\"color\"], input[type=\"date\"], input[type=\"datetime\"], input[type=\"datetime-local\"], input[type=\"month\"], input[type=\"time\"], input[type=\"week\"],\nselect[multiple=multiple] {\n  -webkit-box-sizing: border-box;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  -webkit-transition: border-color;\n  -moz-transition: border-color;\n  transition: border-color;\n  background-color: white;\n  border-radius: 3px;\n  border: 1px solid #DDD;\n  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);\n  font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n  font-size: 1em;\n  margin-bottom: 0.75em;\n  padding: 0.5em 0.5em;\n  width: 100%; }\n  textarea:hover,\n  input[type=\"email\"]:hover, input[type=\"number\"]:hover, input[type=\"password\"]:hover, input[type=\"search\"]:hover, input[type=\"tel\"]:hover, input[type=\"text\"]:hover, .search-tools .filter > div:hover, input[type=\"url\"]:hover, input[type=\"color\"]:hover, input[type=\"date\"]:hover, input[type=\"datetime\"]:hover, input[type=\"datetime-local\"]:hover, input[type=\"month\"]:hover, input[type=\"time\"]:hover, input[type=\"week\"]:hover,\n  select[multiple=multiple]:hover {\n    border-color: #c4c4c4; }\n  textarea:focus,\n  input[type=\"email\"]:focus, input[type=\"number\"]:focus, input[type=\"password\"]:focus, input[type=\"search\"]:focus, input[type=\"tel\"]:focus, input[type=\"text\"]:focus, .search-tools .filter > div:focus, input[type=\"url\"]:focus, input[type=\"color\"]:focus, input[type=\"date\"]:focus, input[type=\"datetime\"]:focus, input[type=\"datetime-local\"]:focus, input[type=\"month\"]:focus, input[type=\"time\"]:focus, input[type=\"week\"]:focus,\n  select[multiple=multiple]:focus {\n    border-color: #477DCA;\n    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06), 0 0 5px rgba(55, 112, 192, 0.7);\n    outline: none; }\n\ntextarea {\n  resize: vertical; }\n\ninput[type=\"search\"] {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  -ms-appearance: none;\n  -o-appearance: none;\n  appearance: none; }\n\ninput[type=\"checkbox\"],\ninput[type=\"radio\"] {\n  display: inline;\n  margin-right: 0.375em; }\n\ninput[type=\"file\"] {\n  padding-bottom: 0.75em;\n  width: 100%; }\n\nselect {\n  margin-bottom: 1.5em;\n  max-width: 100%;\n  width: auto; }\n\ntable {\n  border-collapse: collapse;\n  margin: 0.75em 0;\n  table-layout: fixed;\n  width: 100%; }\n\nth {\n  border-bottom: 1px solid #b7b7b7;\n  font-weight: bold;\n  padding: 0.75em 0;\n  text-align: left; }\n\ntd {\n  border-bottom: 1px solid #DDD;\n  padding: 0.75em 0; }\n\ntr,\ntd,\nth {\n  vertical-align: middle; }\n\nul,\nol {\n  margin: 0;\n  padding: 0;\n  list-style-type: none; }\n\ndl {\n  margin-bottom: 0.75em; }\n  dl dt {\n    font-weight: bold;\n    margin-top: 0.75em; }\n  dl dd {\n    margin: 0; }\n\nbutton,\ninput[type=\"submit\"] {\n  -webkit-appearance: none;\n  -moz-appearance: none;\n  -ms-appearance: none;\n  -o-appearance: none;\n  appearance: none;\n  border: none;\n  cursor: pointer;\n  user-select: none;\n  vertical-align: middle;\n  white-space: nowrap; }\n\nnav.bourbon {\n  *zoom: 1;\n  background-color: #5B5E63;\n  padding: 0 2em 0 1em; }\n  nav.bourbon:before,\n  nav.bourbon:after {\n    content: \" \";\n    display: table; }\n  nav.bourbon:after {\n    clear: both; }\n  @media screen and (max-width: 31.875em) {\n    nav.bourbon {\n      padding: 0; } }\n  nav.bourbon ul {\n    text-align: center; }\n    @media screen and (min-width: 56.3125em) {\n      nav.bourbon ul {\n        float: left;\n        text-align: left; } }\n  nav.bourbon li {\n    display: inline-block; }\n  nav.bourbon a {\n    background-position: 1em center;\n    background-repeat: no-repeat;\n    color: #fff;\n    display: inline-block;\n    font-weight: bold;\n    padding: 1em 1em 1em 3em; }\n    @media screen and (max-width: 32.1875em) {\n      nav.bourbon a {\n        padding: 0.75em 0.5em;\n        text-align: center; } }\n    @media screen and (max-width: 56.25em) {\n      nav.bourbon a {\n        display: block; } }\n    nav.bourbon a:hover {\n      background-color: #434548;\n      color: #fff; }\n    nav.bourbon a.current {\n      background-color: #4f5156; }\n    nav.bourbon a.bourbon {\n      background-image: url(\"/images/bourbon-nav/bourbon.png\"); }\n      @media only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (min--moz-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 1.3/1), only screen and (min-resolution: 125dpi), only screen and (min-resolution: 1.3dppx) {\n        nav.bourbon a.bourbon {\n          background-image: url(\"/images/bourbon-nav/bourbon@2x.png\");\n          background-size: 20%; } }\n      @media screen and (max-width: 32.1875em) {\n        nav.bourbon a.bourbon {\n          background-image: none; } }\n    nav.bourbon a.neat {\n      background-image: url(\"/images/bourbon-nav/neat.png\"); }\n      @media only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (min--moz-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 1.3/1), only screen and (min-resolution: 125dpi), only screen and (min-resolution: 1.3dppx) {\n        nav.bourbon a.neat {\n          background-image: url(\"/images/bourbon-nav/neat@2x.png\");\n          background-size: 20%; } }\n      @media screen and (max-width: 32.1875em) {\n        nav.bourbon a.neat {\n          background-image: none; } }\n    nav.bourbon a.bitters {\n      background-image: url(\"/images/bourbon-nav/bitters.png\"); }\n      @media only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (min--moz-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 1.3/1), only screen and (min-resolution: 125dpi), only screen and (min-resolution: 1.3dppx) {\n        nav.bourbon a.bitters {\n          background-image: url(\"/images/bourbon-nav/bitters@2x.png\");\n          background-size: 20%; } }\n      @media screen and (max-width: 32.1875em) {\n        nav.bourbon a.bitters {\n          background-image: none; } }\n    nav.bourbon a.refills {\n      background-image: url(\"/images/bourbon-nav/refills.png\"); }\n      @media only screen and (-webkit-min-device-pixel-ratio: 1.3), only screen and (min--moz-device-pixel-ratio: 1.3), only screen and (-o-min-device-pixel-ratio: 1.3/1), only screen and (min-resolution: 125dpi), only screen and (min-resolution: 1.3dppx) {\n        nav.bourbon a.refills {\n          background-image: url(\"/images/bourbon-nav/refills@2x.png\");\n          background-size: 20%; } }\n      @media screen and (max-width: 32.1875em) {\n        nav.bourbon a.refills {\n          background-image: none; } }\n  nav.bourbon h1 {\n    color: rgba(255, 255, 255, 0.6);\n    float: right;\n    font-size: 1em; }\n    @media screen and (max-width: 56.25em) {\n      nav.bourbon h1 {\n        display: none; } }\n    nav.bourbon h1 a {\n      padding: 1em 0; }\n      nav.bourbon h1 a:hover {\n        background-color: transparent; }\n\nbody {\n  -webkit-backface-visibility: hidden;\n  background-color: white;\n  min-width: 320px; }\n\n.refills-header {\n  *zoom: 1;\n  background-color: #E7F1EC;\n  clear: both;\n  margin-bottom: 1em;\n  padding: 5em 0;\n  text-align: center;\n  width: 100%; }\n  .refills-header:before,\n  .refills-header:after {\n    content: \" \";\n    display: table; }\n  .refills-header:after {\n    clear: both; }\n  @media screen and (min-width: 40em) {\n    .refills-header {\n      margin-bottom: 4em;\n      padding: 6em 0; } }\n  @media screen and (min-width: 53.75em) {\n    .refills-header {\n      margin-bottom: 4em;\n      padding: 6em 0 11em 0; } }\n  .refills-header .refills-logo {\n    display: inline-block;\n    margin: 0 auto 1.4em auto;\n    max-width: 5em; }\n    @media screen and (min-width: 40em) {\n      .refills-header .refills-logo {\n        max-width: 8em; } }\n    .refills-header .refills-logo img {\n      background: white;\n      border-radius: 50%;\n      padding: .3em; }\n      @media screen and (min-width: 40em) {\n        .refills-header .refills-logo img {\n          padding: .5em; } }\n  .refills-header h2 {\n    font-family: Georgia, Cambria, \"Times New Roman\", Times, serif;\n    font-size: 1.4em;\n    font-weight: 100;\n    margin: 0 auto 2em auto;\n    max-width: 90%;\n    text-align: center; }\n    @media screen and (min-width: 40em) {\n      .refills-header h2 {\n        font-size: 3em;\n        margin-bottom: 1em;\n        max-width: 90%; } }\n    @media screen and (min-width: 53.75em) {\n      .refills-header h2 {\n        font-size: 3em;\n        margin-bottom: .8em;\n        max-width: 60%; } }\n  .refills-header h3 {\n    font-size: 1.3em;\n    font-weight: 200;\n    margin-bottom: 1em;\n    text-align: center; }\n  .refills-header a {\n    color: #F55481; }\n    .refills-header a:hover {\n      color: #f884a5; }\n  .refills-header p {\n    background: #e1ede7;\n    box-shadow: inset 0 1px 2px #d0e4da, 0 1px 1px rgba(255, 255, 255, 0.4);\n    text-shadow: 0 1px 1px rgba(255, 255, 255, 0.4);\n    border-radius: 30px;\n    color: #87a898;\n    display: inline;\n    font-family: \"Oswald\", sans-serif;\n    font-size: .8em;\n    font-weight: 400;\n    padding: 0.5em 1.4em; }\n    @media screen and (min-width: 53.75em) {\n      .refills-header p {\n        font-size: .8em; } }\n\n.menu-wrapper {\n  *zoom: 1; }\n  .menu-wrapper:before,\n  .menu-wrapper:after {\n    content: \" \";\n    display: table; }\n  .menu-wrapper:after {\n    clear: both; }\n\nul.refills-menu {\n  font-weight: normal;\n  margin-bottom: 5em;\n  margin: -3.3em auto 0 auto;\n  text-align: center; }\n  @media screen and (min-width: 40em) {\n    ul.refills-menu {\n      margin: -6em auto 0 auto; } }\n  @media screen and (min-width: 53.75em) {\n    ul.refills-menu {\n      margin: -6.7em auto 0 auto; } }\n  ul.refills-menu .menu-item {\n    display: inline; }\n    ul.refills-menu .menu-item a {\n      border-radius: 3px;\n      color: #a7cbb9;\n      font-family: 'Lusitana', serif;\n      font-size: .9em;\n      padding: 0.5em 0.5em 2em; }\n      @media screen and (min-width: 40em) {\n        ul.refills-menu .menu-item a {\n          font-size: 1.1em;\n          padding: 0.5em 0.8em 2em; } }\n      @media screen and (min-width: 53.75em) {\n        ul.refills-menu .menu-item a {\n          font-size: 1.3em;\n          padding: 0.5em 1.3em 2em; } }\n      ul.refills-menu .menu-item a:hover {\n        color: #86b9a0; }\n\n.refills-patterns li.patterns a {\n  background: white; }\n  .refills-patterns li.patterns a:hover {\n    color: #a7cbb9; }\n\n.refills-components li.components a {\n  background: white; }\n  .refills-components li.components a:hover {\n    color: #a7cbb9; }\n\n.refills-type-systems li.type-systems a {\n  background: white; }\n  .refills-type-systems li.type-systems a:hover {\n    color: #a7cbb9; }\n\n#example {\n  padding-top: 6em; }\n\n.refill {\n  *zoom: 1;\n  margin-bottom: 2em;\n  padding-bottom: 1em;\n  position: relative; }\n  .refill:before,\n  .refill:after {\n    content: \" \";\n    display: table; }\n  .refill:after {\n    clear: both; }\n  .refill > h3 {\n    margin-bottom: 1.3em;\n    margin-top: 1em;\n    padding-top: 0.5em; }\n\n.refills-wrapper {\n  *zoom: 1;\n  max-width: 68em;\n  margin-left: auto;\n  margin-right: auto;\n  padding: 1em; }\n  .refills-wrapper:before,\n  .refills-wrapper:after {\n    content: \" \";\n    display: table; }\n  .refills-wrapper:after {\n    clear: both; }\n  .refills-wrapper h1.main-header {\n    background-color: #82caca;\n    display: inline-block;\n    padding: 0.5em; }\n\n.refill-centering {\n  text-align: center; }\n  .refill-centering > * {\n    display: inline-block; }\n    .refill-centering > * > * {\n      text-align: left; }\n  .refill-centering script {\n    display: none; }\n\n.line-behind-text {\n  border-bottom: 1px solid #CACACA;\n  text-align: center;\n  margin-bottom: 4.5em; }\n\n.line-behind-text h6 {\n  background: white;\n  color: gray;\n  display: inline-block;\n  font-family: \"Oswald\", sans-serif;\n  font-size: 1em;\n  font-weight: 500;\n  padding: 0 10px;\n  position: relative;\n  text-transform: uppercase;\n  top: 34px; }\n\n.refill h6 {\n  margin-bottom: 1.5em; }\n\n.js-hide-code,\n.js-show-code {\n  border-top: 1px dashed #BEBCBC;\n  color: #7E7A7A;\n  font-size: .8em;\n  text-transform: uppercase;\n  width: 9em; }\n  .js-hide-code:hover,\n  .js-show-code:hover {\n    color: #477DCA; }\n\n.js-show-code {\n  display: inline-block;\n  padding: 0.5em 1em; }\n\n.js-hide-code {\n  display: none;\n  padding: 0.5em 1em; }\n\n.refill-snippet {\n  margin-top: 4.5em;\n  padding: 0 1em; }\n\n.refill-control {\n  display: block;\n  margin-bottom: 2em;\n  text-align: center;\n  width: 100%; }\n\npre[class*=\"language-\"] {\n  background: #F8F8F8;\n  border-top: 2px solid silver;\n  height: 300px;\n  line-height: 1em; }\n\n.copy-source {\n  background-color: #666666;\n  border-radius: 10px;\n  color: white;\n  font-size: 0.5em;\n  font-weight: 800;\n  padding: 0.4em 1em;\n  text-transform: uppercase; }\n  .copy-source:hover, .copy-source:active {\n    background-color: #666666;\n    color: white; }\n\n.snippets-table {\n  display: none; }\n  .snippets-table td {\n    border-bottom: 0; }\n\n@media screen and (min-width: 40em) {\n  .snippet {\n    margin-bottom: 2em; } }\n\n.snippet code {\n  font-size: .6em;\n  line-height: 1.4em;\n  max-height: 25em;\n  overflow: scroll; }\n\n.token.variable {\n  background-color: transparent; }\n\nfooter.refills-footer {\n  color: silver;\n  padding-bottom: 2em;\n  padding-top: 1em;\n  text-align: center; }\n  footer.refills-footer a {\n    color: #F55481; }\n  footer.refills-footer img {\n    display: block;\n    height: 60px;\n    margin-bottom: 2em;\n    margin: auto; }\n  footer.refills-footer .footer-links {\n    background: #F3F3F3;\n    border-radius: 3em;\n    box-shadow: inset 0 1px 2px #e4e4e4;\n    display: inline-block;\n    font-size: .8em;\n    margin-bottom: 2em;\n    padding: .6em; }\n    @media screen and (min-width: 53.75em) {\n      footer.refills-footer .footer-links {\n        font-size: 1em;\n        padding: 1em; } }\n    footer.refills-footer .footer-links li {\n      display: inline;\n      padding: .4em; }\n      footer.refills-footer .footer-links li a {\n        color: #A7A7A7; }\n        footer.refills-footer .footer-links li a:hover {\n          color: #F55481; }\n\n@media screen and (min-width: 53.75em) {\n  .refill-smaller {\n    margin: auto;\n    width: 70%; } }\n\n@-webkit-keyframes fadeInAccordionTabsArticles {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n\n@-moz-keyframes fadeInAccordionTabsArticles {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n\n@-o-keyframes fadeInAccordionTabsArticles {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n\n@keyframes fadeInAccordionTabsArticles {\n  0% {\n    opacity: 0; }\n  100% {\n    opacity: 1; } }\n\n.accordion-tabs-type-systems {\n  *zoom: 1;\n  border-radius: 3px;\n  border: 1px solid #DDD;\n  margin-bottom: 1.5em; }\n  .accordion-tabs-type-systems:before,\n  .accordion-tabs-type-systems:after {\n    content: \" \";\n    display: table; }\n  .accordion-tabs-type-systems:after {\n    clear: both; }\n  @media screen and (min-width: 40em) {\n    .accordion-tabs-type-systems {\n      border: none; } }\n  @media screen and (min-width: 40em) {\n    .accordion-tabs-type-systems .tab {\n      display: inline; } }\n  .accordion-tabs-type-systems .tab:first-child .tab-link {\n    border-top-left-radius: 3px;\n    border-top-right-radius: 3px; }\n  .accordion-tabs-type-systems .tab:last-child .tab-link {\n    border-bottom-left-radius: 3px;\n    border-bottom-right-radius: 3px; }\n    @media screen and (min-width: 40em) {\n      .accordion-tabs-type-systems .tab:last-child .tab-link {\n        border-bottom-left-radius: 0;\n        border-bottom-right-radius: 0; } }\n  .accordion-tabs-type-systems .tab .tab-link-type-system {\n    background-color: transparent;\n    border-bottom: 1px solid #DDD;\n    color: #333;\n    display: block;\n    font-size: .9em;\n    font-weight: 200;\n    letter-spacing: .6px;\n    padding: 0.75em 0.809em;\n    text-align: center; }\n    @media screen and (min-width: 40em) {\n      .accordion-tabs-type-systems .tab .tab-link-type-system {\n        display: inline-block;\n        vertical-align: baseline;\n        zoom: 1;\n        *display: inline;\n        *vertical-align: auto;\n        border-bottom: 0;\n        border-top-left-radius: 3px;\n        border-top-right-radius: 3px; } }\n    .accordion-tabs-type-systems .tab .tab-link-type-system:hover {\n      color: #477DCA; }\n    .accordion-tabs-type-systems .tab .tab-link-type-system:focus {\n      outline: none; }\n  .accordion-tabs-type-systems .tab section {\n    padding: 1.5em 1.618em;\n    background: white;\n    display: none;\n    overflow: hidden;\n    padding: 1.5 1.618em;\n    width: 100%; }\n    @media screen and (min-width: 40em) {\n      .accordion-tabs-type-systems .tab section {\n        border-bottom-left-radius: 3px;\n        border-bottom-right-radius: 3px;\n        border-top: 1px solid #DDD;\n        float: left;\n        left: 0;\n        padding: 0.75em 1.618em; } }\n    .accordion-tabs-type-systems .tab section .tab-content {\n      opacity: 0; }\n  .accordion-tabs-type-systems .tab.js-is-active {\n    border-bottom: 1px solid #DDD; }\n    @media screen and (min-width: 40em) {\n      .accordion-tabs-type-systems .tab.js-is-active {\n        border-bottom: 0; } }\n    .accordion-tabs-type-systems .tab.js-is-active .tab-link-type-system {\n      background-color: white;\n      border-bottom: 0; }\n      @media screen and (min-width: 40em) {\n        .accordion-tabs-type-systems .tab.js-is-active .tab-link-type-system {\n          background-color: white;\n          border-bottom: 1px solid white;\n          border: 1px solid #DDD;\n          margin-bottom: -1px; } }\n    .accordion-tabs-type-systems .tab.js-is-active section {\n      display: block; }\n      .accordion-tabs-type-systems .tab.js-is-active section .tab-content {\n        -webkit-animation-name: fadeInAccordionTabsArticles;\n        -moz-animation-name: fadeInAccordionTabsArticles;\n        animation-name: fadeInAccordionTabsArticles;\n        -webkit-animation-duration: 1s;\n        -moz-animation-duration: 1s;\n        animation-duration: 1s;\n        opacity: 1; }\n\nsection.inner-content {\n  margin-left: auto; }\n\n.refills-menu-anchor {\n  display: inline-block;\n  vertical-align: baseline;\n  zoom: 1;\n  *display: inline;\n  *vertical-align: auto;\n  cursor: pointer;\n  border: 1px solid #87a898;\n  height: 50px;\n  width: 50px;\n  padding: 0.7em 1em;\n  border-radius: 50%;\n  font-size: 1em;\n  margin-bottom: 1.5;\n  position: fixed;\n  top: 4.5em;\n  left: 1em;\n  z-index: 9999; }\n  .refills-menu-anchor.fixedsticky-on {\n    margin-top: -3.5em; }\n  .refills-menu-anchor.fixedsticky-off {\n    position: fixed; }\n  .refills-menu-anchor img {\n    height: 26px;\n    width: 30px; }\n\n.fixedsticky-dummy {\n  height: 0 !important; }\n\n.refills-menu-screen {\n  position: fixed;\n  top: 0px;\n  right: 0px;\n  bottom: 0px;\n  left: 0px;\n  -webkit-transition: all 0.15s ease-out 0;\n  -moz-transition: all 0.15s ease-out 0;\n  transition: all 0.15s ease-out 0;\n  background: teal;\n  opacity: 0;\n  visibility: hidden;\n  z-index: 999998; }\n  .refills-menu-screen.is-visible {\n    opacity: 0;\n    visibility: visible; }\n\n.er_toc_title {\n  display: none; }\n\n.er_toc_top {\n  display: none; }\n\n.er_toc {\n  position: fixed;\n  top: 0px;\n  right: auto;\n  bottom: 0px;\n  left: 0px;\n  width: 220px;\n  height: 100%;\n  -webkit-transform: translateX(-220px);\n  -moz-transform: translateX(-220px);\n  -ms-transform: translateX(-220px);\n  -o-transform: translateX(-220px);\n  transform: translateX(-220px);\n  -webkit-transition: all 0.2s linear;\n  -moz-transition: all 0.2s linear;\n  transition: all 0.2s linear;\n  overflow-y: scroll;\n  -webkit-overflow-scrolling: touch;\n  background: black;\n  z-index: 999999; }\n  .er_toc ul {\n    padding: 1em; }\n  .er_toc ul li a {\n    color: white;\n    font-weight: 300;\n    font-size: 1em; }\n    .er_toc ul li a:hover {\n      color: #FFF;\n      text-decoration: none; }\n  .er_toc ul ul {\n    margin-top: .5em;\n    margin-bottom: 1em;\n    padding: 0; }\n  .er_toc ul ul li a {\n    font-weight: 200; }\n  .er_toc.is-visible {\n    -webkit-transform: translateX(0);\n    -moz-transform: translateX(0);\n    -ms-transform: translateX(0);\n    -o-transform: translateX(0);\n    transform: translateX(0); }\n\n.cards {\n  *zoom: 1; }\n  .cards:before,\n  .cards:after {\n    content: \" \";\n    display: table; }\n  .cards:after {\n    clear: both; }\n\n.card {\n  -webkit-transition: all 0.2s ease-in-out;\n  -moz-transition: all 0.2s ease-in-out;\n  transition: all 0.2s ease-in-out;\n  background-color: #f7f7f7;\n  border-radius: 3px;\n  border: 1px solid #DDD;\n  margin-bottom: 1.5em;\n  cursor: pointer;\n  box-shadow: 0 2px 4px #e6e6e6;\n  position: relative; }\n  @media screen and (min-width: 53.75em) {\n    .card {\n      float: left;\n      display: block;\n      margin-right: 2.35765%;\n      width: 31.76157%; }\n      .card:last-child {\n        margin-right: 0; }\n      .card:nth-child(3n) {\n        margin-right: 0; }\n      .card:nth-child(3n+1) {\n        clear: left; } }\n  .card .card-image {\n    overflow: hidden;\n    max-height: 150px; }\n    .card .card-image img {\n      width: 100%;\n      -webkit-transition: all 0.2s ease-in-out;\n      -moz-transition: all 0.2s ease-in-out;\n      transition: all 0.2s ease-in-out;\n      background: #DBD199;\n      border-top-left-radius: 3px;\n      border-top-right-radius: 3px; }\n  .card .ribbon-wrapper {\n    width: 85px;\n    height: 85px;\n    overflow: hidden;\n    position: absolute;\n    top: -1px;\n    right: -1px; }\n    .card .ribbon-wrapper .ribbon {\n      font-size: .8em;\n      font-weight: 800;\n      text-align: center;\n      -webkit-transform: rotate(45deg);\n      -moz-transform: rotate(45deg);\n      -ms-transform: rotate(45deg);\n      -o-transform: rotate(45deg);\n      transform: rotate(45deg);\n      position: relative;\n      padding: 2px 7px;\n      left: -5px;\n      top: 15px;\n      width: 120px;\n      background-color: #477DCA;\n      color: white;\n      box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.3); }\n  .card .card-header {\n    -webkit-transition: all 0.2s ease-in-out;\n    -moz-transition: all 0.2s ease-in-out;\n    transition: all 0.2s ease-in-out;\n    background-color: #f7f7f7;\n    border-bottom: 1px solid #DDD;\n    border-radius: 3px 3px 0 0;\n    font-weight: bold;\n    padding: 0.5em 0.809em; }\n  .card .card-copy {\n    padding: 0.75em 0.809em;\n    font-size: .9em;\n    line-height: 1.5em; }\n  .card .card-stats {\n    padding: 0.75em 0.809em;\n    overflow: auto; }\n    .card .card-stats ul li {\n      display: inline;\n      color: #6f99d5;\n      font-weight: 800;\n      font-size: 1.2em;\n      float: left;\n      border-right: 1px solid rgba(51, 51, 51, 0.2);\n      line-height: 1.1em;\n      padding: 0 0.7em 0 0.7em; }\n      .card .card-stats ul li:first-child {\n        padding-left: 0; }\n      .card .card-stats ul li:last-child {\n        border-right: 0; }\n      .card .card-stats ul li span {\n        color: #333;\n        font-size: .7em;\n        display: block;\n        font-weight: normal; }\n  .card:hover {\n    background-color: white; }\n    .card:hover .card-image img {\n      background: #e2daac; }\n    .card:hover .card-header {\n      background-color: white; }\n  .card:active {\n    background-color: #f7f7f7; }\n    .card:active .card-header {\n      background-color: #f7f7f7; }\n\nheader.navigation {\n  background-color: #333;\n  border-bottom: 1px solid #1a1a1a;\n  height: 60px;\n  width: 100%;\n  z-index: 999; }\n  header.navigation .navigation-wrapper {\n    *zoom: 1;\n    *zoom: 1;\n    max-width: 68em;\n    margin-left: auto;\n    margin-right: auto;\n    position: relative;\n    z-index: 9999; }\n    header.navigation .navigation-wrapper:before,\n    header.navigation .navigation-wrapper:after {\n      content: \" \";\n      display: table; }\n    header.navigation .navigation-wrapper:after {\n      clear: both; }\n    header.navigation .navigation-wrapper:before,\n    header.navigation .navigation-wrapper:after {\n      content: \" \";\n      display: table; }\n    header.navigation .navigation-wrapper:after {\n      clear: both; }\n  header.navigation .logo {\n    float: left;\n    max-height: 60px;\n    padding-left: 1em;\n    padding-right: 2em; }\n    header.navigation .logo img {\n      max-height: 60px;\n      padding: .8em 0; }\n  header.navigation .navigation-menu-button {\n    color: rgba(255, 255, 255, 0.7);\n    display: block;\n    float: right;\n    font-family: \"Helvetica Neue\", Helvetica, Arial, sans-serif;\n    font-weight: 700;\n    line-height: 60px;\n    margin: 0;\n    padding-right: 1em;\n    text-transform: uppercase; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation .navigation-menu-button {\n        display: none; } }\n    header.navigation .navigation-menu-button:hover {\n      color: white; }\n  header.navigation .nav {\n    z-index: 9999999;\n    float: none; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation .nav {\n        float: left; } }\n  header.navigation ul#navigation-menu {\n    -webkit-transform-style: preserve-3d;\n    clear: both;\n    display: none;\n    margin: 0 auto;\n    overflow: visible;\n    padding: 0;\n    width: 100%;\n    z-index: 9999; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation ul#navigation-menu {\n        display: inline;\n        margin: 0;\n        padding: 0; } }\n  header.navigation ul li.nav-link {\n    background: #333;\n    display: block;\n    line-height: 60px;\n    overflow: hidden;\n    padding-right: .8em;\n    text-align: right;\n    width: 100%;\n    z-index: 9999; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation ul li.nav-link {\n        background: transparent;\n        display: inline;\n        line-height: 60px;\n        text-decoration: none;\n        width: auto; } }\n    header.navigation ul li.nav-link a {\n      color: rgba(255, 255, 255, 0.7);\n      display: inline-block;\n      font-weight: 400; }\n      @media screen and (min-width: 53.75em) {\n        header.navigation ul li.nav-link a {\n          padding-right: 1em; } }\n      header.navigation ul li.nav-link a:hover {\n        color: white; }\n  header.navigation .active-nav-item a {\n    border-bottom: 1px solid rgba(255, 255, 255, 0.5);\n    padding-bottom: 3px; }\n  header.navigation li.more.nav-link {\n    padding-right: 0; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation li.more.nav-link {\n        padding-right: 1em; } }\n    header.navigation li.more.nav-link > ul > li:first-child a {\n      padding-top: 1em; }\n    header.navigation li.more.nav-link a {\n      margin-right: 1em; }\n    header.navigation li.more.nav-link > a {\n      padding-right: 0.6em; }\n    header.navigation li.more.nav-link > a:after {\n      position: absolute;\n      top: auto;\n      right: -0.4em;\n      bottom: auto;\n      left: auto;\n      content: '\\25BE';\n      color: rgba(255, 255, 255, 0.7); }\n  header.navigation li.more {\n    overflow: visible;\n    padding-right: 0; }\n    header.navigation li.more a {\n      padding-right: .8em; }\n    header.navigation li.more > a {\n      padding-right: 1.6em;\n      position: relative; }\n      @media screen and (min-width: 53.75em) {\n        header.navigation li.more > a {\n          margin-right: 1em; } }\n      header.navigation li.more > a:after {\n        content: '\\203A';\n        font-size: 1.2em;\n        position: absolute;\n        right: 0.5em; }\n    header.navigation li.more:hover > .submenu {\n      display: block; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation li.more {\n        padding-right: .8em;\n        position: relative; } }\n  header.navigation ul.submenu {\n    display: none;\n    padding-left: 0; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation ul.submenu {\n        left: -1em;\n        position: absolute;\n        top: 1.5em; } }\n    @media screen and (min-width: 53.75em) {\n      header.navigation ul.submenu .submenu {\n        left: 11.8em;\n        top: 0; } }\n    header.navigation ul.submenu li {\n      display: block;\n      padding-right: 0; }\n      @media screen and (min-width: 53.75em) {\n        header.navigation ul.submenu li {\n          line-height: 46.15385px; }\n          header.navigation ul.submenu li:first-child > a {\n            border-top-left-radius: 3px;\n            border-top-right-radius: 3px; }\n          header.navigation ul.submenu li:last-child > a {\n            border-bottom-left-radius: 3px;\n            border-bottom-right-radius: 3px;\n            padding-bottom: .7em; } }\n      header.navigation ul.submenu li a {\n        background-color: #2b2b2b;\n        display: inline-block;\n        text-align: right;\n        width: 100%; }\n        @media screen and (min-width: 53.75em) {\n          header.navigation ul.submenu li a {\n            background-color: #333;\n            padding-left: 1em;\n            text-align: left;\n            width: 12em; } }\n  header.navigation .navigation-tools {\n    *zoom: 1;\n    display: block;\n    padding-right: 1em;\n    padding-left: 0.5em;\n    clear: both;\n    background: #505050; }\n    header.navigation .navigation-tools:before,\n    header.navigation .navigation-tools:after {\n      content: \" \";\n      display: table; }\n    header.navigation .navigation-tools:after {\n      clear: both; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation .navigation-tools {\n        background: transparent;\n        float: right;\n        clear: none; } }\n  header.navigation a.sign-up {\n    margin-top: 1.2em;\n    float: right;\n    -webkit-transition: all 0.2s ease-in-out;\n    -moz-transition: all 0.2s ease-in-out;\n    transition: all 0.2s ease-in-out;\n    display: inline;\n    background: #477DCA;\n    border-radius: 3px;\n    color: white;\n    font-size: .8em;\n    font-weight: 800;\n    text-transform: uppercase;\n    padding: 0.4em 0.5em; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation a.sign-up {\n        padding: 0.5em 1em; } }\n    header.navigation a.sign-up:hover {\n      background: #6f99d5; }\n  header.navigation .search-bar {\n    padding: 0.85em 0.6em;\n    float: left; }\n    header.navigation .search-bar .search-and-submit {\n      position: relative; }\n      header.navigation .search-bar .search-and-submit input[type=search] {\n        background: #404040;\n        border: 1px solid #262626;\n        padding: 0.6em 0.8em;\n        font-size: .9em;\n        font-style: italic;\n        color: rgba(255, 255, 255, 0.7);\n        border-radius: 6px;\n        margin: 0; }\n        @media screen and (min-width: 53.75em) {\n          header.navigation .search-bar .search-and-submit input[type=search] {\n            width: 100%; } }\n      header.navigation .search-bar .search-and-submit button[type=submit] {\n        border: 1px solid #363636;\n        border-radius: 3px;\n        box-shadow: inset 0 1px 0 0 gray;\n        color: white;\n        display: inline-block;\n        font-size: 11px;\n        font-weight: bold;\n        background-color: #595959;\n        background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #595959), color-stop(100%, #3d3d3d));\n        background-image: -webkit-linear-gradient(#595959, #3d3d3d);\n        background-image: linear-gradient(#595959, #3d3d3d);\n        padding: 7px 18px;\n        text-decoration: none;\n        text-shadow: 0 1px 0 #2b2b2b;\n        background-clip: padding-box;\n        position: absolute;\n        top: 0.3em;\n        right: 0.3em;\n        bottom: 0.3em;\n        left: auto;\n        outline: none;\n        padding: 0 15px; }\n        header.navigation .search-bar .search-and-submit button[type=submit]:hover:not(:disabled) {\n          box-shadow: inset 0 1px 0 0 #666666;\n          cursor: pointer;\n          background-color: #4d4d4d;\n          background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #4d4d4d), color-stop(100%, #363636));\n          background-image: -webkit-linear-gradient(#4d4d4d, #363636);\n          background-image: linear-gradient(#4d4d4d, #363636); }\n        header.navigation .search-bar .search-and-submit button[type=submit]:active:not(:disabled) {\n          border: 1px solid #363636;\n          box-shadow: inset 0 0 8px 4px #2e2e2e, inset 0 0 8px 4px #2e2e2e, 0 1px 1px 0 #eee; }\n        header.navigation .search-bar .search-and-submit button[type=submit]:disabled {\n          opacity: 0.5;\n          cursor: not-allowed; }\n        header.navigation .search-bar .search-and-submit button[type=submit] img {\n          height: 12px;\n          opacity: .7; }\n    @media screen and (min-width: 53.75em) {\n      header.navigation .search-bar {\n        width: 16em;\n        position: relative;\n        display: inline-block; }\n        header.navigation .search-bar input {\n          -webkit-box-sizing: border-box;\n          -moz-box-sizing: border-box;\n          box-sizing: border-box;\n          display: block; } }\n\n.badges {\n  display: block;\n  margin-bottom: 1.5; }\n  .badges .badge {\n    display: inline-block;\n    vertical-align: baseline;\n    zoom: 1;\n    *display: inline;\n    *vertical-align: auto;\n    background: #999;\n    border-radius: 2em;\n    color: #fff;\n    font-size: 0.75em;\n    font-weight: 600;\n    line-height: 1;\n    padding: 0.25em 1em;\n    text-align: center; }\n    .badges .badge.dark {\n      background: #333; }\n    .badges .badge.error {\n      background: #FBE3E4;\n      color: #96151b; }\n    .badges .badge.notice {\n      background: #e5edf8;\n      color: #264d85; }\n    .badges .badge.success {\n      background: #E6EFC2;\n      color: #56651a; }\n\n.button-group input {\n  display: none; }\n\n.button-group label {\n  margin-bottom: 0; }\n  @media screen and (min-width: 53.75em) {\n    .button-group label {\n      float: left; } }\n  .button-group label .button-group-item {\n    background: white;\n    border-left: 1px solid silver;\n    border-radius: 0;\n    border-right: 1px solid silver;\n    color: gray;\n    cursor: pointer;\n    display: inline-block;\n    font-size: 1em;\n    font-weight: normal;\n    line-height: 1;\n    padding: 0.75em 1em;\n    width: 100%; }\n    @media screen and (min-width: 53.75em) {\n      .button-group label .button-group-item {\n        border-bottom: 1px solid silver;\n        border-left: 0;\n        border-right: 1px solid #eeeeee;\n        border-top: 1px solid silver;\n        width: auto; } }\n    .button-group label .button-group-item:hover {\n      background-color: #f7f7f7; }\n  .button-group label:first-child .button-group-item {\n    border-top-left-radius: 3px;\n    border-top-right-radius: 3px;\n    border-top: 1px solid silver; }\n    @media screen and (min-width: 53.75em) {\n      .button-group label:first-child .button-group-item {\n        border-bottom-left-radius: 3px;\n        border-left: 1px solid silver;\n        border-top-left-radius: 3px;\n        border-top-right-radius: 0; } }\n  .button-group label:last-child .button-group-item {\n    border-bottom-left-radius: 3px;\n    border-bottom-right-radius: 3px;\n    border-bottom: 1px solid silver; }\n    @media screen and (min-width: 53.75em) {\n      .button-group label:last-child .button-group-item {\n        border-bottom-left-radius: 0;\n        border-bottom-right-radius: 3px;\n        border-right: 1px solid silver;\n        border-top-right-radius: 3px; } }\n  .button-group label input:checked + .button-group-item {\n    background: #477DCA;\n    border: 1px solid #2c5999;\n    box-shadow: inset 0 1px 2px #3264ac;\n    color: white; }\n\n.image-gradient-dynamic {\n  position: relative;\n  line-height: 0;\n  width: 100%;\n  margin-bottom: 1.5; }\n  .image-gradient-dynamic img {\n    width: 100%;\n    height: auto;\n    position: relative;\n    top: 0;\n    left: 0; }\n  .image-gradient-dynamic .copy {\n    position: absolute;\n    top: 50%;\n    left: 50%;\n    margin: auto;\n    z-index: 999;\n    text-align: center;\n    -webkit-transform: translate(-50%, -50%);\n    -moz-transform: translate(-50%, -50%);\n    -ms-transform: translate(-50%, -50%);\n    -o-transform: translate(-50%, -50%);\n    transform: translate(-50%, -50%); }\n    .image-gradient-dynamic .copy p {\n      line-height: 1.5em;\n      padding: 1em 2em;\n      position: relative;\n      color: white;\n      font-weight: 800; }\n  .image-gradient-dynamic .overlay {\n    background-color: rgba(255, 0, 0, 0.1);\n    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(255, 0, 0, 0.1)), color-stop(100%, rgba(0, 128, 0, 0.4)));\n    background-image: -webkit-linear-gradient(-270deg, rgba(255, 0, 0, 0.1), rgba(0, 128, 0, 0.4));\n    background-image: linear-gradient(0deg,rgba(255, 0, 0, 0.1), rgba(0, 128, 0, 0.4));\n    display: block;\n    position: absolute;\n    top: 0px;\n    right: 0px;\n    bottom: 0px;\n    left: 0px; }\n    .image-gradient-dynamic .overlay:after {\n      content: '';\n      background-color: rgba(0, 128, 128, 0.2);\n      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(0, 128, 128, 0.2)), color-stop(100%, rgba(255, 255, 0, 0.2)));\n      background-image: -webkit-linear-gradient(-360deg, rgba(0, 128, 128, 0.2), rgba(255, 255, 0, 0.2));\n      background-image: linear-gradient(90deg,rgba(0, 128, 128, 0.2), rgba(255, 255, 0, 0.2));\n      display: block;\n      position: absolute;\n      top: 0px;\n      right: 0px;\n      bottom: 0px;\n      left: 0px; }\n\n.table-borders {\n  border: 1px solid #DDD;\n  border-left: 0px;\n  border-collapse: separate;\n  border-spacing: 0;\n  border-radius: 3px; }\n  .table-borders tbody {\n    background-color: #f7f7f7; }\n    .table-borders tbody tr:hover > td, .table-borders tbody tr:hover > th {\n      background-color: #eaeaea; }\n    .table-borders tbody tr:nth-child(even) {\n      background-color: #ececec; }\n      .table-borders tbody tr:nth-child(even):hover > td {\n        background-color: #e0e0e0; }\n  .table-borders thead:first-of-type tr:first-child > th:first-child {\n    border-top-left-radius: 3px; }\n  .table-borders thead:first-of-type tr:first-child > th:last-child {\n    border-top-right-radius: 3px; }\n  .table-borders tbody:last-child tr:last-child > td:first-child {\n    border-bottom-left-radius: 3px; }\n  .table-borders tbody:last-child tr:last-child > td:last-child {\n    border-bottom-right-radius: 3px; }\n  .table-borders thead th {\n    background-color: white;\n    padding: 0.5em;\n    border-left: 1px solid #DDD;\n    border-bottom: 0px; }\n  .table-borders tbody {\n    background-color: #f7f7f7; }\n    .table-borders tbody td {\n      padding: 0.5em;\n      border-left: 1px solid #DDD;\n      border-top: 1px solid #DDD;\n      border-bottom: 0px; }\n      .table-borders tbody td button {\n        border: 1px solid lightgray;\n        border-radius: 3px;\n        box-shadow: inset 0 1px 0 0 white;\n        color: #333333;\n        display: inline-block;\n        font-size: 11px;\n        font-weight: bold;\n        background-color: #f7f7f7;\n        background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f7f7f7), color-stop(100%, #dadada));\n        background-image: -webkit-linear-gradient(#f7f7f7, #dadada);\n        background-image: linear-gradient(#f7f7f7, #dadada);\n        padding: 7px 18px;\n        text-decoration: none;\n        text-shadow: 0 1px 0 white;\n        background-clip: padding-box;\n        margin-right: 0.5em;\n        display: inline-block;\n        width: 100%;\n        margin-bottom: .3em;\n        outline: none; }\n        .table-borders tbody td button:hover:not(:disabled) {\n          box-shadow: inset 0 1px 0 0 white;\n          cursor: pointer;\n          background-color: #eaeaea;\n          background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #eaeaea), color-stop(100%, lightgray));\n          background-image: -webkit-linear-gradient(#eaeaea, lightgray);\n          background-image: linear-gradient(#eaeaea, lightgray); }\n        .table-borders tbody td button:active:not(:disabled) {\n          border: 1px solid lightgray;\n          box-shadow: inset 0 0 8px 4px #cbcbcb, inset 0 0 8px 4px #cbcbcb, 0 1px 1px 0 #eee; }\n        .table-borders tbody td button:disabled {\n          opacity: 0.5;\n          cursor: not-allowed; }\n        @media screen and (min-width: 40em) {\n          .table-borders tbody td button {\n            width: auto;\n            margin-bottom: 0; } }\n\n.table-minimal {\n  border-collapse: separate;\n  border-spacing: 0; }\n  .table-minimal tbody tr:hover > td, .table-minimal tbody tr:hover > th {\n    background-color: #fafafa; }\n  .table-minimal tbody tr:first-child td {\n    border-top: 2px solid #DDD; }\n  .table-minimal thead th {\n    background-color: white;\n    padding: 0.5em;\n    border-bottom: 0px; }\n  .table-minimal tbody {\n    background-color: white; }\n    .table-minimal tbody td {\n      padding: 0.5em;\n      border-top: 1px solid #DDD;\n      border-bottom: 0px; }\n      .table-minimal tbody td button {\n        border: 1px solid #dbdbdb;\n        border-radius: 3px;\n        box-shadow: inset 0 1px 0 0 white;\n        color: #333333;\n        display: inline-block;\n        font-size: 11px;\n        font-weight: bold;\n        background-color: white;\n        background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #e3e3e3));\n        background-image: -webkit-linear-gradient(white, #e3e3e3);\n        background-image: linear-gradient(white, #e3e3e3);\n        padding: 7px 18px;\n        text-decoration: none;\n        text-shadow: 0 1px 0 white;\n        background-clip: padding-box;\n        margin-right: 0.5em;\n        display: inline-block;\n        width: 100%;\n        margin-bottom: .3em;\n        outline: none; }\n        .table-minimal tbody td button:hover:not(:disabled) {\n          box-shadow: inset 0 1px 0 0 white;\n          cursor: pointer;\n          background-color: #f2f2f2;\n          background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f2f2f2), color-stop(100%, #dbdbdb));\n          background-image: -webkit-linear-gradient(#f2f2f2, #dbdbdb);\n          background-image: linear-gradient(#f2f2f2, #dbdbdb); }\n        .table-minimal tbody td button:active:not(:disabled) {\n          border: 1px solid #dbdbdb;\n          box-shadow: inset 0 0 8px 4px #d4d4d4, inset 0 0 8px 4px #d4d4d4, 0 1px 1px 0 #eee; }\n        .table-minimal tbody td button:disabled {\n          opacity: 0.5;\n          cursor: not-allowed; }\n        @media screen and (min-width: 40em) {\n          .table-minimal tbody td button {\n            width: auto;\n            margin-bottom: 0; } }\n\n.tooltip-item {\n  border: 1px solid #DDD;\n  padding: 0.5em 1em;\n  border-radius: 3px;\n  position: relative;\n  margin-bottom: 1.5; }\n  .tooltip-item:hover .tooltip {\n    opacity: 1;\n    visibility: visible; }\n  .tooltip-item .tooltip {\n    position: absolute;\n    left: 50%;\n    -webkit-box-sizing: border-box;\n    -moz-box-sizing: border-box;\n    box-sizing: border-box;\n    -webkit-transition: all 0.2s ease-in-out;\n    -moz-transition: all 0.2s ease-in-out;\n    transition: all 0.2s ease-in-out;\n    bottom: 140%;\n    background-color: white;\n    border-radius: 3px;\n    color: #333;\n    font-size: .9em;\n    line-height: 1.5em;\n    margin-left: -8em;\n    opacity: 0;\n    padding: 1em;\n    box-shadow: 0 2px 2px silver;\n    text-align: center;\n    visibility: hidden;\n    min-width: 16em;\n    z-index: 10;\n    font-family: Georgia, Cambria, \"Times New Roman\", Times, serif; }\n    .tooltip-item .tooltip p {\n      margin-bottom: 0; }\n    .tooltip-item .tooltip:after {\n      position: absolute;\n      left: 46%;\n      margin-left: -8px;\n      border: 8px solid transparent;\n      color: white;\n      content: '\\25BC';\n      text-shadow: 0 2px 2px silver;\n      font-size: 1.4em;\n      pointer-events: none;\n      bottom: -27.2px; }\n\n.vertical-tabs-container {\n  *zoom: 1;\n  border-radius: 3px;\n  border: 1px solid #DDD;\n  margin-bottom: 1.5em;\n  overflow: hidden; }\n  .vertical-tabs-container:before,\n  .vertical-tabs-container:after {\n    content: \" \";\n    display: table; }\n  .vertical-tabs-container:after {\n    clear: both; }\n  .vertical-tabs-container .vertical-tabs {\n    display: none; }\n    @media screen and (min-width: 40em) {\n      .vertical-tabs-container .vertical-tabs {\n        background-color: white;\n        display: inline;\n        float: left;\n        height: 18.75em;\n        width: 20%; } }\n  @media screen and (min-width: 40em) {\n    .vertical-tabs-container .vertical-tab {\n      border-bottom: 1px solid #DDD;\n      display: block;\n      font-weight: bold;\n      margin-right: -1px;\n      padding: 0.75em 0.809em; }\n      .vertical-tabs-container .vertical-tab.is-active {\n        background-color: #f7f7f7;\n        margin-right: -1px; } }\n  .vertical-tabs-container .vertical-tab:focus {\n    outline: none; }\n  .vertical-tabs-container .vertical-tab-content-container {\n    display: block;\n    margin: 0 auto; }\n    .vertical-tabs-container .vertical-tab-content-container a:focus {\n      outline: none; }\n    @media screen and (min-width: 40em) {\n      .vertical-tabs-container .vertical-tab-content-container {\n        display: inline-block;\n        vertical-align: baseline;\n        zoom: 1;\n        *display: inline;\n        *vertical-align: auto;\n        width: 80%;\n        height: 18.75em;\n        background-color: #f7f7f7; } }\n  .vertical-tabs-container .vertical-tab-content {\n    background-color: #f7f7f7;\n    padding: 1.5em 1.618em; }\n    @media screen and (min-width: 40em) {\n      .vertical-tabs-container .vertical-tab-content {\n        border: none;\n        display: none; } }\n  .vertical-tabs-container .vertical-tab-accordion-heading {\n    background-color: white;\n    border-top: 1px solid #DDD;\n    cursor: pointer;\n    display: block;\n    font-weight: bold;\n    padding: 0.75em 0.809em; }\n    .vertical-tabs-container .vertical-tab-accordion-heading:hover {\n      color: #477DCA; }\n    .vertical-tabs-container .vertical-tab-accordion-heading:first-child {\n      border-top: none; }\n    .vertical-tabs-container .vertical-tab-accordion-heading.is-active {\n      background: #f7f7f7;\n      border-bottom: none; }\n    @media screen and (min-width: 40em) {\n      .vertical-tabs-container .vertical-tab-accordion-heading {\n        display: none; } }\n\n.hover-tile-outer {\n  background-position: bottom;\n  background-size: cover;\n  background: url(\"/images/mountains.png\");\n  background-size: cover;\n  background-color: #BEB56E;\n  border: 1px solid #DDD;\n  height: 10em;\n  margin-bottom: 1.5;\n  cursor: pointer; }\n  @media screen and (min-width: 40em) {\n    .hover-tile-outer {\n      width: 40%; } }\n  .hover-tile-outer .hover-tile-container {\n    height: 10em;\n    overflow: hidden; }\n  .hover-tile-outer .hover-tile-container:hover > .hover-tile {\n    -webkit-transform: translate(0, -100%);\n    -moz-transform: translate(0, -100%);\n    -ms-transform: translate(0, -100%);\n    -o-transform: translate(0, -100%);\n    transform: translate(0, -100%); }\n  .hover-tile-outer .hover-tile {\n    -webkit-transition: all, 0.2s ease-in-out;\n    -moz-transition: all, 0.2s ease-in-out;\n    transition: all, 0.2s ease-in-out;\n    background: inherit;\n    color: white;\n    height: inherit;\n    padding: 1em 1.5em; }\n  .hover-tile-outer .hover-tile-visible {\n    color: rgba(255, 255, 255, 0.7);\n    font-size: 2em;\n    font-weight: 200;\n    padding-top: 2em;\n    text-align: center; }\n  .hover-tile-outer .hover-tile-hidden {\n    background: rgba(0, 0, 0, 0.5); }\n    .hover-tile-outer .hover-tile-hidden h4 {\n      margin-bottom: .5em; }\n    .hover-tile-outer .hover-tile-hidden p {\n      color: rgba(255, 255, 255, 0.7); }\n\n.bullets {\n  overflow: auto;\n  margin-bottom: 1.5; }\n  @media screen and (min-width: 53.75em) {\n    .bullets .two-col-bullet {\n      float: left;\n      display: block;\n      margin-right: 2.35765%;\n      width: 48.82117%; }\n      .bullets .two-col-bullet:last-child {\n        margin-right: 0; }\n      .bullets .two-col-bullet:nth-child(2n) {\n        margin-right: 0; }\n      .bullets .two-col-bullet:nth-child(2n+1) {\n        clear: left; } }\n  @media screen and (min-width: 53.75em) {\n    .bullets .three-col-bullet {\n      float: left;\n      display: block;\n      margin-right: 2.35765%;\n      width: 31.76157%; }\n      .bullets .three-col-bullet:last-child {\n        margin-right: 0; }\n      .bullets .three-col-bullet:nth-child(3n) {\n        margin-right: 0; }\n      .bullets .three-col-bullet:nth-child(3n+1) {\n        clear: left; } }\n  @media screen and (min-width: 53.75em) {\n    .bullets .four-col-bullet {\n      float: left;\n      display: block;\n      margin-right: 2.35765%;\n      width: 23.23176%; }\n      .bullets .four-col-bullet:last-child {\n        margin-right: 0; }\n      .bullets .four-col-bullet:nth-child(4n) {\n        margin-right: 0; }\n      .bullets .four-col-bullet:nth-child(4n+1) {\n        clear: left; } }\n  .bullets .bullet-icon {\n    float: left;\n    background: #477DCA;\n    padding: 0.875em;\n    border-radius: 50%;\n    width: 3.5em;\n    height: 3.5em; }\n  .bullets .bullet-icon-1 {\n    background: #477DCA; }\n  .bullets .bullet-icon-2 {\n    background: #47caaa; }\n  .bullets .bullet-icon-3 {\n    background: #a9ca47; }\n  .bullets .bullet-content {\n    margin-left: 4.9em;\n    margin-bottom: 2em; }\n  .bullets h2 {\n    font-size: 1.4em;\n    padding-top: 0.5em;\n    margin-bottom: 0.58333em;\n    border-bottom: 1px solid rgba(51, 51, 51, 0.2);\n    display: inline-block; }\n\n.grid-items {\n  *zoom: 1; }\n  .grid-items:before,\n  .grid-items:after {\n    content: \" \";\n    display: table; }\n  .grid-items:after {\n    clear: both; }\n  .grid-items .grid-item {\n    -webkit-transition: all 0.2s ease-in-out;\n    -moz-transition: all 0.2s ease-in-out;\n    transition: all 0.2s ease-in-out;\n    height: 14em;\n    background: #6b83a6;\n    width: 100%;\n    overflow: hidden;\n    float: left;\n    padding: 2em;\n    border-top: 0;\n    border-bottom: 9px solid white;\n    border-left: 4.5px solid white;\n    border-right: 4.5px solid white;\n    text-align: center;\n    cursor: pointer; }\n    @media screen and (min-width: 53.75em) {\n      .grid-items .grid-item {\n        width: 33.33333%; } }\n    .grid-items .grid-item:nth-child(1) {\n      background-color: #6b83a6;\n      box-shadow: inset 0px 0px 1px 2px #536a8b; }\n      .grid-items .grid-item:nth-child(1):hover {\n        background-color: #536a8b;\n        background-repeat: no-repeat;\n        background-position: top;\n        background-size: cover; }\n    .grid-items .grid-item:nth-child(2) {\n      background-color: #3581A5;\n      box-shadow: inset 0px 0px 1px 2px #29637e; }\n      .grid-items .grid-item:nth-child(2):hover {\n        background-color: #29637e;\n        background-repeat: no-repeat;\n        background-position: top;\n        background-size: cover; }\n    .grid-items .grid-item:nth-child(3) {\n      background-color: #5FBEBE;\n      box-shadow: inset 0px 0px 1px 2px #44a6a6; }\n      .grid-items .grid-item:nth-child(3):hover {\n        background-color: #44a6a6;\n        background-repeat: no-repeat;\n        background-position: top;\n        background-size: cover; }\n    .grid-items .grid-item:nth-child(4) {\n      background-color: #98C79A;\n      box-shadow: inset 0px 0px 1px 2px #77b57a; }\n      .grid-items .grid-item:nth-child(4):hover {\n        background-color: #77b57a;\n        background-repeat: no-repeat;\n        background-position: top;\n        background-size: cover; }\n    .grid-items .grid-item:nth-child(5) {\n      background-color: #A7A891;\n      box-shadow: inset 0px 0px 1px 2px #909175; }\n      .grid-items .grid-item:nth-child(5):hover {\n        background-color: #909175;\n        background-repeat: no-repeat;\n        background-position: top;\n        background-size: cover; }\n    .grid-items .grid-item:nth-child(6) {\n      background-color: #BDCC97;\n      box-shadow: inset 0px 0px 1px 2px #a7bb75; }\n      .grid-items .grid-item:nth-child(6):hover {\n        background-color: #a7bb75;\n        background-repeat: no-repeat;\n        background-position: top;\n        background-size: cover; }\n    .grid-items .grid-item:nth-child(7) {\n      background-color: #979EA0;\n      box-shadow: inset 0px 0px 1px 2px #7c8588; }\n      .grid-items .grid-item:nth-child(7):hover {\n        background-color: #7c8588;\n        background-repeat: no-repeat;\n        background-position: top;\n        background-size: cover; }\n  .grid-items .grid-item img {\n    display: block;\n    height: 3em;\n    margin: auto;\n    margin-bottom: 1em; }\n  .grid-items .grid-item h1 {\n    color: white;\n    font-size: 1.3em;\n    margin-bottom: .4em; }\n  .grid-items .grid-item p {\n    margin: auto;\n    color: rgba(255, 255, 255, 0.7); }\n    @media screen and (min-width: 40em) {\n      .grid-items .grid-item p {\n        max-width: 70%; } }\n  @media screen and (min-width: 53.75em) {\n    .grid-items .grid-item-big {\n      width: 66.66667%; } }\n  @media screen and (min-width: 40em) {\n    .grid-items .grid-item-big p {\n      max-width: 60%; } }\n  .grid-items .grid-item-image {\n    background: url(/images/lake-transparent.png);\n    background-color: #6b83a6;\n    background-repeat: no-repeat;\n    background-position: top;\n    background-size: cover; }\n\n.grid-items-lines {\n  *zoom: 1;\n  position: relative; }\n  .grid-items-lines:before,\n  .grid-items-lines:after {\n    content: \" \";\n    display: table; }\n  .grid-items-lines:after {\n    clear: both; }\n  .grid-items-lines .grid-item {\n    -webkit-transition: all 0.2s ease-in-out;\n    -moz-transition: all 0.2s ease-in-out;\n    transition: all 0.2s ease-in-out;\n    height: 14em;\n    background: white;\n    width: 100%;\n    overflow: hidden;\n    float: left;\n    padding: 2em;\n    border-right: 1px solid rgba(51, 51, 51, 0.2);\n    border-bottom: 1px solid rgba(51, 51, 51, 0.2);\n    cursor: pointer; }\n    @media screen and (min-width: 53.75em) {\n      .grid-items-lines .grid-item {\n        width: 33.33333%; } }\n    .grid-items-lines .grid-item:hover {\n      background: rgba(51, 51, 51, 0.05); }\n  .grid-items-lines .grid-item img {\n    display: block;\n    height: 2.5em;\n    margin-bottom: 1.2em;\n    opacity: .2; }\n  .grid-items-lines .grid-item h1 {\n    color: #333;\n    font-size: 1.3em;\n    margin-bottom: .4em; }\n  .grid-items-lines .grid-item p {\n    color: rgba(51, 51, 51, 0.6); }\n    @media screen and (min-width: 40em) {\n      .grid-items-lines .grid-item p {\n        max-width: 70%; } }\n  @media screen and (min-width: 53.75em) {\n    .grid-items-lines .grid-item-big {\n      width: 66.66667%; } }\n  @media screen and (min-width: 40em) {\n    .grid-items-lines .grid-item-big p {\n      max-width: 60%; } }\n  .grid-items-lines .bottom-cover {\n    position: absolute;\n    bottom: 0px;\n    width: 100%;\n    height: 3px;\n    background: white; }\n  .grid-items-lines .right-cover {\n    position: absolute;\n    right: 0px;\n    height: 100%;\n    width: 4px;\n    background: white; }\n\n.comment {\n  display: table;\n  width: 100%;\n  margin-bottom: 1.5em;\n  padding-bottom: 1em;\n  border-bottom: 1px solid rgba(51, 51, 51, 0.1); }\n  .comment .comment-image,\n  .comment .comment-content {\n    display: table-cell;\n    vertical-align: top; }\n  .comment .comment-image {\n    padding-right: 1.4em; }\n    .comment .comment-image > img {\n      width: 4em;\n      height: auto;\n      border-radius: 3px;\n      padding: 0.7em;\n      background: #82a7db;\n      display: block;\n      max-width: none; }\n    .comment-reverse-order .comment .comment-image {\n      padding-right: 0;\n      padding-left: 10px; }\n  .comment .comment-content {\n    width: 100%; }\n    .comment .comment-content h1 {\n      font-size: 1em;\n      margin-bottom: .5em; }\n    .comment .comment-content p {\n      margin-bottom: .5em; }\n    .comment .comment-content p.comment-detail {\n      font-style: italic;\n      font-size: .9em;\n      color: rgba(51, 51, 51, 0.5); }\n\n.browsers {\n  display: inline-block;\n  padding-top: 0;\n  text-align: center;\n  width: 100%; }\n  @media screen and (min-width: 53.75em) {\n    .browsers {\n      padding-top: 2em; } }\n\n.browser-top-bar {\n  background-color: #ececec;\n  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ececec), color-stop(100%, #e7e7e7));\n  background-image: -webkit-linear-gradient(#ececec, #e7e7e7);\n  background-image: linear-gradient(#ececec, #e7e7e7);\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n  border: 0px;\n  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);\n  height: 1.5em;\n  width: 100%; }\n\n.browser-circle {\n  border-radius: 1em;\n  box-shadow: 0 1px 0px rgba(255, 255, 255, 0.5), inset 0 1px 1px rgba(0, 0, 0, 0.2);\n  display: inline-block;\n  width: 0.5em;\n  height: 0.5em;\n  margin: 0.5em 0; }\n\n.browser-circle:nth-child(1) {\n  background: #FF6F55;\n  margin-left: 0.5em; }\n\n.browser-circle:nth-child(2) {\n  background: #F5B01D;\n  margin-left: 0.16667em; }\n\n.browser-circle:nth-child(3) {\n  background: #51B151;\n  margin-left: 0.16667em; }\n\n.browser {\n  border-bottom: none;\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px;\n  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.3);\n  display: inline-block;\n  text-align: left;\n  width: 20%; }\n\n.browser:nth-child(1) {\n  background-color: #F0F0F0;\n  display: none; }\n  @media screen and (min-width: 53.75em) {\n    .browser:nth-child(1) {\n      display: inline-block; } }\n  .browser:nth-child(1) .browser-content {\n    background: url(https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/refills-screenshot1.png);\n    background-color: #F0F0F0;\n    background-position: top;\n    background-repeat: no-repeat;\n    background-size: cover; }\n\n.browser:nth-child(2) {\n  -webkit-transform: scale(1);\n  -moz-transform: scale(1);\n  -ms-transform: scale(1);\n  -o-transform: scale(1);\n  transform: scale(1);\n  background-color: white;\n  width: 90%; }\n  @media screen and (min-width: 53.75em) {\n    .browser:nth-child(2) {\n      -webkit-transform: scale(1.2);\n      -moz-transform: scale(1.2);\n      -ms-transform: scale(1.2);\n      -o-transform: scale(1.2);\n      transform: scale(1.2);\n      width: 40%; } }\n  .browser:nth-child(2) .browser-content {\n    background: url(https://raw.githubusercontent.com/thoughtbot/refills/9c16f8b69d857c296c85f2d8c434e825f813a566/source/images/refills-screenshot2.jpg);\n    background-color: white;\n    background-position: top;\n    background-repeat: no-repeat;\n    background-size: cover; }\n\n.browser:nth-child(3) {\n  background-color: #F0F0F0;\n  display: none; }\n  @media screen and (min-width: 53.75em) {\n    .browser:nth-child(3) {\n      display: inline-block; } }\n  .browser:nth-child(3) .browser-content {\n    background: url(https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/refills-screenshot3.png);\n    background-color: #F0F0F0;\n    background-position: top;\n    background-repeat: no-repeat;\n    background-size: cover; }\n\n.browser-content {\n  border-left: 0px;\n  border-right: 0px;\n  height: 17em;\n  overflow: hidden; }\n  @media screen and (min-width: 53.75em) {\n    .browser-content {\n      height: 18em; } }\n\n.cover {\n  background: white;\n  border-top: 1px solid #E6E6E6;\n  height: 3.2em;\n  margin-top: -1em;\n  position: relative;\n  width: 100%;\n  z-index: 999; }\n\n.centered-navigation {\n  background-color: #E7F1EC;\n  border-bottom: 1px solid #d4e6dd;\n  font-family: Georgia, Cambria, \"Times New Roman\", Times, serif;\n  height: 60px;\n  width: 100%;\n  z-index: 9999; }\n  .centered-navigation .mobile-logo {\n    display: inline;\n    float: left;\n    max-height: 60px;\n    padding-left: 1em; }\n    .centered-navigation .mobile-logo img {\n      max-height: 60px;\n      opacity: .6;\n      padding: .8em 0; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation .mobile-logo {\n        display: none; } }\n  .centered-navigation .centered-navigation-menu-button {\n    color: rgba(51, 51, 51, 0.7);\n    display: block;\n    float: right;\n    font-weight: 700;\n    line-height: 60px;\n    margin: 0;\n    padding-right: 1em;\n    text-transform: uppercase; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation .centered-navigation-menu-button {\n        display: none; } }\n    .centered-navigation .centered-navigation-menu-button:hover {\n      color: #333; }\n  .centered-navigation .centered-navigation-wrapper {\n    *zoom: 1;\n    max-width: 68em;\n    margin-left: auto;\n    margin-right: auto;\n    *zoom: 1;\n    position: relative;\n    z-index: 999; }\n    .centered-navigation .centered-navigation-wrapper:before,\n    .centered-navigation .centered-navigation-wrapper:after {\n      content: \" \";\n      display: table; }\n    .centered-navigation .centered-navigation-wrapper:after {\n      clear: both; }\n    .centered-navigation .centered-navigation-wrapper:before,\n    .centered-navigation .centered-navigation-wrapper:after {\n      content: \" \";\n      display: table; }\n    .centered-navigation .centered-navigation-wrapper:after {\n      clear: both; }\n  .centered-navigation ul.centered-navigation-menu {\n    -webkit-transform-style: preserve-3d;\n    clear: both;\n    display: none;\n    margin: 0 auto;\n    overflow: visible;\n    padding: 0;\n    width: 100%;\n    z-index: 99999; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation ul.centered-navigation-menu {\n        display: block;\n        text-align: center; } }\n  @media screen and (min-width: 53.75em) {\n    .centered-navigation .nav-link:first-child {\n      margin-left: 2.2em; } }\n  .centered-navigation ul li.nav-link {\n    background: #E7F1EC;\n    display: block;\n    line-height: 60px;\n    overflow: hidden;\n    padding-right: 1em;\n    text-align: right;\n    width: 100%;\n    z-index: 9999; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation ul li.nav-link {\n        background: transparent;\n        display: inline;\n        line-height: 60px; }\n        .centered-navigation ul li.nav-link a {\n          padding-right: 1em; } }\n    .centered-navigation ul li.nav-link a {\n      color: rgba(51, 51, 51, 0.7);\n      display: inline-block; }\n      .centered-navigation ul li.nav-link a:hover {\n        color: #333; }\n  .centered-navigation li.logo.nav-link {\n    display: none;\n    line-height: 0; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation li.logo.nav-link {\n        display: inline; } }\n  .centered-navigation .logo img {\n    margin-bottom: -0.66667em;\n    max-height: 2em;\n    opacity: .6; }\n  .centered-navigation li.more.nav-link {\n    padding-right: 0; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation li.more.nav-link {\n        padding-right: 1em; } }\n    .centered-navigation li.more.nav-link > ul > li:first-child a {\n      padding-top: 1em; }\n    .centered-navigation li.more.nav-link a {\n      margin-right: 1em; }\n    .centered-navigation li.more.nav-link > a {\n      padding-right: 0.6em; }\n    .centered-navigation li.more.nav-link > a:after {\n      position: absolute;\n      top: auto;\n      right: -0.4em;\n      bottom: auto;\n      left: auto;\n      color: rgba(51, 51, 51, 0.7);\n      content: '\\25BE'; }\n  .centered-navigation li.more {\n    overflow: visible;\n    padding-right: 0; }\n    .centered-navigation li.more a {\n      padding-right: 1em; }\n    .centered-navigation li.more > a {\n      padding-right: 1.6em;\n      position: relative; }\n      @media screen and (min-width: 53.75em) {\n        .centered-navigation li.more > a {\n          margin-right: 1em; } }\n      .centered-navigation li.more > a:after {\n        content: '\\203A';\n        font-size: 1.2em;\n        position: absolute;\n        right: 0.5em; }\n    .centered-navigation li.more:hover > .submenu {\n      display: block; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation li.more {\n        padding-right: 1em;\n        position: relative; } }\n  .centered-navigation ul.submenu {\n    display: none;\n    padding-left: 0; }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation ul.submenu {\n        left: -1em;\n        position: absolute;\n        top: 1.5em; } }\n    @media screen and (min-width: 53.75em) {\n      .centered-navigation ul.submenu .submenu {\n        left: 11.8em;\n        top: 0; } }\n    .centered-navigation ul.submenu li {\n      display: block;\n      padding-right: 0; }\n      @media screen and (min-width: 53.75em) {\n        .centered-navigation ul.submenu li {\n          line-height: 46.15385px; }\n          .centered-navigation ul.submenu li:first-child > a {\n            border-top-left-radius: 3px;\n            border-top-right-radius: 3px; }\n          .centered-navigation ul.submenu li:last-child > a {\n            border-bottom-left-radius: 3px;\n            border-bottom-right-radius: 3px;\n            padding-bottom: .7em; } }\n      .centered-navigation ul.submenu li a {\n        background-color: #ddebe4;\n        display: inline-block;\n        text-align: right;\n        width: 100%; }\n        @media screen and (min-width: 53.75em) {\n          .centered-navigation ul.submenu li a {\n            background-color: #E7F1EC;\n            padding-left: 1em;\n            text-align: left;\n            width: 12em; } }\n\n.search-tools {\n  *zoom: 1;\n  border: 1px solid #DDD;\n  background: #f7f7f7;\n  padding: 0.809em;\n  border-radius: 3px; }\n  .search-tools:before,\n  .search-tools:after {\n    content: \" \";\n    display: table; }\n  .search-tools:after {\n    clear: both; }\n  .search-tools .filter {\n    margin-bottom: 1em; }\n    @media screen and (min-width: 53.75em) {\n      .search-tools .filter {\n        float: left;\n        display: block;\n        margin-right: 2.35765%;\n        width: 27.49666%;\n        margin-bottom: 0; }\n        .search-tools .filter:last-child {\n          margin-right: 0; } }\n    .search-tools .filter > div {\n      position: relative; }\n      .search-tools .filter > div label {\n        font-weight: 400;\n        cursor: pointer;\n        margin-bottom: 0; }\n    .search-tools .filter ol label {\n      display: inline; }\n    .search-tools .filter button {\n      border: 1px solid #dbdbdb;\n      border-radius: 3px;\n      box-shadow: inset 0 1px 0 0 white;\n      color: #333333;\n      display: inline-block;\n      font-size: 11px;\n      font-weight: bold;\n      background-color: white;\n      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #e3e3e3));\n      background-image: -webkit-linear-gradient(white, #e3e3e3);\n      background-image: linear-gradient(white, #e3e3e3);\n      padding: 7px 18px;\n      text-decoration: none;\n      text-shadow: 0 1px 0 white;\n      background-clip: padding-box;\n      position: absolute;\n      top: 5px;\n      right: 5px;\n      bottom: auto;\n      left: auto;\n      font-size: .7em; }\n      .search-tools .filter button:hover:not(:disabled) {\n        box-shadow: inset 0 1px 0 0 white;\n        cursor: pointer;\n        background-color: #f2f2f2;\n        background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f2f2f2), color-stop(100%, #dbdbdb));\n        background-image: -webkit-linear-gradient(#f2f2f2, #dbdbdb);\n        background-image: linear-gradient(#f2f2f2, #dbdbdb); }\n      .search-tools .filter button:active:not(:disabled) {\n        border: 1px solid #dbdbdb;\n        box-shadow: inset 0 0 8px 4px #d4d4d4, inset 0 0 8px 4px #d4d4d4, 0 1px 1px 0 #eee; }\n      .search-tools .filter button:disabled {\n        opacity: 0.5;\n        cursor: not-allowed; }\n    .search-tools .filter .hide-options {\n      margin-bottom: 0; }\n      .search-tools .filter .hide-options ol, .search-tools .filter .hide-options button {\n        display: none; }\n  .search-tools .trigger {\n    width: 100%; }\n    @media screen and (min-width: 53.75em) {\n      .search-tools .trigger {\n        float: left;\n        display: block;\n        margin-right: 2.35765%;\n        width: 10.43705%; }\n        .search-tools .trigger:last-child {\n          margin-right: 0; } }\n    .search-tools .trigger button {\n      width: 100%;\n      margin-top: 1em;\n      padding-top: .7em;\n      padding-bottom: .7em; }\n      @media screen and (min-width: 53.75em) {\n        .search-tools .trigger button {\n          margin-top: 1.95em; } }\n\n.device-background {\n  background-color: #162C4C;\n  background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/mountains.png\"), -webkit-linear-gradient(-280deg, #0A120D, #162C4C), no-repeat #162C4C scroll;\n  background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/mountains.png\"), linear-gradient(10deg, #0A120D, #162C4C), no-repeat #162C4C scroll;\n  background-repeat: no-repeat;\n  background-size: cover;\n  width: 100%;\n  height: 20em; }\n  .device-background button {\n    border: 1px solid #dbdbdb;\n    border-radius: 3px;\n    box-shadow: inset 0 1px 0 0 white;\n    color: #333333;\n    display: inline-block;\n    font-size: 11px;\n    font-weight: bold;\n    background-color: white;\n    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, white), color-stop(100%, #e3e3e3));\n    background-image: -webkit-linear-gradient(white, #e3e3e3);\n    background-image: linear-gradient(white, #e3e3e3);\n    padding: 7px 18px;\n    text-decoration: none;\n    text-shadow: 0 1px 0 white;\n    background-clip: padding-box;\n    font-size: 1em;\n    outline: none; }\n    .device-background button:hover:not(:disabled) {\n      box-shadow: inset 0 1px 0 0 white;\n      cursor: pointer;\n      background-color: #f2f2f2;\n      background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #f2f2f2), color-stop(100%, #dbdbdb));\n      background-image: -webkit-linear-gradient(#f2f2f2, #dbdbdb);\n      background-image: linear-gradient(#f2f2f2, #dbdbdb); }\n    .device-background button:active:not(:disabled) {\n      border: 1px solid #dbdbdb;\n      box-shadow: inset 0 0 8px 4px #d4d4d4, inset 0 0 8px 4px #d4d4d4, 0 1px 1px 0 #eee; }\n    .device-background button:disabled {\n      opacity: 0.5;\n      cursor: not-allowed; }\n\n.device-text {\n  color: white;\n  padding: 2em; }\n  @media screen and (min-width: 53.75em) {\n    .device-text {\n      max-width: 50%;\n      padding: 4em;\n      float: left; } }\n  .device-text h4 {\n    margin-bottom: .5em;\n    padding-bottom: .5em;\n    border-bottom: 1px solid rgba(255, 255, 255, 0.3); }\n  .device-text p {\n    font-family: Georgia, Cambria, \"Times New Roman\", Times, serif;\n    margin-bottom: 1.5em; }\n\n.device {\n  display: none;\n  position: relative; }\n  @media screen and (min-width: 53.75em) {\n    .device {\n      -webkit-transform: perspective(800px) translateX(0px) translateY(-100px) translateZ(50px) rotateX(0deg) rotateY(-20deg) rotateZ(0deg);\n      -moz-transform: perspective(800px) translateX(0px) translateY(-100px) translateZ(50px) rotateX(0deg) rotateY(-20deg) rotateZ(0deg);\n      -ms-transform: perspective(800px) translateX(0px) translateY(-100px) translateZ(50px) rotateX(0deg) rotateY(-20deg) rotateZ(0deg);\n      -o-transform: perspective(800px) translateX(0px) translateY(-100px) translateZ(50px) rotateX(0deg) rotateY(-20deg) rotateZ(0deg);\n      transform: perspective(800px) translateX(0px) translateY(-100px) translateZ(50px) rotateX(0deg) rotateY(-20deg) rotateZ(0deg);\n      display: block;\n      float: right;\n      margin-bottom: -12em;\n      margin-right: 5em;\n      padding: 5em 0;\n      width: 14.8em;\n      border-radius: 2em;\n      background: #1a1a1a;\n      box-shadow: 1px 0px #343434, 4px 0px #060606, 7px 0px black, 10px 0px black, 13px 0px black;\n      z-index: 99999; }\n      .device .screen {\n        width: 14em;\n        height: 25em;\n        background-image: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/cosmin_capitanu_screen.jpg\");\n        background-size: cover;\n        box-shadow: inset 0 1px 8px rgba(0, 0, 0, 0.5);\n        margin: auto;\n        border-radius: .2em; } }\n\n.dropdown {\n  text-align: center; }\n\n.dropdown-container {\n  display: inline-block;\n  position: relative; }\n\n.dropdown-description {\n  background: white;\n  border-bottom-left-radius: 3px;\n  border-bottom: 1px solid silver;\n  border-left: 1px solid silver;\n  border-top-left-radius: 3px;\n  border-top: 1px solid silver;\n  color: #999999;\n  float: left;\n  font-size: .7em;\n  line-height: 40px;\n  margin-bottom: 0;\n  padding: 0 0.5em 0 1em; }\n  @media screen and (min-width: 53.75em) {\n    .dropdown-description {\n      font-size: 1em; } }\n\n.dropdown-button {\n  background: white;\n  border-bottom-right-radius: 3px;\n  border-top-right-radius: 3px;\n  border-top: 1px solid silver;\n  border-right: 1px solid silver;\n  border-bottom: 1px solid silver;\n  cursor: pointer;\n  float: right;\n  font-size: .7em;\n  font-weight: 800;\n  line-height: 40px;\n  margin-bottom: 0;\n  padding: 0 3.5em 0 0.5em;\n  position: relative; }\n  @media screen and (min-width: 53.75em) {\n    .dropdown-button {\n      font-size: 1em;\n      padding: 0 2.5em 0 0.5em; } }\n\n.dropdown-button:hover {\n  background-color: #f7f7f7; }\n\n.dropdown-button:after {\n  color: #333;\n  content: \"\\25BE\";\n  display: block;\n  position: absolute;\n  right: 1em;\n  top: 0; }\n\n.menu {\n  -webkit-transition: all 0.2s ease-in-out;\n  -moz-transition: all 0.2s ease-in-out;\n  transition: all 0.2s ease-in-out;\n  background: white;\n  border-radius: 3px;\n  border: 1px solid silver;\n  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);\n  color: #333;\n  cursor: pointer;\n  display: none;\n  overflow: show;\n  position: absolute;\n  right: 0;\n  top: 50px;\n  width: 228px;\n  z-index: 99999; }\n  .menu:before {\n    position: absolute;\n    right: 1em;\n    color: white;\n    content: \"\\25B2\";\n    font-size: 1.4em;\n    pointer-events: none;\n    text-shadow: 0 -2px 2px rgba(0, 0, 0, 0.3);\n    top: -1em; }\n\n.menu li {\n  border-bottom: 1px solid silver;\n  color: #333;\n  padding: 0.5em; }\n\n.menu li:hover {\n  background: #f7f7f7; }\n\n.menu li:first-child {\n  border-top-left-radius: 3px;\n  border-top-right-radius: 3px; }\n\n.menu li:last-child {\n  border: none;\n  border-bottom-left-radius: 3px;\n  border-bottom-right-radius: 3px; }\n\n.show-menu {\n  display: block; }\n\n.texture {\n  height: 5em;\n  width: 100%; }\n\n.texture-normal {\n  background-color: #e1f2f1;\n  background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/diagonal-noise.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), center no-repeat #e1f2f1 scroll;\n  background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/diagonal-noise.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), center no-repeat #e1f2f1 scroll;\n  float: left;\n  height: 5em;\n  width: 50%; }\n\n.texture-inverted {\n  background-color: #e1f2f1;\n  background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/diagonal-noise.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), center no-repeat #e1f2f1 scroll;\n  background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/diagonal-noise.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), center no-repeat #e1f2f1 scroll;\n  float: left;\n  height: 5em;\n  width: 50%; }\n\n.intro-text {\n  margin-bottom: 5em;\n  margin-top: 4em;\n  text-align: center; }\n  .intro-text h2 {\n    font-family: Georgia, Cambria, \"Times New Roman\", Times, serif;\n    font-weight: 800;\n    margin-bottom: .3em; }\n    @media screen and (min-width: 53.75em) {\n      .intro-text h2 {\n        font-size: 3em;\n        margin-bottom: .4em; } }\n  .intro-text h3 {\n    background: #477DCA;\n    color: white;\n    display: inline-block;\n    font-size: .7em;\n    font-weight: 800;\n    margin-bottom: 2em;\n    padding: 3px 8px;\n    text-transform: uppercase; }\n    @media screen and (min-width: 53.75em) {\n      .intro-text h3 {\n        margin-bottom: 3.3em; } }\n  .intro-text h4 {\n    color: #666666;\n    font-size: 1.3em;\n    font-weight: 300;\n    line-height: 1.4em;\n    margin: 0 auto 1em; }\n    @media screen and (min-width: 53.75em) {\n      .intro-text h4 {\n        font-size: 1.7em;\n        line-height: 1.35em;\n        margin: 0 auto 1em;\n        width: 60%; } }\n  .intro-text p {\n    margin: auto; }\n    @media screen and (min-width: 53.75em) {\n      .intro-text p {\n        width: 60%; } }\n    .intro-text p a {\n      font-size: .8em;\n      font-weight: 400;\n      text-transform: uppercase; }\n      .intro-text p a span {\n        font-size: 1.3em;\n        line-height: 0; }\n\narticle.type-system-slab {\n  *zoom: 1;\n  text-align: left; }\n  article.type-system-slab:before,\n  article.type-system-slab:after {\n    content: \" \";\n    display: table; }\n  article.type-system-slab:after {\n    clear: both; }\n  article.type-system-slab .type {\n    border-bottom: 1px solid;\n    display: inline-block;\n    font-family: \"Open Sans\", sans-serif;\n    font-size: .7em;\n    font-weight: 600;\n    margin-bottom: 2em;\n    padding: .1em 0;\n    text-align: left;\n    text-transform: uppercase; }\n  article.type-system-slab h1 {\n    font-family: \"Roboto Slab\", serif;\n    font-size: 1.6em;\n    font-weight: 400;\n    margin-bottom: .6em; }\n    @media screen and (min-width: 40em) {\n      article.type-system-slab h1 {\n        font-size: 2.4em; } }\n  article.type-system-slab h2 {\n    font-family: \"Open Sans\", sans-serif;\n    font-size: 1.1em;\n    font-weight: 400;\n    line-height: 1.5em;\n    margin-bottom: 1.2em; }\n    @media screen and (min-width: 40em) {\n      article.type-system-slab h2 {\n        font-size: 1.3em; } }\n  article.type-system-slab code {\n    white-space: nowrap;\n    background: #F7F7F7;\n    border: 1px solid #E0E0E0;\n    border-radius: 4.5px;\n    padding: 0.1em 0.4em;\n    font-size: .8em;\n    font-style: normal; }\n  article.type-system-slab h3 {\n    font-family: \"Roboto Slab\", serif;\n    font-size: 1em;\n    font-weight: 600;\n    text-transform: uppercase;\n    line-height: 1.4em;\n    margin-bottom: .5em; }\n  article.type-system-slab p.date {\n    color: rgba(51, 51, 51, 0.4);\n    font-family: \"Roboto Slab\", serif;\n    font-size: .8em;\n    margin-bottom: .5em; }\n  article.type-system-slab p {\n    font-family: \"Roboto Slab\", serif;\n    font-weight: 300;\n    letter-spacing: 1;\n    margin-bottom: 1.5em; }\n    article.type-system-slab p span {\n      font-family: \"Open Sans\", sans-serif;\n      font-weight: 600;\n      font-size: .8em;\n      text-transform: uppercase; }\n  article.type-system-slab a.read-more {\n    display: inline-block;\n    font-family: \"Roboto Slab\", serif;\n    font-weight: 700;\n    font-size: .8em;\n    text-transform: uppercase;\n    margin-left: .2em;\n    position: relative; }\n    article.type-system-slab a.read-more span {\n      position: absolute;\n      font-size: 1.8em;\n      top: -2px;\n      right: -12px; }\n  article.type-system-slab hr {\n    width: 3em; }\n  article.type-system-slab p.author {\n    font-family: \"Roboto Slab\", serif; }\n\n.texture-examples {\n  *zoom: 1;\n  border-radius: 6px;\n  border: 1px solid silver;\n  margin-bottom: 3em;\n  padding: 1em; }\n  .texture-examples:before,\n  .texture-examples:after {\n    content: \" \";\n    display: table; }\n  .texture-examples:after {\n    clear: both; }\n  .texture-examples .texture-examples-container {\n    *zoom: 1; }\n    .texture-examples .texture-examples-container:before,\n    .texture-examples .texture-examples-container:after {\n      content: \" \";\n      display: table; }\n    .texture-examples .texture-examples-container:after {\n      clear: both; }\n  .texture-examples h3 {\n    color: #CDCDCD;\n    font-size: 1em;\n    margin-bottom: 1.5em;\n    text-align: center;\n    text-transform: uppercase; }\n  .texture-examples h4 {\n    color: gray;\n    font-size: .8em;\n    font-weight: 200;\n    line-height: 2.2em;\n    padding-left: .5em;\n    text-align: center; }\n  .texture-examples .instructions {\n    clear: both;\n    display: block;\n    padding-top: 2em;\n    text-align: center; }\n  .texture-examples b {\n    font-weight: 800; }\n  .texture-examples p {\n    color: #909090;\n    font-size: .9em;\n    margin: 1em auto 1em auto;\n    max-width: 74%; }\n\n.examples {\n  height: 2.5em;\n  width: 100%; }\n\n.example-normal {\n  border-bottom-left-radius: 6px;\n  border-top-left-radius: 6px;\n  float: left;\n  height: 100%;\n  width: 50%; }\n\n.example-inverted {\n  border-bottom-right-radius: 6px;\n  border-top-right-radius: 6px;\n  float: left;\n  height: 100%;\n  width: 50%; }\n\n.texture-1 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-1 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/paper.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/paper.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-1 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/paper.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/paper.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-2 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-2 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/rice_paper.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/rice_paper.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-2 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/rice_paper.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/rice_paper.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-3 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-3 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noise_lines.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noise_lines.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-3 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noise_lines.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noise_lines.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-4 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-4 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/fabric_plaid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/fabric_plaid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-4 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/fabric_plaid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/fabric_plaid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-5 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-5 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/first_aid_kit.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/first_aid_kit.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-5 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/first_aid_kit.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/first_aid_kit.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-6 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-6 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/texturetastic_gray.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/texturetastic_gray.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-6 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/texturetastic_gray.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/texturetastic_gray.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-7 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-7 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/lil_fiber.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/lil_fiber.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-7 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/lil_fiber.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/lil_fiber.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-8 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-8 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/tex2res5.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/tex2res5.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-8 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/tex2res5.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/tex2res5.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-9 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-9 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/skin_side_up.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/skin_side_up.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-9 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/skin_side_up.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/skin_side_up.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-10 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-10 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/light_noise_diagonal.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/light_noise_diagonal.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-10 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/light_noise_diagonal.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/light_noise_diagonal.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-11 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-11 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/chruch.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/chruch.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-11 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/chruch.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/chruch.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-12 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-12 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/45degreee_fabric.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/45degreee_fabric.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-12 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/45degreee_fabric.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/45degreee_fabric.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-13 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-13 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/bgnoise_lg.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/bgnoise_lg.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-13 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/bgnoise_lg.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/bgnoise_lg.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-14 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-14 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/little_pluses.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/little_pluses.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-14 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/little_pluses.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/little_pluses.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-15 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-15 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/squairy_light.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/squairy_light.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-15 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/squairy_light.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/squairy_light.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-16 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-16 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/white_texture.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/white_texture.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-16 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/white_texture.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/white_texture.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-17 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-17 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/binding_light.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/binding_light.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-17 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/binding_light.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/binding_light.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-18 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-18 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/double_lined.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/double_lined.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-18 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/double_lined.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/double_lined.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-19 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-19 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-19 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-20 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-20 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/absurdidad.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/absurdidad.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-20 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/absurdidad.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/absurdidad.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-21 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-21 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grid_noise.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grid_noise.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-21 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grid_noise.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grid_noise.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-22 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-22 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/fancy_deboss.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/fancy_deboss.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-22 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/fancy_deboss.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/fancy_deboss.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-23 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-23 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/graphy.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/graphy.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-23 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/graphy.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/graphy.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-24 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-24 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noise_pattern_with_crosslines.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noise_pattern_with_crosslines.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-24 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noise_pattern_with_crosslines.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noise_pattern_with_crosslines.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-25 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-25 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/old_mathematics.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/old_mathematics.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-25 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/old_mathematics.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/old_mathematics.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-26 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-26 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/ps_neutral.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/ps_neutral.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-26 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/ps_neutral.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/ps_neutral.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-27 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-27 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_freckles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_freckles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-27 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_freckles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_freckles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-28 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-28 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/wavegrid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/wavegrid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-28 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/wavegrid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/wavegrid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-29 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-29 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/az_subtle.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/az_subtle.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-29 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/az_subtle.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/az_subtle.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-30 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-30 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/tiny_grid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/tiny_grid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-30 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/tiny_grid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/tiny_grid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-31 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-31 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/wavegrid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/wavegrid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-31 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/wavegrid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/wavegrid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-32 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-32 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/gridme.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/gridme.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-32 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/gridme.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/gridme.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-33 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-33 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noisy_grid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noisy_grid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-33 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noisy_grid.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noisy_grid.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-34 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-34 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtlenet2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtlenet2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-34 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtlenet2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtlenet2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-35 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-35 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/white_carbon.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/white_carbon.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-35 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/white_carbon.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/white_carbon.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-36 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-36 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/lghtmesh.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/lghtmesh.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-36 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/lghtmesh.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/lghtmesh.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-37 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-37 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/p5.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/p5.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-37 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/p5.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/p5.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-38 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-38 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/worn_dots.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/worn_dots.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-38 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/worn_dots.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/worn_dots.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-39 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-39 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_dots.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_dots.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-39 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_dots.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_dots.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-40 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-40 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/brillant.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/brillant.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-40 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/brillant.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/brillant.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-41 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-41 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/farmer.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/farmer.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-41 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/farmer.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/farmer.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-42 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-42 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/retina_dust.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/retina_dust.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-42 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/retina_dust.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/retina_dust.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-43 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-43 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/pinstripe.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/pinstripe.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-43 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/pinstripe.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/pinstripe.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-44 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-44 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_horizontal1.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_horizontal1.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-44 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_horizontal1.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_horizontal1.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-45 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-45 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_horizontal2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_horizontal2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-45 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_horizontal2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_horizontal2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-46 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-46 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/linen.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/linen.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-46 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/linen.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/linen.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-47 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-47 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/vintage_speckles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/vintage_speckles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-47 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/vintage_speckles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/vintage_speckles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-48 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-48 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_grunge.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_grunge.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-48 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_grunge.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_grunge.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-49 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-49 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/old_wall.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/old_wall.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-49 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/old_wall.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/old_wall.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-50 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-50 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/brushed.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/brushed.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-50 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/brushed.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/brushed.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-51 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-51 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/stucco.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/stucco.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-51 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/stucco.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/stucco.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-52 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-52 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/mooning.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/mooning.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-52 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/mooning.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/mooning.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-53 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-53 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/husk.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/husk.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-53 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/husk.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/husk.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-54 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-54 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/concrete_wall_2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/concrete_wall_2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-54 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/concrete_wall_2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/concrete_wall_2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-55 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-55 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noisy.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noisy.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-55 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noisy.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noisy.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-56 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-56 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/concrete_wall_3.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/concrete_wall_3.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-56 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/concrete_wall_3.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/concrete_wall_3.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-57 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-57 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_surface.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_surface.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-57 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_surface.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_surface.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-58 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-58 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/dust.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/dust.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-58 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/dust.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/dust.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-59 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-59 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/light_alu.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/light_alu.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-59 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/light_alu.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/light_alu.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-60 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-60 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/corrugation.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/corrugation.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-60 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/corrugation.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/corrugation.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-61 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-61 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/kindajean.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/kindajean.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-61 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/kindajean.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/kindajean.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-62 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-62 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_diagonal1.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_diagonal1.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-62 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_diagonal1.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_diagonal1.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-63 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-63 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_diagonal2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/line_diagonal2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-63 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_diagonal2.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/line_diagonal2.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-64 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-64 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/groovepaper.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/groovepaper.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-64 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/groovepaper.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/groovepaper.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-65 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-65 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/brushed_alu.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/brushed_alu.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-65 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/brushed_alu.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/brushed_alu.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-66 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-66 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/rough_diagonal.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/rough_diagonal.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-66 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/rough_diagonal.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/rough_diagonal.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-67 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-67 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/diagonal-noise.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/diagonal-noise.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-67 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/diagonal-noise.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/diagonal-noise.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-68 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-68 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/cross_scratches.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/cross_scratches.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-68 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/cross_scratches.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/cross_scratches.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-69 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-69 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/striped_lens.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/striped_lens.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-69 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/striped_lens.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/striped_lens.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-70 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-70 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/debut_light.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/debut_light.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-70 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/debut_light.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/debut_light.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-71 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-71 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/diagonal_waves.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/diagonal_waves.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-71 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/diagonal_waves.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/diagonal_waves.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-72 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-72 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/honey_im_subtle.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/honey_im_subtle.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-72 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/honey_im_subtle.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/honey_im_subtle.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-73 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-73 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/pw_maze_white.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/pw_maze_white.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-73 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/pw_maze_white.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/pw_maze_white.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-74 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-74 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_zebra_3d.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/subtle_zebra_3d.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-74 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_zebra_3d.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/subtle_zebra_3d.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-75 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-75 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/white_wave.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/white_wave.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-75 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/white_wave.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/white_wave.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-76 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-76 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/circles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/circles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-76 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/circles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/circles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-77 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-77 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/crosses.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/crosses.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-77 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/crosses.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/crosses.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-78 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-78 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grilled.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grilled.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-78 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grilled.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grilled.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-79 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-79 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/pw_pattern.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/pw_pattern.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-79 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/pw_pattern.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/pw_pattern.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-80 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-80 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/struckaxiom.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/struckaxiom.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-80 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/struckaxiom.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/struckaxiom.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-81 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-81 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/vichy.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/vichy.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-81 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/vichy.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/vichy.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-82 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-82 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/wavecut.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/wavecut.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-82 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/wavecut.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/wavecut.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-83 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-83 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/whitey.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/whitey.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-83 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/whitey.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/whitey.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-84 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-84 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/cream_pixels.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/cream_pixels.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-84 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/cream_pixels.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/cream_pixels.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-85 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-85 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grey.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/grey.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-85 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grey.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/grey.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-86 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-86 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/shinedotted.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/shinedotted.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-86 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/shinedotted.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/shinedotted.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-87 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-87 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/stacked_circles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/stacked_circles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-87 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/stacked_circles.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/stacked_circles.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\n.texture-88 {\n  float: left;\n  margin-bottom: 1em;\n  margin: 0 0.95% 1em 0.95%;\n  width: 14.7%; }\n  .texture-88 .example-normal {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noisy_grid_simple.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/noisy_grid_simple.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n  .texture-88 .example-inverted {\n    background-color: #e1f2f1;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noisy_grid_simple.png\"), -webkit-linear-gradient(-450deg, #e1f2f1, #bae0de), #e1f2f1 scroll;\n    background: url(\"https://raw.githubusercontent.com/thoughtbot/refills/master/source/images/textures/inverted/noisy_grid_simple.png\"), linear-gradient(180deg, #e1f2f1, #bae0de), #e1f2f1 scroll; }\n\nheader.centered-navigation {\n  margin-bottom: 2em; }\n\n.card {\n  float: none;\n  display: inline-block; }\n  .card .card-image {\n    max-height: none; }\n  .card img:not([src]), .card img[src=\"\"], .card img.error {\n    max-height: 328px; }\n  .card .card-copy {\n    height: 3em;\n    box-sizing: content-box; }\n\n#everyone {\n  max-width: 90%;\n  margin: 0 auto; }\n\n.button-group {\n  *zoom: 1;\n  margin-bottom: 1em; }\n  .button-group:before,\n  .button-group:after {\n    content: \" \";\n    display: table; }\n  .button-group:after {\n    clear: both; }\n\n#flash-cards h1 {\n  width: 80%;\n  margin: 0 auto; }\n  #flash-cards h1 small {\n    font-weight: normal;\n    opacity: 0.7;\n    font-size: 0.6em; }\n\n#flash-cards #people {\n  width: 50%;\n  margin: 0 auto; }\n  @media screen and (min-width: 53.75em) {\n    #flash-cards #people .card {\n      box-sizing: border-box;\n      width: 40%;\n      margin: 2em; }\n      #flash-cards #people .card img {\n        max-height: 285px; } }\n  #flash-cards #people .guess {\n    position: relative; }\n    #flash-cards #people .guess.guessed {\n      opacity: 0.1;\n      transition: all 500ms ease-in-out; }\n    #flash-cards #people .guess.actual {\n      opacity: 1;\n      border: 2px solid;\n      transition: all 200ms ease-in-out; }\n    #flash-cards #people .guess.wrong {\n      transition: all 1200ms ease-in; }\n      #flash-cards #people .guess.wrong .overlay {\n        background: rgba(255, 0, 0, 0.8); }\n    #flash-cards #people .guess.right .overlay {\n      background: rgba(0, 128, 0, 0.8); }\n    #flash-cards #people .guess .overlay {\n      position: absolute;\n      top: 0;\n      left: 0;\n      z-index: 10;\n      width: 100%;\n      height: 100%;\n      color: #fff;\n      text-align: center;\n      font-weight: bold;\n      padding: 2em 1.5em; }\n\n.stats {\n  float: right; }\n\narticle {\n  max-width: 800px;\n  padding: 0 1em;\n  margin: 0 auto; }\n\narticle.type-system-slab p {\n  letter-spacing: normal; }\n", ""]);
 
 	// exports
 

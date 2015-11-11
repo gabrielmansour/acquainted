@@ -1,0 +1,19 @@
+h1. Because you're already well over the "Dunbar number(the suggested cognitive limit to the number of people with whom one can maintain stable social relationships: roughly 150)":https://en.wikipedia.org/wiki/Dunbar%27s_number.
+
+p=. !awkward.png!
+
+Starting at a new company can be hard. There are so many new faces, names, and warm bodies floating around that it can sometimes be hard to keep track of who's who.
+
+You have enough on your plate already. You don't need to suffer from "introduction amnesia awkwardness":https://xkcd.com/302/ on top of that.
+
+*Acquainted* makes it easy to learn the names and faces of the people you work around.
+
+p(type). F.A.Q.
+
+h3. Do you not care enough about me to have the common decency to learn my name?
+
+_Nope!_ Just kidding. Rest assured, you are highly valued as an individual and a team member, but we can get overwhelmed with too much new information, and sometimes it takes time in order to properly absorb what we need to know.
+
+h3. I have an idea for how to make Acquainted even better!
+
+Great! "Fork the project on GitHub":https://github.com/gabrielmansour/acquainted, push your feature branch, and then "send a pull request":https://github.com/gabrielmansour/acquainted/pulls. Or, if you're not so tech-savvy, you can "log an issue or make a feature request":https://github.com/gabrielmansour/acquainted/issues.

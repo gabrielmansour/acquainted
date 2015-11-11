@@ -1,5 +1,4 @@
 import React from 'react';
-import Reflux from 'reflux';
 import Card from '../components/card';
 import {ButtonGroup, ButtonGroupItem } from '../components/button_group';
 

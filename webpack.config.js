@@ -24,7 +24,8 @@ module.exports = {
       { test: /\.css$/, loader: "style!css" },
       { test: /\.scss$/, loader: "style!css!sass?" + getBourbonPaths() },
       { test: /\.json$/, loader: "json", exclude: /node_modules/ },
-      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel?stage=0' }
+      { test: /\.jsx?$/, exclude: /node_modules/, loader: 'babel?stage=0' },
+      { test: /\.txt$/, exclude: /node_modules/, loader: 'raw' }
     ]
   }
 };

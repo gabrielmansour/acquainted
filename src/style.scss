@@ -65,7 +65,7 @@ header.centered-navigation {
   margin-bottom: 1em;
 }
 
-h1 {
+#flash-cards h1 {
   width: 80%;
   margin: 0 auto;
   small {
@@ -132,3 +132,14 @@ h1 {
   float: right;
 }
 
+article {
+  max-width: 800px;
+  padding: 0 1em;
+  margin: 0 auto;
+}
+
+
+// Overrides:
+article.type-system-slab p {
+  letter-spacing: normal;
+}

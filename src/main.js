@@ -4,8 +4,9 @@ import React from 'react';
 import { Router, Route } from 'react-router';
 import SiteHeader from './common/site_header';
 
-import Everyone from './containers/everyone';
 import Deck from './containers/deck';
+import Everyone from './containers/everyone';
+import Colophon  from './containers/colophon';
 
 
 require("./style.scss");
@@ -31,6 +32,7 @@ React.render(
     <Route path="/" name="home" component={Main}>
       <Route path="play" name="play" component={Deck} />
       <Route path="everyone" name="everyone" component={Everyone} />
+      <Route path="colophon" name="colophon" component={Colophon} />
     </Route>
   </Router>
   ), document.getElementById('container')

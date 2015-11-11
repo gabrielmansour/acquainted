@@ -1,0 +1,9 @@
+#!/bin/bash -x
+git co master
+git br -D gh-pages
+git co -b gh-pages
+webpack
+git add app.js
+git ci -m "recompile js"
+git push -f origin gh-pages
+git co master

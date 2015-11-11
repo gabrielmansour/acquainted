@@ -21,4 +21,4 @@ class ButtonGroupItem extends React.Component {
   }
 }
 
-module.exports = { ButtonGroup: ButtonGroup, ButtonGroupItem: ButtonGroupItem };
+module.exports = { ButtonGroup, ButtonGroupItem };

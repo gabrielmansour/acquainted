@@ -1,19 +1,48 @@
 import React from 'react';
+import classNames from 'classnames';
+import _isEqual from 'lodash/lang/isEqual';
 
 export default class Guess extends React.Component {
+  static propTypes = {
+    person: React.PropTypes.object.isRequired,
+    correctPerson: React.PropTypes.object.isRequired,
+    chosen: React.PropTypes.object,
+    onClick: React.PropTypes.function
+  };
+
   static defaultProps = {
     person: {},
+    correctPerson: null,
+    chosen: null,
     onClick: function () {}
   };
 
-  render () {
+  render() {
     return (
-      <div className="card">
+      <div className={this._classNames()}>
         {this._image()}
-        {this._name()}
-        {this._formattedBody()}
+        {this._answerText()}
       </div>
     )
+  }
+
+  _classNames(){
+    return classNames({
+      card: true,
+      guess: true,
+      guessed: this.props.chosen,
+      actual: this.props.chosen && _isEqual(this.props.person, this.props.correctPerson) && !this._guessedRight(),
+      right: this._guessedRight(),
+      wrong: this._guessedWrong()
+    });
+  }
+
+  _guessedRight() {
+    return this.props.chosen && _isEqual(this.props.chosen, this.props.person) && _isEqual(this.props.chosen, this.props.correctPerson);
+  }
+
+  _guessedWrong() {
+    return this.props.chosen && _isEqual(this.props.chosen, this.props.person) && !_isEqual(this.props.chosen, this.props.correctPerson);
   }
 
   _image () {
@@ -23,28 +52,22 @@ export default class Guess extends React.Component {
     </div>;
   }
 
-  _name () {
-    if (this.props.chosen) {
-      return <div className="card-header">
-        {this.props.person.title}
-      </div>;
-    }
-  }
+  _answerText() {
+    let message = [],
+        title = this.props.person.title;
+    title = title.replace(/ (at|@) <B>Influtitive<B>/).replace('&amp;', '&');
 
-  _formattedBody () {
-    var text = this.props.person.body;
-    if (text && text.length == 2) {
-      var first  = text[0].replace('&amp;', '&'),
-        second = text[0].replace(/ (at|@) <B>Influtitive<B>/).replace('&amp;', '&');
-      if (first == second) {
-        text = first;
-      } else {
-        text = [first, second];
+    if ( this.props.chosen ) {
+
+      if (this._guessedWrong() ) {
+        message = ['Nope!', `That's ${this.props.person.fmt_name}`, title];
       }
-    }
 
-    if (this.props.chosen) {
-      return <div className="card-copy"><p>text</p></div>;
+      return <div className="overlay">
+        <p>{message[0]}</p>
+        <p>{message[1]}</p>
+        <p>{message[2]}</p>
+      </div>;
     }
   }
 }
